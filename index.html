@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MONIQ</title>
+<style>
+:root{--bg:#E8EBF4;--bgi:linear-gradient(135deg,#E3E9F6 0%,#ECE8F7 55%,#F4EAEF 100%);--card:#FCFCFF;--tx:#1F2340;--mu:#6E7392;--bd:#E2E5F0;--ac:#EC0000;--g:#33A67F;--y:#EDAE45;--r:#E5393A;--hl:#F1ECFB}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#14162A;--bgi:none;--card:#1E2036;--tx:#E8E9F5;--mu:#9A9EC0;--bd:#2F3250;--hl:#2A2748;--ac:#EC4B4B}}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bgi,none),var(--bg);background-attachment:fixed;color:var(--tx);font:15px/1.45 Calibri,Carlito,'Segoe UI',Arial,sans-serif;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+.w{max-width:1200px;margin:0 auto;padding:16px}
+h1{font-size:20px;margin:0}h2{font-size:15px;margin:0 0 10px}.sub{color:var(--mu);font-size:12px;margin-top:2px}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;margin:14px 0}
+.bar label{font-size:12px;color:var(--mu);display:flex;flex-direction:column;gap:3px}
+select,input{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:6px 8px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{border:1px solid var(--bd);background:var(--bg);color:var(--tx);padding:5px 11px;border-radius:99px;cursor:pointer;font:inherit}
+.chip.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:12px}
+.kpi .v{font-size:34px;font-weight:700;line-height:1.1}.kpi .t{font-size:12px;color:var(--mu);text-transform:uppercase;letter-spacing:.04em}
+.stack{display:flex;height:10px;border-radius:5px;overflow:hidden;margin:10px 0 6px;background:var(--bd)}
+.stack i{display:block}.lg{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--mu)}.lg b{color:var(--tx)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:900px}
+th,td{padding:7px 8px;border-bottom:1px solid var(--bd);text-align:right;white-space:nowrap}
+th{font-size:11px;color:var(--mu);text-transform:uppercase;cursor:pointer;user-select:none;position:sticky;top:0;background:var(--card)}
+th:first-child,td:first-child{text-align:left}tr.cl{cursor:pointer}tr.cl:hover{background:var(--hl)}tr.sel{background:var(--hl)}
+.nb{position:relative;width:110px;height:14px;display:inline-block;vertical-align:middle;margin-right:6px;background:var(--bg);border-radius:3px}
+.nb:after{content:"";position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--mu)}
+.nb i{position:absolute;top:2px;bottom:2px;border-radius:2px}
+.hd{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}.hd label{font-size:12px;color:var(--mu);display:flex;flex-direction:column;gap:3px;margin-left:auto}#meta,#tmeta,#vtn{display:none}.mq{font-size:1.35em;font-weight:800;letter-spacing:.05em;color:#EC0000;background:linear-gradient(90deg,#EC0000,#7B5CD6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 0}.tab{font:inherit;font-weight:600;border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:9px 18px;border-radius:99px;cursor:pointer}.tab.on{background:var(--tx);border-color:var(--tx);color:var(--bg)}.dl{font-weight:600}.note{font-size:12px;color:var(--mu);margin:6px 0 0}.pos{color:var(--g)}.neg{color:var(--r)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:12px}
+@media(max-width:480px){.two{grid-template-columns:1fr}}
+.xb{font-size:11px;padding:2px 9px;margin-left:10px;vertical-align:middle;font-weight:400}.dtbl table{min-width:0}
+#t1 table{min-width:0}#t1 .nb{width:40px;margin-right:3px}#t1 th,#t1 td{padding-left:6px;padding-right:6px}.dtbl td,.dtbl th{padding:4px 6px;font-size:11px;text-align:center}.dtbl th:first-child,.dtbl td:first-child{text-align:left;white-space:nowrap}.dtbl td:nth-child(2),.dtbl th:nth-child(2){text-align:right}
+
+*,button,select,input,textarea,svg text{font-family:Calibri,Carlito,'Segoe UI',Arial,sans-serif}
+:root{--th:#EDEFF9;--zb:#F6F7FC;--k1:#8DB8EA;--k2:#A38BE0;--k3:#F2A58A;--k4:#6A55C8}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--th:#262945;--zb:#1B1D32}}
+th{background:var(--th)!important;color:var(--mu);font-weight:700}
+tbody tr:nth-child(even){background:var(--zb)}tr.cl:hover,tr.sel{background:var(--hl)!important}
+.card{border-radius:20px;box-shadow:0 8px 26px rgba(90,80,150,.10),0 1px 2px rgba(90,80,150,.06)}
+.kpi{border-left:4px solid var(--k1)}.grid>.kpi:nth-child(2){border-left-color:var(--k2)}.grid>.kpi:nth-child(3){border-left-color:var(--k3)}.grid>.kpi:nth-child(4){border-left-color:var(--k4)}
+.dl.pos,.dl.neg{padding:1px 8px;border-radius:99px}.dl.pos{background:rgba(51,166,127,.15)}.dl.neg{background:rgba(229,57,58,.12)}
+h2{color:var(--tx)}.tab.on{background:linear-gradient(90deg,#2B2150,#4E3FA3);border-color:transparent;color:#fff}
+.mar,#tmx4 .dl,#tmx4 .dl.pos,#tmx4 .dl.neg{color:#800000!important}h2.mar{color:#800000}#tmx4 table{color:#800000}#tmx4 th{color:#800000}
+
+.cr{display:grid;grid-template-columns:minmax(150px,36%) 1fr 210px;gap:10px;align-items:center;padding:5px 0;border-bottom:1px solid var(--bd)}.cl{font-size:13.5px;line-height:1.25}.cn{display:inline-block;width:20px;color:var(--mu);font-weight:700}
+.ct{position:relative;height:20px;background:var(--bg);border-radius:10px}.cb{height:100%;border-radius:10px;min-width:3px}.cm{position:absolute;top:-3px;bottom:-3px;width:3px;border-radius:2px;background:#6E7392;opacity:.75}.cmk{display:inline-block;width:3px;height:11px;background:#6E7392;margin-right:5px;vertical-align:middle;border-radius:2px}
+.cv{text-align:right;white-space:nowrap}.cj{color:var(--mu);font-size:12px}
+@media(max-width:640px){.cr{grid-template-columns:1fr}.cv{text-align:left}}
+select#fm,select#tm,select#vm,select#wm,select#cm,select#ff,select#km,select#hm{font-weight:700;font-size:15px;color:#B00010;background:#FFF0F0;border:2px solid #EC0000;padding:6px 10px}
+select#fm option,select#tm option,select#vm option,select#wm option,select#cm option,select#ff option,select#km option,select#hm option{font-weight:700;color:#1F2340;background:#FFFFFF}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) select#fm,:root:not([data-theme=light]) select#tm,:root:not([data-theme=light]) select#vm,:root:not([data-theme=light]) select#wm,:root:not([data-theme=light]) select#cm,:root:not([data-theme=light]) select#ff,:root:not([data-theme=light]) select#km,:root:not([data-theme=light]) select#hm{color:#FFB3B3;background:#3A1D26;border-color:#EC4B4B}}
+.hd label[id$=mw]{font-weight:700;color:var(--tx)}
+
+select#fs{font-weight:700;border-width:2px}
+select#fs[data-v=cs]{background:#FDE8E8;color:#B00010;border-color:#EC4B4B}
+select#fs[data-v=all]{background:#E1F5EC;color:#1F7A57;border-color:#8FCDB0}
+select#fs option[value=cs]{background:#FDE8E8;color:#B00010}select#fs option[value=all]{background:#E1F5EC;color:#1F7A57}
+
+th,th:first-child,.dtbl th:first-child,.dtbl th:nth-child(2){text-align:center!important}
+
+td{font-size:13px;line-height:1.3}th{font-size:11px}th,td{padding:5px 8px}
+
+.kt table{min-width:0;border-collapse:separate;border-spacing:0;font-size:12.5px}
+.kt th,.kt td{white-space:nowrap;padding:6px 10px;border-bottom:1px solid var(--bd);text-align:center}
+.kt thead th{position:sticky;z-index:3;cursor:default;text-transform:none;font-size:11.5px;letter-spacing:.02em;background:var(--gc,var(--th))!important;color:var(--gt,var(--mu))!important;border-right:1px solid rgba(255,255,255,.25)}
+.kt thead tr:first-child th{top:0}.kt thead tr:nth-child(2) th{top:30px}
+.kt tbody tr{background:var(--card)}.kt tbody tr:nth-child(even){background:var(--zb)}.kt tbody tr:hover{background:var(--hl)}
+.kt th.s1,.kt td.s1{position:sticky;left:0;z-index:2;background:inherit;text-align:left;font-weight:700;min-width:190px;box-shadow:2px 0 3px rgba(43,53,49,.12)}.kt thead th.s1{z-index:5;background:#2B2150!important}
+.kt td.kok{background:rgba(51,166,127,.18);color:#1F7A57}.kt td.kno{background:rgba(229,57,58,.14);color:#B00010}
+.pill{display:inline-block;padding:2px 11px;border-radius:99px;font-weight:700;font-size:12px}.pill.pg{background:rgba(51,166,127,.20);color:#1F7A57}.pill.py{background:rgba(237,174,69,.30);color:#8A5A00}.pill.pr{background:rgba(229,57,58,.16);color:#B00010}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .kt td.kok,:root:not([data-theme=light]) .pill.pg{color:#9BE0C3}:root:not([data-theme=light]) .kt td.kno,:root:not([data-theme=light]) .pill.pr{color:#FFB3B3}:root:not([data-theme=light]) .pill.py{color:#F6D58E}}
+.tab[data-p="7"]{background:#FFECEC;border-color:#F2A0A0;color:#B00010}.tab[data-p="7"].on{background:linear-gradient(90deg,#EC0000,#FF5B4D);border-color:transparent;color:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .tab[data-p="7"]{background:#3A1D26;border-color:#EC4B4B;color:#FFB3B3}:root:not([data-theme=light]) .tab[data-p="7"].on{color:#fff}}
+.ic{display:inline-block;margin-right:7px;font-size:1.05em;filter:saturate(.9)}.tab{display:inline-flex;gap:6px;align-items:center}
+
+.nr{width:100%;border-collapse:collapse;font-size:13px}.nr th{padding:9px 10px;text-align:center;font-size:11px;font-weight:700}.nr td{padding:9px 10px;vertical-align:top;border-bottom:1px solid var(--bd)}.nr{table-layout:fixed}.nr th:nth-child(1){width:17%}.nr th:nth-child(2){width:8%}.nr th:nth-child(3){width:12%}.nr th:nth-child(4){width:36%}.nr th:nth-child(5){width:27%}.nr td{text-align:left!important;color:#1F2340;white-space:normal!important;overflow-wrap:anywhere}.nr td.c{text-align:center!important;white-space:nowrap}.nr .nrq{color:#5B6080}
+.nr.gd th{background:#CFEBDD;color:#1E5A42}.nr.gd td{background:#EAF6F0}.nr.rd th{background:#F8CFCF;color:#8A2A2A}.nr.rd td{background:#FDEDED}
+.nrq{font-style:italic;color:var(--mu);font-size:12.5px;margin:2px 0}.nrs{margin:0 0 10px;font-size:13.5px;line-height:1.5}
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:900px){.cg{grid-template-columns:1fr}}
+.cg .cr{grid-template-columns:minmax(120px,38%) 1fr 130px}
+.tab[data-p="8"]{background:#E3F6EE;border-color:#9BD8BE;color:#14684A}.tab[data-p="8"].on{background:linear-gradient(90deg,#1B9A74,#4CC3A0);border-color:transparent;color:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .tab[data-p="8"]{background:#17332B;border-color:#2E8F70;color:#9BE3C6}:root:not([data-theme=light]) .tab[data-p="8"].on{color:#fff}}
+.hc{display:flex;align-items:center;gap:8px}.hc .cb{flex:1}
+.tab[data-p="9"]{background:#E4EEFC;border-color:#9DBFEF;color:#1E4E96}.tab[data-p="9"].on{background:linear-gradient(90deg,#2F6FDE,#6AA8F2);border-color:transparent;color:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .tab[data-p="9"]{background:#16283F;border-color:#3C6CB5;color:#A9CBF6}:root:not([data-theme=light]) .tab[data-p="9"].on{color:#fff}}
+select#im{font-weight:700;font-size:15px;color:#B00010;background:#FFF0F0;border:2px solid #EC0000;padding:6px 10px}select#im option{font-weight:700;color:#1F2340;background:#FFFFFF}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) select#im{color:#FFB3B3;background:#3A1D26;border-color:#EC4B4B}}
+.sk{display:flex;height:22px;border-radius:11px;overflow:hidden;background:var(--bg)}.sk i{display:block;height:100%}
+.lgd{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;margin-top:8px;color:var(--mu)}.lgd .dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px}
+.tab[data-p="10"]{background:#FFF0E0;border-color:#F2C58F;color:#955012}.tab[data-p="10"].on{background:linear-gradient(90deg,#E8841C,#F5B263);border-color:transparent;color:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .tab[data-p="10"]{background:#3A2A17;border-color:#B27A3B;color:#F5CFA0}:root:not([data-theme=light]) .tab[data-p="10"].on{color:#fff}}
+select#om{font-weight:700;font-size:15px;color:#B00010;background:#FFF0F0;border:2px solid #EC0000;padding:6px 10px}select#om option{font-weight:700;color:#1F2340;background:#FFFFFF}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) select#om{color:#FFB3B3;background:#3A1D26;border-color:#EC4B4B}}
+.grp{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0 0}
+.gb{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:18px;border:2px solid transparent;cursor:pointer;text-align:left;font-family:inherit;color:var(--tx);transition:transform .15s,box-shadow .15s}
+.gb:hover{transform:translateY(-2px)}.gb .gi{font-size:26px;width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.75)}
+.gb b{display:block;font-size:17px;letter-spacing:.06em}.gb small{display:block;font-size:12px;opacity:.8;margin-top:2px;font-weight:400}
+.gk{background:#FFECEC;border-color:#F2B4B4;color:#9C0010}.gk.on{background:linear-gradient(120deg,#EC0000,#FF6B5A);color:#fff;box-shadow:0 8px 20px rgba(236,0,0,.28)}
+.gs{background:#E3F6EE;border-color:#A8DCC6;color:#14684A}.gs.on{background:linear-gradient(120deg,#1B9A74,#58C9A5);color:#fff;border-color:transparent;box-shadow:0 8px 20px rgba(27,154,116,.28)}
+.gv{background:#ECE8FA;border-color:#C5B9EE;color:#41318F}.gv.on{background:linear-gradient(120deg,#3E3294,#7B6BDC);color:#fff;border-color:transparent;box-shadow:0 8px 20px rgba(62,50,148,.3)}
+.gb.on .gi{background:rgba(255,255,255,.22)}
+#tabs{margin:10px 0 0;padding:8px 10px;background:rgba(255,255,255,.55);border-radius:18px}
+@media(max-width:700px){.grp{grid-template-columns:1fr}}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .gk{background:#3A1D26;border-color:#8A3A47;color:#FFB3B3}:root:not([data-theme=light]) .gs{background:#17332B;border-color:#2E8F70;color:#9BE3C6}:root:not([data-theme=light]) .gv{background:#241F45;border-color:#5A4CB0;color:#C9BFF7}:root:not([data-theme=light]) .gb.on{color:#fff}:root:not([data-theme=light]) .gb .gi{background:rgba(255,255,255,.1)}:root:not([data-theme=light]) #tabs{background:rgba(255,255,255,.05)}}
+#ft2 td,#ft3 td,#ft4 td{text-align:center!important}
+#ft2 th,#ft3 th,#ft4 th{text-align:center!important}
+.hid{display:none!important}.subtabs{display:flex;gap:8px;align-items:center;margin:10px 0 0;padding-left:6px}.subtabs .sl{font-size:12px;color:var(--mu);font-weight:600}.subtabs .tab.sb{padding:6px 14px;font-size:13px}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script></head><body><div class="w">
+<div class="hd"><div><h1><span class="mq">MONIQ</span> - Monitoring by SQ Jabar</h1>
+<div class="sub" id="meta"></div></div>
+<div style="display:flex;gap:10px;align-items:flex-end;margin-left:auto"><label>Bulan<select id="fm"></select></label><label id="tmw" style="display:none">Bulan tiket<select id="tm"></select></label><label id="kmw" style="display:none">Bulan KPI<select id="km"></select></label><label id="ffw" style="display:none">Bulan tiket fixed<select id="ff"></select></label><label id="vmw" style="display:none">Bulan visit<select id="vm"></select></label><label id="omw" style="display:none">Bulan sales ORBIT<select id="om"></select></label><label id="imw" style="display:none">Bulan sales IndiHome<select id="im"></select></label><label id="hmw" style="display:none">Bulan sales Halo<select id="hm"></select></label><label id="wmw" style="display:none">Bulan waiting time<select id="wm"></select></label><label id="cmw" style="display:none">Bulan load CAPS<select id="cm"></select></label><button class="chip on" id="xl">⬇ Unduh Excel tNPS</button></div></div>
+<div class="grp" id="grp" style="display:none"><button class="gb gk" data-g="kpi"><span class="gi">🏆</span><span><b>KPI</b><small>MOMO &amp; TOMO</small></span></button><button class="gb gs" data-g="sales"><span class="gi">💰</span><span><b>SALES</b><small>Halo · IndiHome · ORBIT</small></span></button><button class="gb gv" data-g="svc"><span class="gi">🛎️</span><span><b>SERVICE</b><small>Visit · Waiting · tNPS · Tiket · CAPS</small></span></button></div>
+<div class="tabs" id="tabs"><button class="tab" data-g="kpi" data-p="7">🏆 KPI</button><button class="tab on" data-g="svc" data-p="3">🏬 Visit Jabar</button><button class="tab" data-g="svc" data-p="4">⏱️ Waiting Time</button><button class="tab mt" id="mtn" data-g="svc">📊 tNPS</button><button class="tab hid" data-g="svc" data-p="1">📊 tNPS Mobile</button><button class="tab hid" data-g="svc" data-p="11">📞 tNPS Fixed</button><button class="tab mt" id="mtk" data-g="svc">🎫 Tiket</button><button class="tab hid" data-g="svc" data-p="2">🎫 Tiket Mobile</button><button class="tab hid" data-g="svc" data-p="6">📡 Tiket Fixed</button><button class="tab" data-g="svc" data-p="5">🛡️ CAPS</button></div><div class="subtabs" id="subtabs" style="display:none"><span class="sl" id="sl"></span><button class="tab sb" data-s="m">📱 Mobile</button><button class="tab sb" data-s="f">🏠 Fixed</button></div>
+<div class="bar">
+ <label>Branch Jabar<div class="chips" id="fb"></div></label>
+ <label>unit_name<select id="fu"></select></label>
+ <label>Respon Kategori<select id="fs"><option value="cs">Customer Service</option><option value="all">All Respon</option></select></label>
+ <button class="chip" id="rs">Reset</button>
+</div>
+<div id="pg1"><div class="grid">
+ <div class="card kpi" id="k1"></div><div class="card kpi" id="k2"></div>
+</div>
+<div class="two">
+ <div class="card"><h2><span class="ic">🗺️</span>tNPS/Branch</h2><div class="tw" id="t1"></div></div>
+ <div class="card"><h2><span class="ic">🎧</span><span id="t4h">CSR Respon Customer Service</span></h2><div class="tw" style="max-height:330px;overflow-y:auto" id="t4"></div></div>
+</div>
+<div class="card"><h2><span class="ic">🏢</span>tNPS per unit_name</h2><div class="tw" style="max-height:420px" id="t2"></div><p class="note">Klik baris untuk memfilter. Klik judul kolom untuk mengurutkan.</p></div>
+<div class="cg" style="margin-bottom:14px">
+ <div class="card"><h2><span class="ic">🧩</span>%Category (All)</h2><div id="cc0"></div></div>
+ <div class="card"><h2><span class="ic">😍</span>%Category (Promotor)</h2><div id="cc1"></div></div>
+ <div class="card"><h2><span class="ic">😡</span>%Category (Detractor)</h2><div id="cc2"></div></div>
+ <div class="card"><h2><span class="ic">😐</span>%Category (Passive)</h2><div id="cc3"></div></div>
+</div>
+<div class="card"><h2><span class="ic">✅</span>What Went Well</h2><div id="nw"></div></div>
+<div class="card"><h2><span class="ic">⚠️</span>What Went Wrong</h2><div id="nx"></div></div>
+</div>
+<div id="pg2" style="display:none"><div class="card" id="tk"><div class="hd" style="margin-bottom:10px"><div><h2 style="margin:0"><span class="ic">🎫</span>Report Tiket – Jabar</h2><div class="sub" id="tmeta"></div></div>
+<div style="display:flex;gap:10px;align-items:flex-end;margin-left:auto;flex-wrap:wrap"><label style="display:none">Level top tiket<select id="tl"><option value="5">CASE_TYPE_1 (kategori)</option><option value="6" selected>CASE_TYPE_2 (sub-kategori)</option><option value="7">CASE_TYPE_3 (detail)</option></select></label></div></div>
+<div class="grid" id="tkpi"></div>
+<h2 style="margin-top:6px"><span class="ic">🗺️</span>Tiket per Jabar (branch)</h2><div class="tw" id="tt1"></div>
+<h2 style="margin-top:16px"><span class="ic">🏢</span>Tiket/Unit</h2><div class="tw" style="max-height:400px" id="tt2"></div>
+<h2 style="margin-top:18px"><span class="ic">📣</span>Tiket LAPUL per Jabar (branch)</h2><p class="note" id="tlpn" style="margin:0 0 8px"></p><div class="tw" id="tlp"></div>
+<h2 style="margin-top:18px"><span class="ic">📅</span>Report MoM Tiket</h2>
+<p class="note" style="margin:0 0 8px">Mengikuti filter branch dan unit_name. Kenaikan OSL ditandai merah, penurunan hijau. Perubahan jumlah tiket dan closing ditampilkan netral.</p>
+<h2><span class="ic">📈</span>Trend Tiket/Bulan</h2><div class="tw" id="tmx1" style="display:none"></div><div class="two"><div class="card"><h2><span class="ic">🎫</span>Jumlah Tiket &amp; MoM</h2><div id="tmx1a"></div></div><div class="card"><h2><span class="ic">✅</span>% Closing &amp; MoM</h2><div id="tmx1b"></div></div></div>
+<p class="note" id="tmxn"></p>
+<div class="tw" id="tmx2" style="display:none"></div>
+<h2 style="margin-top:14px"><span class="ic">🏢</span>MoM per unit_name</h2><div class="tw" style="max-height:420px" id="tmx3"></div>
+<h2 style="margin-top:14px" class="mar"><span class="ic">🔥</span>MoM top tiket</h2><div class="tw mar" id="tmx4" style="max-height:255px"></div>
+<div class="two" style="margin-top:12px"><div><h2><span class="ic">🏆</span>Top 10 Tiket</h2><div class="tw" id="tt3"></div></div><div><h2><span class="ic">🚨</span>Top 10 Tiket OSL</h2><div class="tw" id="tt4"></div></div></div></div></div>
+<div id="pg11" style="display:none"><div class="card"><div class="hd" style="margin-bottom:10px"><div><h2 style="margin:0"><span class="ic">📞</span>Report tNPS Fixed – Jabar (IndiHome)</h2><div class="sub" id="tfmeta"></div></div>
+<div style="display:flex;gap:10px;align-items:flex-end;margin-left:auto;flex-wrap:wrap"><label>Bulan<select id="tfm"></select></label><button class="chip" id="tfr">Reset filter</button></div></div>
+<div class="grid"><div class="card kpi" id="tfk1"></div><div class="card kpi" id="tfk2"></div></div>
+<h2 style="margin-top:6px"><span class="ic">🗺️</span>Pencapaian %tNPS Total Jabar</h2><div class="tw" id="tf1"></div>
+<h2 style="margin-top:16px"><span class="ic">🧭</span>Pencapaian tNPS / Unit Type</h2><div class="tw" id="tf2"></div>
+<h2 style="margin-top:16px"><span class="ic">🏙️</span>Pencapaian %tNPS per Branch</h2><div class="tw" id="tf3"></div>
+<h2 style="margin-top:16px"><span class="ic">🏢</span>Pencapaian %tNPS per unit_name (GraPARI) – Top 10</h2><div class="tw" id="tf4"></div>
+<h2 style="margin-top:16px"><span class="ic">🛤️</span>Pencapaian %tNPS per Journey</h2><div class="tw" id="tf5"></div>
+<div class="cg" style="margin-top:16px;margin-bottom:14px">
+  <div class="card"><h2><span class="ic">😍</span>Top Kategori Promotor</h2><div id="tfc1"></div></div>
+ <div class="card"><h2><span class="ic">😡</span>Top Kategori Detractor</h2><div id="tfc2"></div></div>
+</div>
+<div class="card"><h2><span class="ic">✅</span>What Went Well – Promotor unit GraPARI</h2><div id="tfnw"></div></div>
+<div class="card"><h2><span class="ic">⚠️</span>What Went Wrong – Detractor unit GraPARI</h2><div id="tfnx"></div></div>
+<div class="card"><h2><span class="ic">🏅</span>Top tNPS / CSR (GraPARI)</h2><p class="note" id="tf6n" style="margin:0 0 8px"></p><div class="tw" id="tf6"></div></div>
+</div></div>
+<div id="pg6" style="display:none"><div class="card"><div class="hd" style="margin-bottom:10px"><div><h2 style="margin:0"><span class="ic">📡</span>Report Tiket Fixed – Jabar</h2></div></div>
+<div class="grid" id="fkpi"></div>
+<h2 style="margin-top:6px"><span class="ic">🗺️</span>Tiket by Branch · Trend &amp; MoM</h2><div id="ftb"></div>
+<h2 style="margin-top:16px"><span class="ic">🏢</span>Tiket by GraPARI</h2><div class="tw" style="max-height:310px" id="ft2"></div>
+<h2 style="margin-top:16px"><span class="ic">🛰️</span>GraPARI dengan Tiket Insera</h2><div class="tw" style="max-height:310px" id="ft3"></div><h2 style="margin-top:16px"><span class="ic">🌐</span>GraPARI dengan Tiket GAMAS</h2><div class="tw" style="max-height:310px" id="ft4"></div>
+<div class="two" style="margin-top:12px"><div><h2><span class="ic">🏆</span>Top 10 Tiket</h2><div class="tw" id="ft5"></div></div><div><h2><span class="ic">🚨</span>Top 10 OSL</h2><div class="tw" id="ft6"></div></div></div></div></div>
+<div id="pg7" style="display:none"><div class="card"><div class="hd" style="margin-bottom:6px"><div><h2 style="margin:0"><span class="ic">🏆</span>Report KPI GraPARI – MOMO &amp; TOMO</h2></div></div>
+<h2 style="margin-top:12px"><span class="ic">🏬</span>KPI MOMO</h2><div class="tw kt" style="max-height:600px" id="kt1"></div>
+<h2 style="margin-top:18px"><span class="ic">🏪</span>KPI TOMO</h2><div class="tw kt" style="max-height:480px" id="kt2"></div></div></div>
+<div id="pg5" style="display:none"><div class="card" id="cptr"></div><div class="card"><div class="grid"><div class="card kpi" id="ck1"></div><div class="card kpi" id="ck2"></div><div class="card kpi" id="ck3"></div><div class="card kpi" id="ck4"></div></div>
+<h2 style="margin-top:14px"><span class="ic">🗺️</span>CAPS GraPARI Jabar per Branch</h2><div class="tw" id="cp6"></div>
+<h2 style="margin-top:20px"><span class="ic">🏬</span>CAPS GraPARI Jabar per GraPARI</h2><div class="tw" style="max-height:420px" id="cp5"></div>
+<h2 style="margin-top:20px"><span class="ic">📦</span>Top 10 Paket Retensi</h2><div id="cp7"></div>
+<h2 style="margin-top:20px"><span class="ic">💬</span>Top 10 Reason CAPS</h2><div id="cp8"></div>
+<h2 style="margin-top:20px"><span class="ic">👤</span>CAPS GraPARI Jabar per CSR (NIK)</h2><div class="bar" style="margin:0 0 10px;padding:8px"><label>Cari nama / NIK<input id="cq" placeholder="ketik..."></label><label>Min. WO<input id="cmin" type="number" min="1" value="1" style="width:80px"></label></div><div class="tw" style="max-height:520px" id="cp9"></div></div></div>
+<div id="pg8" style="display:none"><div class="card"><div class="hd" style="margin-bottom:10px"><div><h2 style="margin:0"><span class="ic">💼</span>Report Sales Halo – Jabar</h2></div></div>
+<div class="grid"><div class="card kpi" id="hk1"></div><div class="card kpi" id="hk2"></div><div class="card kpi" id="hk3"></div><div class="card kpi" id="hk4"></div></div>
+<h2 style="margin-top:16px"><span class="ic">🗺️</span>Performansi Sales Halo per Branch</h2><div class="tw" id="ht0"></div>
+<h2 style="margin-top:16px"><span class="ic">🏬</span>Pencapaian Sales Halo per GraPARI</h2><div class="tw" style="max-height:318px;overflow-y:auto" id="ht1"></div>
+<h2 style="margin-top:16px"><span class="ic">👤</span>Pencapaian &amp; Index Sales Halo per CSR</h2><div class="tw" style="max-height:318px;overflow-y:auto" id="ht2"></div>
+<h2 style="margin-top:16px"><span class="ic">📦</span>Top 5 Paket per Branch</h2>
+<div class="cg"><div class="card"><h2 id="hph0"></h2><div id="hp0"></div></div><div class="card"><h2 id="hph1"></h2><div id="hp1"></div></div><div class="card"><h2 id="hph2"></h2><div id="hp2"></div></div><div class="card"><h2 id="hph3"></h2><div id="hp3"></div></div></div>
+<p class="note" id="hnote"></p></div></div>
+<div id="pg9" style="display:none"><div class="card"><div class="hd" style="margin-bottom:10px"><div><h2 style="margin:0"><span class="ic">🌐</span>Report Sales IndiHome – Jabar</h2></div></div>
+<div class="grid"><div class="card kpi" id="ik1"></div><div class="card kpi" id="ik2"></div><div class="card kpi" id="ik3"></div><div class="card kpi" id="ik4"></div></div>
+<h2 style="margin-top:16px"><span class="ic">🗺️</span>Performansi Sales IndiHome per Branch</h2><div class="tw" id="it0"></div>
+<h2 style="margin-top:16px"><span class="ic">🏬</span>Performansi Sales IndiHome per GraPARI</h2><div class="tw" style="max-height:318px;overflow-y:auto" id="it1"></div>
+<h2 style="margin-top:16px"><span class="ic">✅</span>%Complete per bulan – Jabar &amp; Branch</h2><div id="ic1"></div>
+<h2 style="margin-top:16px"><span class="ic">📦</span>Top 5 Paket per Branch (PS / Completed)</h2>
+<div class="cg"><div class="card"><h2 id="iph0"></h2><div id="ip0"></div></div><div class="card"><h2 id="iph1"></h2><div id="ip1"></div></div><div class="card"><h2 id="iph2"></h2><div id="ip2"></div></div><div class="card"><h2 id="iph3"></h2><div id="ip3"></div></div></div>
+<h2 style="margin-top:16px"><span class="ic">🚧</span>Kendala aktif (funneling) – Jabar</h2><div id="ic2"></div>
+<h2 style="margin-top:16px"><span class="ic">🗺️</span>Kendala aktif (funneling) – per Branch</h2><div id="ic3"></div>
+<h2 style="margin-top:16px"><span class="ic">👤</span>Performansi &amp; Index Sales IndiHome per CSR</h2><div class="tw" style="max-height:318px;overflow-y:auto" id="it2"></div>
+<p class="note" id="inote"></p></div></div>
+<div id="pg10" style="display:none"><div class="card"><div class="hd" style="margin-bottom:10px"><div><h2 style="margin:0"><span class="ic">📶</span>Report Sales ORBIT – Jabar</h2></div></div>
+<div class="grid"><div class="card kpi" id="ok1"></div><div class="card kpi" id="ok2"></div><div class="card kpi" id="ok3"></div><div class="card kpi" id="ok4"></div></div>
+<h2 style="margin-top:16px"><span class="ic">🗺️</span>Performansi Sales ORBIT per Branch</h2><div class="tw" id="ot0"></div>
+<h2 style="margin-top:16px"><span class="ic">🏬</span>Performansi Sales ORBIT per GraPARI</h2><div class="tw" style="max-height:318px;overflow-y:auto" id="ot1"></div>
+<h2 style="margin-top:16px"><span class="ic">👤</span>Performansi &amp; Index Sales ORBIT per CSR</h2><div class="tw" style="max-height:318px;overflow-y:auto" id="ot2"></div>
+<h2 style="margin-top:16px"><span class="ic">🏆</span>Top Sales by Device Name per Branch</h2>
+<div class="cg"><div class="card"><h2 id="odh0"></h2><div id="od0" style="max-height:196px;overflow-y:auto"></div></div><div class="card"><h2 id="odh1"></h2><div id="od1" style="max-height:196px;overflow-y:auto"></div></div><div class="card"><h2 id="odh2"></h2><div id="od2" style="max-height:196px;overflow-y:auto"></div></div><div class="card"><h2 id="odh3"></h2><div id="od3" style="max-height:196px;overflow-y:auto"></div></div></div>
+<p class="note" id="onote"></p></div></div>
+<div id="pg4" style="display:none"><div class="card"><div class="hd" style="margin-bottom:10px"><div><h2 style="margin:0"><span class="ic">⏱️</span>Report Waiting Time – Jabar</h2></div></div>
+<div class="grid"><div class="card kpi" id="wk1"></div><div class="card kpi" id="wk2"></div><div class="card kpi" id="wk3"></div></div>
+<h2 style="margin-top:12px"><span class="ic">📊</span>Distribusi waiting time</h2><div id="wdist"></div>
+<h2 style="margin-top:16px"><span class="ic">🗺️</span>%KPI per Branch</h2><div class="tw" id="ww2"></div>
+<h2 style="margin-top:16px"><span class="ic">🏬</span>Pencapaian Waiting Time per GraPARI</h2><div class="tw" style="max-height:520px" id="ww4"></div>
+<p class="note">Klik baris Branch atau GraPARI untuk memfilter. Klik judul kolom untuk mengurutkan.</p>
+<p class="note" id="wnote"></p></div></div>
+<div id="pg3" style="display:none">
+<div class="bar" style="margin-top:0"><label>Tipe service<select id="vs"><option value="all">Semua</option><option value="0">Telkomsel (Mobile)</option><option value="1">IndiHome</option></select></label>
+<label>Basis hari kerja (Index)<select id="vk"><option value="aktif">Hari aktif (ada visit)</option><option value="mf">Senin–Jumat</option><option value="ms">Senin–Sabtu</option></select></label>
+</div>
+<div class="grid" id="vkpi"></div>
+<div class="card"><div class="hd" style="margin-bottom:8px"><h2 style="margin:0"><span class="ic">📈</span>Tren visit harian</h2><label>Tampilkan per<select id="vd"><option value="br">Branch</option><option value="un">GraPARI</option><option value="csr">CSR (NIK)</option></select></label></div>
+<div class="tw" id="vch"></div><div class="tw dtbl" style="max-height:420px;margin-top:8px" id="vtr"></div><p class="note" id="vtn"></p></div>
+<div class="card"><h2><span class="ic">🗺️</span>Visit per Jabar (branch)</h2><div class="tw" id="vt1"></div></div>
+<div class="card"><h2><span class="ic">🏬</span>Visit per GraPARI</h2><div class="tw" style="max-height:420px" id="vt2"></div><p class="note">Klik baris untuk memfilter branch atau GraPARI. Klik judul kolom untuk mengurutkan.</p></div>
+<div class="card"><h2><span class="ic">👤</span>Visit/CSR</h2>
+<div class="bar" style="margin:0 0 10px;padding:8px"><label>Cari nama / NIK<input id="vq" placeholder="ketik..."></label>
+<label>Min. visit<input id="vmin" type="number" min="1" value="1" style="width:80px"></label>
+<label>Tampilkan<select id="vcf"><option value="ALL">Semua NIK</option><option value="CSR">Grup CSR saja (SIAD)</option></select></label></div>
+<div class="tw" style="max-height:318px;overflow-y:auto" id="vt3"></div><p class="note" id="vnote"></p></div>
+</div></div>
+<script src="loader.js"></script></body></html>
