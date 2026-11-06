@@ -1,6 +1,6 @@
 
 // rows: [branch,unit,nik,score,catClass,catIdx,month] month:0=bulan lalu,1=bulan ini
-const R=D.rows,S=D.siad,CATS=D.cats,MN=D.mn;
+const R=D.rows,S=D.siad,CATS=D.cats,MN=D.mn;const ML=[31,30,31,30],DCUT=MN.map((m,i)=>{const d=Math.max(0,...R.filter(r=>r[6]==i).map(r=>r[9]));return d<ML[i]?d:99});
 const EX={};
 const st={m:2,b:'ALL',u:'ALL',s:'cs',sort:{t2:['n',-1],t3:['n',-1],t1:['n',-1],t4:['n',-1]}};
 const $=i=>document.getElementById(i);
@@ -9,8 +9,8 @@ function ag(rs){let p=0,a=0,d=0;for(const r of rs){const c=cls(r[3]);c==0?p++:c=
 const f1=v=>v==null?'–':v.toFixed(1);
 const dv=(a,b)=>a==null||b==null?null:a-b;
 const dl=v=>v==null?'–':`<span class="dl ${v>=0?'pos':'neg'}">${v>=0?'▲ +':'▼ '}${v.toFixed(1)}</span>`;
-const isCur=r=>st.m=='all'||r[6]==st.m,isPrv=r=>st.m!='all'&&st.m>0&&r[6]==st.m-1;
-const lbl=()=>st.m=='all'?MN[0]+' + '+MN[1]+' + '+MN[2]:MN[st.m];const mhp=()=>st.m!='all'&&st.m>0;
+const isCur=r=>st.m=='all'||r[6]==st.m,isPrv=r=>st.m!='all'&&st.m>0&&r[6]==st.m-1&&r[9]<=DCUT[st.m];const pml=()=>{const c=DCUT[st.m],b=MN[st.m-1].replace(/\s*\(.*\)/,'');return c<ML[st.m-1]?b+' (1–'+c+')':MN[st.m-1]};
+const lbl=()=>st.m=='all'?MN.join(' + '):MN[st.m];const mhp=()=>st.m!='all'&&st.m>0;
 const inCS=r=>st.s=='all'||r[4]==0;
 const CSL=()=>st.s=='all'?'All Respon':'Customer Service';
 const base=()=>R.filter(r=>(st.b=='ALL'||r[0]==st.b)&&(st.u=='ALL'||r[1]==st.u));
@@ -37,10 +37,10 @@ function kpi(el,title,a,o,sub){
  $(el).innerHTML=`<div class="t">${title} · ${lbl()}</div><div class="v ${a.nps>=0?'pos':'neg'}">${f1(a.nps)} <span style="font-size:15px">${dl(m)} MoM</span></div>
  <div class="stack"><i style="width:${pc(a.p)}%;background:var(--g)"></i><i style="width:${pc(a.a)}%;background:var(--y)"></i><i style="width:${pc(a.d)}%;background:var(--r)"></i></div>
  <div class="lg"><span><span class="dot" style="background:var(--g)"></span>Promotor <b>${a.p}</b></span><span><span class="dot" style="background:var(--y)"></span>Passive <b>${a.a}</b></span><span><span class="dot" style="background:var(--r)"></span>Detractor <b>${a.d}</b></span><span>Total <b>${a.n}</b></span></div>
- <div class="note">${mhp()?`<b>${MN[st.m-1]}:</b> tNPS ${f1(o.nps)}`:(st.m==0?`MoM tidak tersedia (tidak ada data sebelum ${MN[0]})`:'MoM tidak berlaku untuk gabungan')}</div>`}
+ <div class="note">${mhp()?`<b>${pml()}:</b> tNPS ${f1(o.nps)}`:(st.m==0?`MoM tidak tersedia (tidak ada data sebelum ${MN[0]})`:'MoM tidak berlaku untuk gabungan')}</div>`}
 function render(){
  const b=base(),b1=b.filter(isCur),b0=b.filter(isPrv),bs=b.filter(r=>isCur(r)||isPrv(r));
- const pl=mhp()?MN[st.m-1]:'bln lalu';HC[5][0]='tNPS '+pl;HC[9][0]=(st.s=='all'?'All':'CS')+' '+pl;HC[7][0]='Resp '+(st.s=='all'?'All':'CS');HC[8][0]='tNPS '+(st.s=='all'?'All':'CS');HC[10][0]='MoM '+(st.s=='all'?'All':'CS');
+ const pl=mhp()?pml():'bln lalu';HC[5][0]='tNPS '+pl;HC[9][0]=(st.s=='all'?'All':'CS')+' '+pl;HC[7][0]='Resp '+(st.s=='all'?'All':'CS');HC[8][0]='tNPS '+(st.s=='all'?'All':'CS');HC[10][0]='MoM '+(st.s=='all'?'All':'CS');
  kpi('k1','📊 tNPS Mobile – Jabar',ag(b1),ag(b0),'(P − D) ÷ total × 100');
  kpi('k2','🎧 tNPS '+CSL(),ag(b1.filter(inCS)),ag(b0.filter(inCS)),'');
  const ub=R.filter(r=>(isCur(r)||isPrv(r))&&(st.u=='ALL'||r[1]==st.u));
@@ -55,7 +55,7 @@ function render(){
  const cg=[...group(bs.filter(inCS),r=>r[2])].map(([k,rs])=>{const m=met(rs),x=S[k],cr=rs.filter(isCur),un=cmode(rs.map(r=>r[1])),br=cmode(rs.map(r=>r[0]));return{key:k,name:(x?x[0]:(k=='NA'?'(tanpa NIK)':k)),unit:un,br,...m,html:`<td>${(x?x[0]:(k=='NA'?'(tanpa NIK)':k))}</td><td style="text-align:left">${un}</td><td style="text-align:left">${br}</td>`+(m.html.match(/<td>.*?<\/td>/g)||[]).slice(0,7).join('')}}).filter(r=>r.n>0&&S[r.key]&&!/^T0/i.test(r.key)&&!/^T0/i.test(r.name));
  table('t4',cg,[['Nama CSR','name'],['GraPARI','unit'],['Branch','br'],...HC.slice(0,7)]);
   renderT();if(st.p==3)renderV();if(st.p==4)renderW();if(st.p==5)renderCP();if(st.p==6)renderF();if(st.p==7)renderK();if(st.p==8)renderH();if(st.p==9)renderI();if(st.p==10)renderO();if(st.p==11)renderTF();
- $('meta').textContent=`Sumber: tNPS_Mobile_4.xlsx (${D.period}) · hanya baris dengan kolom Jabar terisi · ${b1.length} respon pada periode ${lbl()}${mhp()?' (dibanding '+MN[st.m-1]+')':''}`;
+ $('meta').textContent=`Sumber: tNPS_Mobile_4.xlsx (${D.period}) · hanya baris dengan kolom Jabar terisi · ${b1.length} respon pada periode ${lbl()}${mhp()?' (dibanding '+pml()+')':''}`;
 }
 async function saveFile(name,blob){
  let dl=null;try{if(window.claude&&claude.use)dl=await claude.use('downloads')}catch(e){}
@@ -68,7 +68,7 @@ async function exportXlsx(){
  const b=base(),b1=b.filter(isCur),b0=b.filter(isPrv),sc=b.filter(r=>isCur(r)||isPrv(r));
  const k=(n,rs)=>{const a=ag(rs);return[n,a.n,a.p,a.a,a.d,rd(a.nps)]};
  const sum=[['Laporan tNPS Mobile Jabar'],['Periode',lbl()],['Branch Jabar',st.b=='ALL'?'Semua':st.b],['unit_name',st.u=='ALL'?'Semua':st.u],['Respon Kategori',CSL()],['Rumus','(Promotor - Detractor) / total respon x 100'],[],['Metrik','Respon','Promotor','Passive','Detractor','tNPS'],k('tNPS Mobile Jabar - '+lbl(),b1),k('tNPS Customer Service - '+lbl(),b1.filter(inCS))];
- if(mhp()){sum.push(k('tNPS Mobile Jabar - '+MN[st.m-1],b0),k('tNPS '+CSL()+' - '+MN[st.m-1],b0.filter(inCS)),['MoM tNPS Mobile','','','','',rd(dv(ag(b1).nps,ag(b0).nps))],['MoM tNPS Customer Service','','','','',rd(dv(ag(b1.filter(inCS)).nps,ag(b0.filter(inCS)).nps))])}
+ if(mhp()){sum.push(k('tNPS Mobile Jabar - '+pml(),b0),k('tNPS '+CSL()+' - '+pml(),b0.filter(inCS)),['MoM tNPS Mobile','','','','',rd(dv(ag(b1).nps,ag(b0).nps))],['MoM tNPS Customer Service','','','','',rd(dv(ag(b1.filter(inCS)).nps,ag(b0.filter(inCS)).nps))])}
  add('Ringkasan',sum);
  [['t1','Per Jabar'],['t2','Per unit_name'],['cc0','%Category All'],['cc1','%Category Promotor'],['cc2','%Category Detractor'],['cc3','%Category Passive'],['nw','What Went Well'],['nx','What Went Wrong'],['t4','Per CSR respon CS']].forEach(([id,n])=>{const e=EX[id];if(e)add(n,[e.cols.map(c=>c[0]),...e.rows.map(r=>e.cols.map(c=>rd(r[c[1]])))])});
  add('Data respon',[['Bulan','Jabar (branch)','unit_name','NIK','Nama CSR','Job Function','Skor q5','Kategori tNPS','q6_part1'],...sc.map(r=>{const s=S[r[2]];return[MN[r[6]],r[0],r[1],r[2],s?s[0]:'',s?s[1]:'',r[3],['Promotor','Passive','Detractor'][cls(r[3])],CATS[r[5]]]})]);
@@ -77,7 +77,8 @@ async function exportXlsx(){
  await saveFile('tNPS_Jabar_'+tag+'.xlsx',new Blob([out],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
 }
 Object.assign(st.sort,{tt1:['n',-1],tt2:['n',-1],tt3:['n',-1],tt4:['n',-1]});st.tm=2;st.tl=6;
-const isTC=r=>st.tm=='all'||r[2]==st.tm,isTP=r=>st.tm!='all'&&st.tm>0&&r[2]==st.tm-1;
+const TCUT=T.m.map((m,i)=>{const d=Math.max(0,...T.rows.filter(r=>r[2]==i).map(r=>r[9]));return d<ML[i]?d:99});const tpl=m=>{const c=TCUT[m+1],b=T.m[m];return c<ML[m]?b+' (1–'+c+')':b};
+const isTC=r=>st.tm=='all'||r[2]==st.tm,isTP=r=>st.tm!='all'&&st.tm>0&&r[2]==st.tm-1&&r[9]<=TCUT[st.tm];
 const tbase=()=>T.rows.filter(r=>(st.b=='ALL'||T.br[r[0]]==st.b)&&(st.u=='ALL'||T.un[r[1]]==st.u));
 function tg(rs){const n=rs.length;let cl=0,isl=0,osl=0;for(const r of rs){if(r[3])cl++;if(r[4]==0)isl++;else if(r[4]==1)osl++}return{n,cl,op:n-cl,isl,osl,pc:n?cl/n*100:null,sla:isl+osl?isl/(isl+osl)*100:null}}
 const f0=v=>v==null?'–':v.toFixed(1)+'%';
@@ -90,8 +91,8 @@ function tmet(rs){const cur=rs.filter(isTC),prv=rs.filter(isTP),a=tg(cur),o=tg(p
 const TC=[['Tiket','n'],['Closing','cl'],['% Closing','pc'],['ISL','isl'],['OSL','osl'],['% in SLA','sla'],['% in SLA bln lalu','ps'],['MoM','mom']];
 
 function renderLP(){
- const mi=T.m.length-1,mm=T.m[mi],all=T.rows.filter(r=>r[2]==mi),L=all.filter(r=>r[8]==1);
- const pv=mi>0?T.rows.filter(r=>r[2]==mi-1):[],pm=mi>0?T.m[mi-1]:'';
+ const mi=(st.tm=='all'||st.tm<1)?2:st.tm,mm=T.m[mi],all=T.rows.filter(r=>r[2]==mi),L=all.filter(r=>r[8]==1);
+ const pv=mi>0?T.rows.filter(r=>r[2]==mi-1&&r[9]<=TCUT[mi]):[],pm=mi>0?tpl(mi-1):'';
  const mk=(k,a)=>{const g=a.filter(r=>r[8]==1),t=tg(g),pa=pv.filter(r=>r[0]==(k=='Jabar'?r[0]:T.br.indexOf(k))),pg=pa.filter(r=>r[8]==1);return{key:k,name:k,n:a.length,lp:g.length,pl:a.length?g.length/a.length*100:null,sh:L.length?g.length/L.length*100:null,cl:t.cl,osl:t.osl,sla:t.sla,plp:pg.length,ppl:pa.length?pg.length/pa.length*100:null,mom:pg.length?(g.length-pg.length)/pg.length*100:null}};
  const rw=x=>`<td>${x.name}</td><td>${fi(x.n)}</td><td><b>${fi(x.lp)}</b></td><td><b>${f0(x.pl)}</b></td><td>${f0(x.sh)}</td><td>${fi(x.plp)}</td><td>${f0(x.ppl)}</td><td>${x.mom==null?'–':fp(x.mom)}</td><td>${x.cl}</td><td>${x.osl}</td><td>${f0(x.sla)}</td>`;
  const rows=T.br.map((b,i)=>mk(b,all.filter(r=>r[0]==i))).filter(x=>x.n>0).map(x=>({...x,html:rw(x)}));
@@ -101,13 +102,36 @@ function renderLP(){
  table('tlp',rows,cols,null,null);
  EX.tlp.rows=[...EX.tlp.rows,{...tot,html:rw(tot)}];
  const tb=$('tlp').querySelector('tbody');tb.insertAdjacentHTML('beforeend',`<tr style="font-weight:700;background:var(--soft,#f1f5f9)">${rw(tot)}</tr>`);
- $('tlpn').textContent=`Data kolom LAPUL tersedia untuk ${pm} dan ${mm} (Agu tidak lengkap, tidak ditampilkan). LAPUL = tiket yang bertanda LAPUL pada kolom LAPUL (${L.length} dari ${all.length} tiket ${mm}). % LAPUL = tiket LAPUL ÷ total tiket branch pada ${mm}. Tidak terpengaruh filter branch/unit.`;
+ const ug=[...group(all,r=>T.un[r[1]])].map(([k,a])=>{const x=mk(T.br[a[0][0]],a),pa=pv.filter(r=>T.un[r[1]]==k),pg=pa.filter(r=>r[8]==1).length,mo=pg?(x.lp-pg)/pg*100:null;return{...x,key:k,name:k,br:T.br[a[0][0]],plp:pg,mom:mo}}).filter(x=>x.lp>0||x.plp>0)
+  .map(x=>({...x,html:`<td style="text-align:left">${x.name}</td><td style="text-align:left">${x.br}</td><td>${fi(x.n)}</td><td><b>${fi(x.lp)}</b></td><td><b>${f0(x.pl)}</b></td><td>${f0(x.sh)}</td><td>${fi(x.plp)}</td><td>${x.mom==null?'–':fp(x.mom)}</td><td>${x.osl}</td><td>${f0(x.sla)}</td>`}));
+ st.sort.tlpu=st.sort.tlpu||['lp',-1];
+ table('tlpu',ug,[['Unit Creator (GraPARI)','name'],['Branch','br'],['Total tiket '+mm,'n'],['Tiket LAPUL','lp'],['% LAPUL dari tiket unit','pl'],['% dari LAPUL Jabar','sh'],['LAPUL '+pm,'plp'],['MoM LAPUL','mom'],['LAPUL OSL','osl'],['LAPUL % in SLA','sla']],null,null);
+ $('tlpn').textContent=`Data kolom LAPUL tersedia untuk ${pm} dan ${mm} (Agu tidak lengkap, tidak ditampilkan). LAPUL = tiket closing yang bertanda LAPUL pada kolom LAPUL atau menyebut LAPUL di Notes (${L.length} dari ${all.length} tiket ${mm}). % LAPUL = tiket LAPUL ÷ total tiket branch pada ${mm}. Mengikuti pilihan Bulan tiket (default Okt vs Sep); tidak terpengaruh filter branch/unit.`;
 }
+function tdaily(id,base,mi,mn){
+ const el=$(id),hd=$(id+'h');if(hd)hd.textContent=(st.u!='ALL'?st.u:st.b!='ALL'?'Branch '+st.b:'Jabar');
+ if(mi=='all'){el.innerHTML='<p class="note">Pilih satu bulan untuk melihat trend harian.</p>';return}
+ const ML=[31,30,31,30],cnt=(m,f)=>{const a=new Array(ML[m]+1).fill(0);base.forEach(r=>{if(r[2]==m&&f(r))a[r[9]]++});return a};
+ const c=cnt(mi,r=>true),p=mi>0?cnt(mi-1,r=>true):null,last=Math.max(0,...base.filter(r=>r[2]==mi).map(r=>r[9])),nd=ML[mi];
+ const W=1120,H=270,L=44,R=12,T=26,B=40,cw=(W-L-R)/nd,mx=Math.max(1,...c,...(p||[0]))*1.15,Y=v=>T+(H-T-B)*(1-v/mx);
+ const dow=d=>new Date(2026,7+mi,d).getDay(),dn=['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+ let g=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;font-family:inherit">`;
+ for(let k=0;k<=4;k++){const v=mx/1.15*k/4,y=Y(v);g+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="#E6E7EF"/><text x="${L-6}" y="${y+4}" text-anchor="end" font-size="11" fill="#8A8DA3">${Math.round(v)}</text>`}
+ for(let d=1;d<=nd;d++){const x=L+(d-1)*cw,su=dow(d)==0;
+  if(d<=last){const y=Y(c[d]);g+=`<rect x="${x+cw*0.15}" y="${y}" width="${cw*0.7}" height="${H-B-y}" rx="3" fill="${su?'#B9BDD6':'#6C63D9'}"><title>${d} ${mn[mi]} (${dn[dow(d)]}): ${c[d]} tiket${p?` · ${mn[mi-1]} tgl ${d}: ${p[d]??'–'}`:''}</title></rect>`;
+   if(nd<=31)g+=`<text x="${x+cw/2}" y="${y-4}" text-anchor="middle" font-size="10" font-weight="700" fill="#2B2D42">${c[d]}</text>`}
+  g+=`<text x="${x+cw/2}" y="${H-B+15}" text-anchor="middle" font-size="10.5" fill="${su?'#D7263D':'#6B7089'}">${d}</text>`}
+ if(p){const pts=[];for(let d=1;d<=Math.min(nd,ML[mi-1]);d++)pts.push(`${(L+(d-1)*cw+cw/2).toFixed(1)},${Y(p[d]).toFixed(1)}`);g+=`<polyline fill="none" stroke="#E8912D" stroke-width="2" stroke-dasharray="5 4" points="${pts.join(' ')}"/>`}
+ g+=`<text x="${L}" y="${H-6}" font-size="11" fill="#6B7089">Tanggal (merah = hari Minggu)</text></svg>`;
+ const sc=c.slice(1,last+1).reduce((a,b)=>a+b,0),pl=p?Math.min(last,p.length-1):0,sp=p?p.slice(1,pl+1).reduce((a,b)=>a+b,0):0,av=last?sc/last:0,pk=c.indexOf(Math.max(...c.slice(1)));
+ const lg=`<div class="note" style="display:flex;gap:18px;flex-wrap:wrap;margin:0 0 4px"><span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#6C63D9;vertical-align:-1px"></span> ${mn[mi]} (tiket per tanggal dibuat)</span>${p?`<span><span style="display:inline-block;width:18px;border-top:2px dashed #E8912D;vertical-align:3px"></span> ${mn[mi-1]} (tanggal yang sama)</span>`:''}<span>Rata-rata <b>${av.toFixed(1)}</b> tiket/hari${p?` · ${mn[mi-1]} 1–${pl}: ${(sp/(pl||1)).toFixed(1)}/hari`:''}</span><span>Puncak: <b>${pk} ${mn[mi]}</b> (${c[pk]} tiket)</span></div>`;
+ el.innerHTML=lg+g}
 function renderT(){
- const b=tbase(),cur=b.filter(isTC),prv=b.filter(isTP),a=tg(cur),o=tg(prv),hp=st.tm!='all'&&st.tm>0,pm=hp?T.m[st.tm-1]:'';
+ const b=tbase(),cur=b.filter(isTC),prv=b.filter(isTP),a=tg(cur),o=tg(prv),hp=st.tm!='all'&&st.tm>0,pm=hp?tpl(st.tm-1):'';
  const per=st.tm=='all'?T.m[0]+'–'+T.m[T.m.length-1]:T.m[st.tm];
  const kc=(t,v,s)=>`<div class="card kpi"><div class="t">${t} · ${per}</div><div class="v">${v}</div><div class="note">${s}</div></div>`;
  const pc=(x,y)=>hp&&y?`<span class="dl ${x>=y?'pos':'neg'}">${x>=y?'▲ +':'▼ '}${((x-y)/y*100).toFixed(1)}%</span>`:'';
+ tdaily('tdl',b,st.tm,['Agu','Sep','Okt','Nov']);
  $('tkpi').innerHTML=kc('🎫 Total tiket',a.n,hp?`${pm}: ${o.n} · MoM ${pc(a.n,o.n)}`:'Semua bulan digabung')
   +kc('✅ Closing',`${a.cl} <span style="font-size:15px">${f0(a.pc)}</span>`,`Open: ${a.op}`+(hp?` · ${pm}: ${o.cl} (${f0(o.pc)})`:''))
   +kc('⏱️ % in SLA',f0(a.sla),`ISL ${a.isl} · OSL ${a.osl}`+(hp?` · ${pm}: ${f0(o.sla)} · MoM ${dl(dv(a.sla,o.sla))}`:''))
@@ -126,9 +150,9 @@ function renderT(){
  rows=[...group(osl,nm)].map(([k,rs])=>({key:k,name:k,n:rs.length,sh:rs.length/osl.length*100,html:`<td ${cell}>${k}</td><td>${rs.length}</td><td>${f0(rs.length/osl.length*100)}</td>`})).sort((x,y)=>y.n-x.n).slice(0,10);
  tbars('tt4',rows,'Tiket OSL',1);
  renderM();renderLP();
- $('tmeta').textContent=`Sumber: Tiket_Mobile.xlsx (dibuat 1 Agu – 29 Okt 2026) · kolom JABAR terisi · ${cur.length} tiket pada periode ${per} · ikut filter branch dan unit_name di atas`;
+ $('tmeta').textContent=`Sumber: Tiket_Mobile.xlsx (dibuat 1 Agu – ${TCUT[3]} Nov 2026; Okt s.d. 31 Okt, Nov s.d. ${TCUT[3]} Nov) · kolom JABAR terisi · ${cur.length} tiket pada periode ${per} · ikut filter branch dan unit_name di atas`;
 }
-$('tm').innerHTML=['Agustus','September','Oktober'].map((m,i)=>`<option value="${i}">${m}</option>`).join('')+'<option value="all">All Month</option>';$('tm').value='2';
+$('tm').innerHTML=['Agustus','September','Oktober','November (1–'+TCUT[3]+' Nov, parsial)'].map((m,i)=>`<option value="${i}">${m}</option>`).join('')+'<option value="all">All Month</option>';$('tm').value='2';
 $('tm').onchange=e=>{st.tm=e.target.value=='all'?'all':+e.target.value;renderT()};$('tl').onchange=e=>{st.tl=+e.target.value;renderT()};
 Object.assign(st.sort,{tmx1:['ord',1],tmx2:['n',-1],tmx3:['n',-1],tmx4:['n',-1]});
 const pct=(x,y)=>y?(x-y)/y*100:null;
@@ -168,7 +192,7 @@ function renderCat(b1){
 }
 
 function tanal(id,kind,b){
- const b1=b.filter(isCur),b0=b.filter(isPrv),hp=mhp(),pl=hp?MN[st.m-1]:'',A=ag(b1),O=ag(b0),per=lbl();
+ const b1=b.filter(isCur),b0=b.filter(isPrv),hp=mhp(),pl=hp?pml():'',A=ag(b1),O=ag(b0),per=lbl();
  if(!A.n){return}
  const pp=(x,n)=>n?x/n*100:0,sg=v=>(v>=0?'naik ':'turun ')+Math.abs(v).toFixed(1)+'%',mm=v=>v==null?'':` (${v>=0?'▲ +':'▼ '}${Math.abs(v).toFixed(1)}%)`;
  const gm=(kf,min)=>[...group(b,kf)].map(([k,rs])=>{const a=ag(rs.filter(isCur)),o=ag(rs.filter(isPrv));return{k,...a,po:o.nps,pn:o.n,mom:(hp&&o.n>=min&&a.n>=min)?a.nps-o.nps:null}}).filter(x=>x.n>=min);
@@ -203,6 +227,8 @@ function tanal(id,kind,b){
  const box=`<div class="anl" style="margin:0 0 12px;padding:10px 14px;border-left:4px solid ${kind=='p'?'var(--g)':'var(--r)'};background:var(--soft,rgba(127,127,127,.08));border-radius:8px"><div style="font-weight:700;margin-bottom:4px">Analisa tNPS · ${per}${hp?' vs '+pl:''}</div><ul style="margin:0;padding-left:18px;line-height:1.55">${L.map(x=>`<li>${x}</li>`).join('')}</ul></div>`;
  $(id).insertAdjacentHTML('afterbegin',box);
 }
+const nq=(g,i,st0)=>{const seen=new Set(),o=[];g.filter(r=>r[7]==i&&r[8]).sort((a,b)=>b[8].length-a[8].length).forEach(r=>{const k=r[8].slice(0,30).toLowerCase();if(!seen.has(k)&&o.length<2){seen.add(k);o.push(r)}});
+ return o.length?o.map(r=>`<div class="nrq">"${r[8].replace(/</g,'&lt;')}" <b style="font-style:normal;color:var(--tx)">— ${r[1]}</b></div>`).join(''):`<div class="nrq">${st0}</div>`};
 function narr(id,b1,kind){
  const T=kind=='p'?PTH:DTH,cl=kind=='p'?0:2,g=b1.filter(r=>cls(r[3])==cl),n=g.length;
  const c=new Array(T.length).fill(0);let nc=0;g.forEach(r=>{if(r[7]>=0)c[r[7]]++;else nc++});
@@ -212,7 +238,7 @@ function narr(id,b1,kind){
  if(!n)sum='Tidak ada respon '+nm+' pada filter ini.';
  else if(kind=='p')sum=`Dari <b>${fi(n)}</b> respon Promotor, <b>${fi(tot)}</b> (${f1(tot/n*100)}%) menuliskan komentar yang bermakna; ${fi(nc)} tanpa komentar atau hanya label. Tema yang paling banyak disebut: <b>${idx.slice(0,3).map(i=>T[i][0]).join(', ')||'–'}</b>. Pelanggan terutama menghargai petugas yang ramah dan membantu, termasuk saat aktivasi ulang nomor hangus/hilang dan penggantian kartu.`;
  else sum=`Dari <b>${fi(n)}</b> respon Detractor, <b>${fi(c.reduce((a,b)=>a+b,0))}</b> dikelompokkan ke tema berikut (komentar bebas atau, bila kosong, kategori kolom P). Tema yang paling banyak: <b>${idx.slice(0,3).map(i=>T[i][0]).join(', ')||'–'}</b>.`;
- const rows=idx.map(i=>`<tr><td><b>${T[i][0]}</b></td><td class="c">${fi(c[i])}</td><td class="c">${f1(c[i]/(kind=='p'?tot:n)*100)}%</td><td>${T[i][1]}<div class="nrq">${T[i][2]}</div></td><td>${T[i][3]}</td></tr>`).join('');
+ const rows=idx.map(i=>`<tr><td><b>${T[i][0]}</b></td><td class="c">${fi(c[i])}</td><td class="c">${f1(c[i]/(kind=='p'?tot:n)*100)}%</td><td>${T[i][1]}${nq(g,i,T[i][2])}</td><td>${T[i][3]}</td></tr>`).join('');
  const tt=kind=='p'?['Yang sudah baik','Pertahankan']:['Temuan','Yang perlu diperbaiki'];
  const cn=kind=='p'?'% dari promotor berkomentar':'% dari detractor';
  $(id).innerHTML=(idx.length?`<div class="tw" style="max-height:none"><table class="nr ${kind=='p'?'gd':'rd'}"><thead><tr><th style="text-align:left">Tema</th><th>Jumlah</th><th>${cn}</th><th style="text-align:left">${tt[0]} &amp; contoh suara pelanggan</th><th style="text-align:left">${tt[1]}</th></tr></thead><tbody>${rows}</tbody></table></div>`:'')+`<p class="note">Sumber: komentar bebas pelanggan (kolom S, q6) pada respon ${nm}; tema dikelompokkan otomatis berdasarkan kata kunci dan mengikuti filter bulan, branch dan unit (semua respon, tidak dibatasi pilihan Respon Kategori).</p>`;
@@ -242,15 +268,15 @@ function tsvg(rows,val,mom,fv,col,line,pid,sm=st.tm){
 const mt=(v,d)=>v==null?'MoM –':Math.abs(v)<0.05?'MoM 0.0'+d:`MoM ${v>=0?'▲ +':'▼ '}${v.toFixed(1)}${d}`;
 function renderM(){
  const b=tbase();
- let rows=T.m.map((m,i)=>{const a=tg(b.filter(r=>r[2]==i)),p=i>0?tg(b.filter(r=>r[2]==i-1)):null;
+ let rows=T.m.map((m,i)=>{const a=tg(b.filter(r=>r[2]==i)),p=i>0?tg(b.filter(r=>r[2]==i-1&&r[9]<=TCUT[i])):null;
   const mn=p?pct(a.n,p.n):null,mcl=p?pct(a.cl,p.cl):null,mpc=p?dv(a.pc,p.pc):null,mosl=p?a.osl-p.osl:null,msla=p?dv(a.sla,p.sla):null;
-  const lb=i==T.m.length-1?m+' (1–29)':m;return{key:m,name:lb,ord:i,n:a.n,mn,cl:a.cl,mcl,pc:a.pc,mpc,osl:a.osl,mosl,sla:a.sla,msla,
+  const lb=i==2?m+' (1–31)':i==3?m+' (1–4)':m;return{key:m,name:lb,ord:i,n:a.n,mn,cl:a.cl,mcl,pc:a.pc,mpc,osl:a.osl,mosl,sla:a.sla,msla,
   html:`<td>${lb}</td><td>${a.n}</td><td>${fp(mn)}</td><td>${a.cl}</td><td>${fp(mcl)}</td><td>${f0(a.pc)}</td><td>${dl(mpc)}</td><td>${a.osl}</td><td>${fn(mosl,'osl')}</td><td>${f0(a.sla)}</td><td>${dl(msla)}</td>`}});
  table('tmx1',rows,[['Bulan','name'],['Tiket','n'],['MoM Tiket','mn'],['Closing','cl'],['MoM Closing','mcl'],['% Closing','pc'],['MoM % Closing','mpc'],['OSL','osl'],['MoM OSL','mosl'],['% in SLA','sla'],['MoM % in SLA','msla']]);
  $('tmx1a').innerHTML=tsvg(rows,r=>r.n,i=>mt(rows[i].mn,'%'),(v,a)=>a?Math.round(v):fi(Math.round(v)),['#8DB8EA','#CBE0F6'],false,'gtA');
  $('tmx1b').innerHTML=tsvg(rows,r=>r.pc,i=>mt(rows[i].mpc,''),(v,a)=>v.toFixed(1)+'%',['#A38BE0','#D3C9F2'],true,'gtB');
  const ok=st.tm!='all'&&st.tm>0;
- $('tmxn').textContent=ok?`MoM per Jabar, unit_name dan top tiket: ${T.m[st.tm]} dibanding ${T.m[st.tm-1]} (mengikuti pilihan Bulan tiket).`:'MoM per Jabar, unit_name dan top tiket tersedia untuk bulan Agu, Sep dan Okt. Pilih salah satunya di Bulan tiket.';
+ $('tmxn').textContent=ok?`MoM per Jabar, unit_name dan top tiket: ${T.m[st.tm]} dibanding ${tpl(st.tm-1)} (periode tanggal yang sama; mengikuti pilihan Bulan tiket).`:'MoM per Jabar, unit_name dan top tiket tersedia untuk bulan Agu, Sep, Okt dan Nov. Pilih salah satunya di Bulan tiket.';
  if(!ok){['tmx2','tmx3','tmx4'].forEach(i=>{$(i).innerHTML='';delete EX[i]});return}
  const sc=r=>r[2]==st.tm||r[2]==st.tm-1;
  const ub=T.rows.filter(r=>sc(r)&&(st.u=='ALL'||T.un[r[1]]==st.u));
@@ -272,58 +298,65 @@ async function exportTiket(){
  const b=tbase(),cur=b.filter(isTC),prv=b.filter(isTP),hp=st.tm!='all'&&st.tm>0,per=st.tm=='all'?T.m[0]+'–'+T.m[T.m.length-1]:T.m[st.tm];
  const k=(n,rs)=>{const a=tg(rs);return[n,a.n,a.cl,rd(a.pc),a.isl,a.osl,rd(a.sla)]};
  const sum=[['Laporan Tiket Mobile Jabar'],['Periode',per],['Branch Jabar',st.b=='ALL'?'Semua':st.b],['unit_name',st.u=='ALL'?'Semua':st.u],['Level top tiket',['CASE_TYPE_1','CASE_TYPE_2','CASE_TYPE_3'][st.tl-5]],['% in SLA','ISL / (ISL + OSL) dari tiket closed'],[],['Metrik','Tiket','Closing','% Closing','ISL','OSL','% in SLA'],k('Tiket Jabar - '+per,cur)];
- if(hp)sum.push(k('Tiket Jabar - '+T.m[st.tm-1],prv),['MoM % in SLA','','','','','',rd(dv(tg(cur).sla,tg(prv).sla))]);
+ if(hp)sum.push(k('Tiket Jabar - '+tpl(st.tm-1),prv),['MoM % in SLA','','','','','',rd(dv(tg(cur).sla,tg(prv).sla))]);
  add('Ringkasan',sum);
  [['tt1','Tiket per Jabar'],['tt2','Tiket per unit_name'],['tt3','Top tiket'],['tt4','Top tiket OSL'],['tmx1','MoM tren bulanan'],['tmx3','MoM per unit_name'],['tmx4','MoM top tiket']].forEach(([id,n])=>{const e=EX[id];if(e)add(n,[e.cols.map(c=>c[0]),...e.rows.map(r=>e.cols.map(c=>rd(r[c[1]])))])});
  add('Data tiket',[['Bulan','Jabar (branch)','unit_name','Status','SLA','CASE_TYPE_1','CASE_TYPE_2','CASE_TYPE_3'],...b.filter(r=>isTC(r)||isTP(r)).map(r=>[T.m[r[2]],T.br[r[0]],T.un[r[1]],r[3]?'Closed':'Open',['ISL','OSL','OPEN'][r[4]],T.l[0][r[5]],T.l[1][r[6]],T.l[2][r[7]]])]);
  const out=XLSX.write(wb,{bookType:'xlsx',type:'array'});
  await saveFile('Tiket_Jabar_'+per+'.xlsx',new Blob([out],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
 }
-st.ff=1;Object.assign(st.sort,{ft2:['n',-1],ft3:['n',-1],ft4:['n',-1]});
-const FC=r=>st.ff=='all'||r[2]==st.ff,FP=r=>st.ff!='all'&&st.ff>0&&r[2]==st.ff-1,fhp=()=>st.ff!='all'&&st.ff>0;
-const flab=i=>F.m[i]+(i==F.m.length-1?' (1–31)':'');
+st.ff=2;Object.assign(st.sort,{ft2:['n',-1],ft3:['n',-1],ft4:['n',-1]});
+const FC=r=>st.ff=='all'||r[2]==st.ff,FCUT=F.m.map((m,i)=>{const d=Math.max(0,...F.rows.filter(r=>r[2]==i).map(r=>r[9]));return d<ML[i]?d:99}),FP=r=>st.ff!='all'&&st.ff>0&&r[2]==st.ff-1&&r[9]<=FCUT[st.ff],fpl=k=>{const c=FCUT[k+1];return c<ML[k]?F.m[k]+' (1–'+c+')':F.m[k]},fhp=()=>st.ff!='all'&&st.ff>0;
+const flab=i=>F.m[i]+(i==2?' (1–31)':i==3?' (1–'+FCUT[3]+')':'');
 function fg(rs){const n=rs.length;let cl=0,o=0;for(const r of rs){if(r[3])cl++;if(r[4])o++}return{n,cl,osl:o,pc:n?cl/n*100:null,sla:n?(n-o)/n*100:null}}
 function fbranch(){
  const rs=F.rows.filter(r=>st.u=='ALL'||F.un[r[1]]==st.u);
- const data=F.br.map((b,i)=>{const c=F.m.map((m,k)=>rs.filter(r=>r[0]==i&&r[2]==k).length);return{name:b,c,mom:c.length>1?pct(c[c.length-1],c[c.length-2]):null}});
- EX.ftb={rows:data.map(d=>({name:d.name,a:d.c[0],b:d.c[1],mom:d.mom})),cols:[['Branch','name'],[flab(0),'a'],[flab(1),'b'],['MoM Tiket %','mom']]};addXb('ftb');
+ const data=F.br.map((b,i)=>{const c=F.m.map((m,k)=>rs.filter(r=>r[0]==i&&r[2]==k).length),L=F.m.length-1,pc=rs.filter(r=>r[0]==i&&r[2]==L-1&&r[9]<=FCUT[L]).length;return{name:b,c,mom:c.length>1?pct(c[L],pc):null}}).filter(d=>st.u=='ALL'||d.c.some(v=>v>0));
+ EX.ftb={rows:data.map(d=>({name:d.name,a:d.c[0],b:d.c[1],c:d.c[2],d:d.c[3],mom:d.mom})),cols:[['Branch','name'],...F.m.map((m,k)=>[flab(k),'abcd'[k]]),['MoM Tiket % ('+flab(F.m.length-1)+' vs '+fpl(F.m.length-2)+')','mom']]};addXb('ftb');
  const W=560,H=290,pl=46,pr=12,pt=44,pb=66,n=data.length,gw=(W-pl-pr)/n,mxv=Math.max(1,...data.flatMap(d=>d.c));
  const raw=(mxv*1.1)/4,mg=Math.pow(10,Math.floor(Math.log10(raw))),hi=[1,2,2.5,5,10].find(x=>x*mg>=raw)*mg*4,Y=v=>pt+(H-pt-pb)*(1-v/hi);
- const cols=[['#8DB8EA','#CBE0F6'],['#A38BE0','#D3C9F2']];
+ const cols=[['#9FD3B8','#D2EDE0'],['#8DB8EA','#CBE0F6'],['#A38BE0','#D3C9F2'],['#E8A27C','#F6D3BF']];
  let g='';for(let k=0;k<=4;k++){const v=hi*k/4,y=Y(v);g+=`<line x1="${pl}" x2="${W-pr}" y1="${y}" y2="${y}" style="stroke:var(--bd)"/><text x="${pl-6}" y="${y+4}" text-anchor="end" font-size="11" style="fill:var(--mu)">${Math.round(v)}</text>`}
  let defs='<defs>'+cols.map((c,k)=>`<linearGradient id="fbg${k}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c[0]}"/><stop offset="1" stop-color="${c[1]}"/></linearGradient>`).join('')+'</defs>';
- let body=F.m.map((m,k)=>`<rect x="${pl+k*110}" y="10" width="14" height="14" rx="4" fill="url(#fbg${k})"/><text x="${pl+k*110+20}" y="22" font-size="12.5" style="fill:var(--tx)">${flab(k)}</text>`).join('');
- const bw=Math.min(40,gw*.3),gap=6;
+ let body=F.m.map((m,k)=>`<rect x="${pl+k*125}" y="10" width="14" height="14" rx="4" fill="url(#fbg${k})"/><text x="${pl+k*125+20}" y="22" font-size="12.5" style="fill:var(--tx)">${flab(k)}</text>`).join('');
+ const bw=Math.min(30,gw*.2),gap=4;
  data.forEach((d,i)=>{const cx=pl+gw*(i+.5),tot=d.c.length*bw+(d.c.length-1)*gap;
   d.c.forEach((v,k)=>{const x=cx-tot/2+k*(bw+gap),y=Y(v);body+=`<rect x="${x}" y="${y}" width="${bw}" height="${Math.max(2,H-pb-y)}" rx="8" fill="url(#fbg${k})"/><text x="${x+bw/2}" y="${y-6}" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--tx)">${fi(v)}</text>`});
   body+=`<text x="${cx}" y="${H-pb+20}" text-anchor="middle" font-size="12.5" font-weight="700" style="fill:var(--tx)">${d.name}</text><text x="${cx}" y="${H-pb+38}" text-anchor="middle" font-size="12" style="fill:var(--mu)">${mt(d.mom,'%')}</text>`});
- $('ftb').innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:720px;display:block;margin:0 auto">${defs}${g}${body}</svg>`}
+ $('ftb').innerHTML=(st.u!='ALL'?`<div class="note" style="margin:0 0 6px;padding:6px 10px;border-radius:8px;background:#FDF0E3;color:#7A4A12">Filter GraPARI aktif: <b>${st.u}</b> – grafik hanya menampilkan tiket GraPARI ini. <a href="#" onclick="st.u='ALL';sync();render();return false" style="color:#B5541C;font-weight:700">Tampilkan semua GraPARI</a></div>`:'')+`<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:720px;display:block;margin:0 auto">${defs}${g}${body}</svg>`}
 function ftab(id,rs,onlyKey){
  const g=[...group(rs,r=>F.un[r[1]])].map(([k,x])=>{const a=fg(x),br=F.br[x[0][0]];return{key:k,name:k,br,n:a.n,pc:a.pc,sla:a.sla,html:`<td>${k}</td><td style="text-align:left">${br}</td><td>${a.n}</td><td>${f0(a.pc)}</td><td>${f0(a.sla)}</td>`}});
  table(id,g,[['GraPARI','name'],['Branch','br'],['Jumlah Tiket','n'],['% Closing','pc'],['% in SLA','sla']],k=>{st.u=st.u==k?'ALL':k;sync();render()},st.u)}
+function lgtab(id,rs){
+ const g=[...group(rs,r=>F.un[r[1]])].map(([k,x])=>{const a=fg(x),br=F.br[x[0][0]],lp=x.filter(r=>r[11]&1).length,ga=x.filter(r=>r[11]&2).length;return{key:k,name:k,br,lp,ga,n:a.n,pc:a.pc,sla:a.sla,html:`<td>${k}</td><td style="text-align:left">${br}</td><td><b>${lp}</b></td><td><b>${ga}</b></td><td>${a.n}</td><td>${f0(a.pc)}</td><td>${f0(a.sla)}</td>`}});
+ st.sort[id]=st.sort[id]||['n',-1];
+ table(id,g,[['Unit Creator (GraPARI)','name'],['Branch','br'],['LAPUL','lp'],['GAUL','ga'],['Total LAPUL/GAUL','n'],['% Closing','pc'],['% in SLA','sla']],k=>{st.u=st.u==k?'ALL':k;sync();render()},st.u);
+ if(!g.length)$(id).innerHTML='<p class="note">Tidak ada tiket LAPUL/GAUL pada periode dan filter ini.</p>'}
 function renderF(){
- const fb=F.rows.filter(r=>(st.b=='ALL'||F.br[r[0]]==st.b)&&(st.u=='ALL'||F.un[r[1]]==st.u)),cur=fb.filter(FC),prv=fb.filter(FP),a=fg(cur),o=fg(prv),hp=fhp(),pm=hp?F.m[st.ff-1]:'';
- const per=st.ff=='all'?F.m[0]+'–'+F.m[F.m.length-1]:F.m[st.ff];
- const KC=['var(--k1)','var(--k2)','var(--k3)','var(--k4)','#7FB6D9','#D7A3D2'];let kn=0;
+ const fb=F.rows.filter(r=>(st.b=='ALL'||F.br[r[0]]==st.b)&&(st.u=='ALL'||F.un[r[1]]==st.u)),cur=fb.filter(FC),prv=fb.filter(FP),a=fg(cur),o=fg(prv),hp=fhp(),pm=hp?fpl(st.ff-1):'';
+ const per=st.ff=='all'?F.m[0]+'–'+F.m[F.m.length-1]:F.m[st.ff];tdaily('fdl',fb,st.ff,['Agu','Sep','Okt','Nov']);
+ const KC=['var(--k1)','var(--k2)','var(--k3)','var(--k4)','#7FB6D9','#D7A3D2','#E8912D','#C0392B'];let kn=0;
  const kc=(t,v,s)=>{const c=KC[kn++];return`<div class="card kpi" style="border-left-color:${c}"><div class="t">${t} · ${per}</div><div class="v">${v}</div><div class="note" style="--kc:${c}">${s}</div></div>`};
  const ar=(v,t)=>`<b style="color:var(--kc);white-space:nowrap">${v>=0?'▲':'▼'} ${t}</b>`;
  const pcx=(x,y)=>hp&&y?ar(x-y,(x>=y?'+':'')+((x-y)/y*100).toFixed(1)+'%'):'';
  const pdx=(x,y)=>hp&&x!=null&&y!=null?ar(x-y,(x>=y?'+':'')+(x-y).toFixed(1)):'';
- const ia=fg(cur.filter(r=>r[5]==1)),io=fg(prv.filter(r=>r[5]==1)),ga=fg(cur.filter(r=>r[6]==1)),go=fg(prv.filter(r=>r[6]==1));
+ const ia=fg(cur.filter(r=>r[5]==1)),io=fg(prv.filter(r=>r[5]==1)),ga=fg(cur.filter(r=>r[6]==1)),go=fg(prv.filter(r=>r[6]==1)),nk=cur.filter(r=>r[8]==1).length,kp=prv.filter(r=>r[8]==1).length,NA=`Data Insera/GAMAS tidak tersedia di file terbaru untuk periode ini`;
  $('fkpi').style.gridTemplateColumns='repeat(auto-fit,minmax(170px,1fr))';
  $('fkpi').innerHTML=kc('🎫 Total tiket',fi(a.n),hp?`${pm}: ${fi(o.n)} · MoM ${pcx(a.n,o.n)}`:'Semua bulan digabung')
   +kc('✅ Closing',`${fi(a.cl)} <span style="font-size:15px">${f0(a.pc)}</span>`,`Open: ${fi(a.n-a.cl)}`+(hp?` · ${pm}: ${f0(o.pc)} · MoM ${pdx(a.pc,o.pc)}`:''))
   +kc('⏱️ % in SLA',f0(a.sla),`In SLA ${fi(a.n-a.osl)} · OSL ${fi(a.osl)}`+(hp?` · ${pm}: ${f0(o.sla)} · MoM ${pdx(a.sla,o.sla)}`:''))
   +kc('🚨 Tiket OSL',fi(a.osl),`${a.n?(a.osl/a.n*100).toFixed(1):0}% dari total tiket`+(hp?` · ${pm}: ${fi(o.osl)} · MoM ${pcx(a.osl,o.osl)}`:''))
-  +kc('🛰️ Tiket Insera',fi(ia.n),`${a.n?(ia.n/a.n*100).toFixed(1):0}% dari total tiket`+(hp?` · ${pm}: ${fi(io.n)} · MoM ${pcx(ia.n,io.n)}`:''))
-  +kc('🌐 Tiket GAMAS',fi(ga.n),`${a.n?(ga.n/a.n*100).toFixed(1):0}% dari total tiket`+(hp?` · ${pm}: ${fi(go.n)} · MoM ${pcx(ga.n,go.n)}`:''));
+  +(nk?kc('🛰️ Tiket Insera',fi(ia.n),`${(ia.n/nk*100).toFixed(1)}% dari ${nk<a.n?fi(nk)+' tiket ber-data':'total tiket'}`+(hp&&kp?` · ${pm}: ${fi(io.n)} · MoM ${pcx(ia.n,io.n)}`:'')):'')
+  +kc('🌐 Tiket GAMAS',fi(ga.n),`${a.n?(ga.n/a.n*100).toFixed(1):0}% dari total tiket · hashtag #GAMAS: ${fi(cur.filter(r=>r[10]==1).length)}`+(hp?` · ${pm}: ${fi(go.n)} · MoM ${pcx(ga.n,go.n)}`:''))
+  +(()=>{const one=(bit,t,d)=>{const c=cur.filter(r=>r[11]&bit).length,p=prv.filter(r=>r[11]&bit).length;return kc(t,fi(c),`${d} · ${a.n?(c/a.n*100).toFixed(1):0}% dari total tiket`+(hp?` · ${pm}: ${fi(p)} · MoM ${pcx(c,p)}`:''))};return one(1,'🔁 Tiket LAPUL','Lapor ulang')+one(2,'⚡ Tiket GAUL','Gangguan ulang')})();
+ $('fi3').style.display=nk?'':'none';
  fbranch();
  const bb=F.rows.filter(r=>FC(r)&&(st.b=='ALL'||F.br[r[0]]==st.b));
- ftab('ft2',bb);ftab('ft3',bb.filter(r=>r[5]==1));ftab('ft4',bb.filter(r=>r[6]==1));
+ ftab('ft2',bb);ftab('ft3',bb.filter(r=>r[5]==1));ftab('ft4',bb.filter(r=>r[6]==1));lgtab('ft7',bb.filter(r=>r[11]>0));
  const mk=(rs,tot)=>[...group(rs,r=>F.l3[r[7]])].map(([k,x])=>({name:k,n:x.length,sh:tot?x.length/tot*100:0})).sort((x,y)=>y.n-x.n).slice(0,10);
  tbars('ft5',mk(cur,cur.length),'Tiket',0);
  const os=cur.filter(r=>r[4]==1);tbars('ft6',mk(os,os.length),'Tiket OSL',1)}
-$('ff').innerHTML=F.m.map((m,i)=>`<option value="${i}">${['September','Oktober'][i]||m}</option>`).join('')+'<option value="all">All Month</option>';$('ff').value='1';
+$('ff').innerHTML=F.m.map((m,i)=>`<option value="${i}">${['Agustus','September','Oktober','November (1–'+FCUT[3]+' Nov, parsial)'][i]||m}</option>`).join('')+'<option value="all">All Month</option>';$('ff').value='2';
 $('ff').onchange=e=>{st.ff=e.target.value=='all'?'all':+e.target.value;renderF()};
 async function exportFixed(){
  if(noXl())return;
@@ -331,7 +364,7 @@ async function exportFixed(){
  const wb=XLSX.utils.book_new(),add=(n,aoa)=>XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(aoa),n);
  const fb=F.rows.filter(r=>(st.b=='ALL'||F.br[r[0]]==st.b)&&(st.u=='ALL'||F.un[r[1]]==st.u)),cur=fb.filter(FC),per=st.ff=='all'?F.m[0]+'–'+F.m[F.m.length-1]:F.m[st.ff],a=fg(cur);
  add('Ringkasan',[['Laporan Tiket Fixed Jabar'],['Periode',per],...finfo().slice(1),['Definisi','Closing = status CLOSE; % in SLA = tiket In SLA / total tiket; OSL = Out SLA'],[],['Metrik','Tiket','Closing','% Closing','OSL','% in SLA'],['Tiket Fixed Jabar - '+per,a.n,a.cl,rd(a.pc),a.osl,rd(a.sla)]]);
- [['ftb','Tiket by Branch'],['ft2','Tiket by GraPARI'],['ft3','GraPARI Tiket Insera'],['ft4','GraPARI Tiket GAMAS'],['ft5','Top 10 Tiket'],['ft6','Top 10 OSL']].forEach(([id,n])=>{const e=EX[id];if(e)add(n,[e.cols.map(c=>c[0]),...e.rows.map(r=>e.cols.map(c=>rd(r[c[1]])))])});
+ [['ftb','Tiket by Branch'],['ft2','Tiket by GraPARI'],['ft3','GraPARI Tiket Insera'],['ft4','GraPARI Tiket GAMAS'],['ft7','GraPARI LAPUL GAUL'],['ft5','Top 10 Tiket'],['ft6','Top 10 OSL']].forEach(([id,n])=>{const e=EX[id];if(e)add(n,[e.cols.map(c=>c[0]),...e.rows.map(r=>e.cols.map(c=>rd(r[c[1]])))])});
  add('Data tiket',[['Bulan','Branch','GraPARI','case_type_3','Closing','SLA','Insera','GAMAS'],...cur.map(r=>[F.m[r[2]],F.br[r[0]],F.un[r[1]],F.l3[r[7]],r[3]?'Closed':'Open',r[4]?'OSL':'ISL',r[5]?'Ya':'',r[6]?'Ya':''])]);
  await saveFile('Tiket_Fixed_Jabar_'+per+'.xlsx',new Blob([XLSX.write(wb,{bookType:'xlsx',type:'array'})],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
 }
@@ -373,7 +406,7 @@ async function exportKPI(){
 }
 
 // ===== VISIT JABAR =====
-V.mo=[];for(let d=0;d<=V.last;d++)V.mo.push(d>=V.ms[3]?3:d>=V.ms[2]?2:d>=V.ms[1]?1:0);
+V.mo=[];for(let d=0;d<=V.last;d++)V.mo.push(V.ms.filter(x=>d>=x).length-1);const VLM=V.m.length-1,VML=[31,31,30,31,30,31],VCUT=V.last-V.ms[VLM],VPART=VCUT<VML[VLM]-1;const vcutok=d=>!(VPART&&st.vm==VLM)||d-V.ms[VLM-1]<=VCUT;
 const UBR=new Map();R.forEach(r=>UBR.set(r[1],r[0]));T.rows.forEach(r=>{if(!UBR.has(T.un[r[1]]))UBR.set(T.un[r[1]],T.br[r[0]])});V.u.forEach((u,i)=>UBR.set(u,V.br[V.ub[i]]));
 const dd=d=>new Date(Date.UTC(2026,6,1+d)),dw=d=>dd(d).getUTCDay(),dnum=d=>dd(d).getUTCDate(),dmon=d=>dd(d).getUTCMonth()+1;
 const dlab=d=>String(dnum(d)).padStart(2,'0')+'/'+String(dmon(d)).padStart(2,'0');
@@ -381,22 +414,22 @@ Object.assign(st,{vm:3,vs:'all',vk:'aktif',vd:'br',vc:'all',vsel:new Set()});
 Object.assign(st.sort,{vt1:['n',-1],vt2:['n',-1],vt3:['n',-1],vtr:['n',-1]});
 const SVN={all:'Semua',0:'Telkomsel (Mobile)',1:'IndiHome'};
 const VCN={all:'Sheet Jumlah CSR (SIAD Update)',csr:'Sheet Jumlah CSR (SIAD Update)'};
-const VCS={"GraPARI Bandung Elektronik Center": 11, "GraPARI Banjar": 3, "GraPARI Bantarkalong": 1, "GraPARI Bojongsoang": 2, "GraPARI Ciamis": 4, "GraPARI Cianjur": 4, "GraPARI Ciledug Cirebon": 2, "GraPARI Cimahi": 5, "GraPARI Ekstensi Cipanas": 1, "GraPARI Cirebon": 4, "GraPARI Cirebon Super Blok": 9, "GraPARI Dago": 9, "GraPARI Garut": 6, "GraPARI Indramayu": 4, "GraPARI Jatibarang": 2, "GraPARI Kuningan": 5, "GraPARI Lembang": 2, "GraPARI Lembong": 6, "GraPARI Majalaya": 3, "GraPARI Majalengka": 3, "GraPARI Metro Trade Center Bandung": 5, "GraPARI Miko Mall Bandung": 6, "GraPARI Padalarang": 4, "GraPARI Pamanukan": 2, "GraPARI Pamengpeuk": 1, "GraPARI Pangandaran": 3, "GraPARI Rancaekek": 4, "GraPARI Singaparna": 3, "GraPARI Soreang": 4, "GraPARI Subang": 4, "GraPARI Sukanagara": 1, "GraPARI Sumber": 4, "GraPARI Sumedang": 4, "GraPARI Supratman": 4, "GraPARI Tasikmalaya": 10, "GraPARI Trans Studio Mall Bandung": 8, "GraPARI Ujung Berung": 4};const VCSN=V.u.map(u=>VCS[u]||0);
+const VCS={"GraPARI Bandung Elektronik Center": 12, "GraPARI Banjar": 3, "GraPARI Bantarkalong": 1, "GraPARI Bojongsoang": 2, "GraPARI Ciamis": 4, "GraPARI Cianjur": 4, "GraPARI Ciledug Cirebon": 2, "GraPARI Cimahi": 5, "GraPARI Ekstensi Cipanas": 1, "GraPARI Cirebon": 3, "GraPARI Cirebon Super Blok": 9, "GraPARI Dago": 9, "GraPARI Garut": 6, "GraPARI Indramayu": 4, "GraPARI Jatibarang": 2, "GraPARI Kuningan": 5, "GraPARI Lembang": 2, "GraPARI Lembong": 7, "GraPARI Majalaya": 3, "GraPARI Majalengka": 4, "GraPARI Metro Trade Center Bandung": 5, "GraPARI Miko Mall Bandung": 6, "GraPARI Padalarang": 4, "GraPARI Pamanukan": 2, "GraPARI Pamengpeuk": 1, "GraPARI Pangandaran": 3, "GraPARI Rancaekek": 4, "GraPARI Singaparna": 3, "GraPARI Soreang": 4, "GraPARI Subang": 4, "GraPARI Sukanagara": 1, "GraPARI Sumber": 4, "GraPARI Sumedang": 4, "GraPARI Supratman": 5, "GraPARI Tasikmalaya": 10, "GraPARI Trans Studio Mall Bandung": 8, "GraPARI Ujung Berung": 3};const VCSN=V.u.map(u=>VCS[u]||0);
 const VKN={aktif:'Hari aktif (ada visit)',mf:'Senin–Jumat',ms:'Senin–Sabtu'};
 const fT=s=>{if(s==null)return'–';const t=Math.round(Math.abs(s)),m=Math.floor(t/60);return(s<0&&t>0?'-':'')+m+':'+String(t%60).padStart(2,'0')};
 const fTd=v=>v==null?'–':Math.abs(v)<0.5?'0:00':`<span class="dl ${v>0?'neg':'pos'}">${v>0?'▲ +':'▼ '}${fT(Math.abs(v))}</span>`;
 const vp=(x,y)=>x==null||!y?null:(x-y)/y*100;
 const fpg=v=>v==null?'–':Math.abs(v)<0.05?'0.0%':`<span class="dl ${v>=0?'pos':'neg'}">${v>=0?'▲ +':'▼ '}${v.toFixed(1)}%</span>`;
 const fx1=v=>v==null?'–':v.toFixed(2);
-const vcur=r=>st.vm=='all'||V.mo[r[0]]==st.vm,vprv=r=>st.vm!='all'&&st.vm>0&&V.mo[r[0]]==st.vm-1,vhp=()=>st.vm!='all'&&st.vm>0,vsc=r=>vcur(r)||vprv(r);
+const vcur=r=>st.vm=='all'||V.mo[r[0]]==st.vm,vprv=r=>st.vm!='all'&&st.vm>0&&V.mo[r[0]]==st.vm-1&&vcutok(r[0]),vhp=()=>st.vm!='all'&&st.vm>0,vsc=r=>vcur(r)||vprv(r);
 const vlast=()=>dnum(V.last);
-const vlbl=()=>st.vm=='all'?V.m[0]+'–'+V.m[3]+' (gabungan)':V.m[st.vm]+(st.vm==3?` (1–${vlast()})`:'');
+const vlbl=()=>st.vm=='all'?V.m[0]+'–'+V.m[VLM]+' (gabungan)':V.m[st.vm]+(st.vm==VLM&&VPART?` (1–${vlast()})`:'');const vpl=()=>V.m[st.vm-1]+(st.vm==VLM&&VPART?` (1–${vlast()})`:'');
 const vbrn=r=>V.br[V.ub[r[1]]];
 const vf=(r,b,u)=>(b=='ALL'||vbrn(r)==b)&&(u=='ALL'||V.u[r[1]]==u);
 const vbase=()=>V.rows.filter(r=>vsc(r)&&vf(r,st.b,st.u));
 const wk=d=>{const w=dw(d);return st.vk=='mf'?w>=1&&w<=5:st.vk=='ms'?w>=1&&w<=6:true};
 const calHK=p=>{let c=0;for(let d=0;d<=V.last;d++)if(p(d)&&wk(d))c++;return c};
-const vK=()=>({c:calHK(d=>st.vm=='all'||V.mo[d]==st.vm),p:vhp()?calHK(d=>V.mo[d]==st.vm-1):0});
+const vK=()=>({c:calHK(d=>st.vm=='all'||V.mo[d]==st.vm),p:vhp()?calHK(d=>V.mo[d]==st.vm-1&&vcutok(d)):0});
 function va(rs){let m0=0,m1=0,n=0,w=0,s=0,iv=0;const ds=new Set(),ks=new Set();
  for(const r of rs){if(r[3]==0)m0+=r[4];else m1+=r[4];
   if(st.vs=='all'||r[3]==st.vs){n+=r[4];w+=r[5];s+=r[6];if(wk(r[0])){iv+=r[4];ds.add(r[0]);ks.add(r[1])}}}
@@ -420,7 +453,7 @@ function vbuild(kind){const K=vK(),cols=vcols(true);let rows;
   .filter(r=>(r.m0+r.m1)>=mn&&r.role!='–'&&(cf=='ALL'||r.grp=='CSR')&&(!q||(r.name+r.nik).toLowerCase().includes(q)));
  return{rows,cols:[['Nama CSR','name'],['Role (Job Function)','role'],['GraPARI utama','unit'],...vcols(false)]}}
 function vtrend(dim){
- const days=[];if(st.vm=='all'){for(let d=0;d<=V.last;d++)days.push(d)}else{const VME=[V.ms[1]-1,V.ms[2]-1,V.ms[3]-1,V.ms[3]+30];for(let d=V.ms[st.vm];d<=VME[st.vm];d++)days.push(d)}
+ const days=[];if(st.vm=='all'){for(let d=0;d<=V.last;d++)days.push(d)}else{const VME=V.ms.map((x,i)=>i<VLM?V.ms[i+1]-1:x+VML[i]-1);for(let d=V.ms[st.vm];d<=VME[st.vm];d++)days.push(d)}
  const kf=dim=='br'?vbrn:dim=='un'?(r=>V.u[r[1]]):(r=>V.k[r[2]]);
  const rs=V.rows.filter(r=>vcur(r)&&(st.vs=='all'||r[3]==st.vs)&&vf(r,st.b,st.u));
  const rows=[...group(rs,kf)].map(([k,g])=>{const o={key:k,name:dim=='csr'?((S[k]?S[k][0]:'(tidak ada di SIAD)')+' · '+k):k,n:0};for(const d of days)o['d'+d]=0;for(const r of g){o['d'+r[0]]+=r[4];o.n+=r[4]}return o}).filter(o=>dim!='csr'||S[o.key]);
@@ -446,7 +479,7 @@ function vchart(tr){
  s+='</svg>';
  return s+`<div class="lg" style="margin:6px 0 4px">${rows.map((o,j)=>`<span><span class="dot" style="background:${VCOL[j%VCOL.length]}"></span><b>${o.name}</b> (${o.n})</span>`).join('')}</div>`}
 function vcmp(){
- const b=V.rows.filter(r=>vf(r,st.b,st.u)),ms=V.m.map((m,i)=>{let t=0,h=0;for(const r of b)if(V.mo[r[0]]==i){if(r[3]==0)t+=r[4];else h+=r[4]}return{m:i==3?`${m} (1–${vlast()})`:m,i,t,h}});
+ const b=V.rows.filter(r=>vf(r,st.b,st.u)),ms=V.m.map((m,i)=>{let t=0,h=0;for(const r of b)if(V.mo[r[0]]==i){if(r[3]==0)t+=r[4];else h+=r[4]}return{m:i==VLM&&VPART?`${m} (1–${vlast()})`:m,i,t,h}});
  const W=900,H=250,L=54,RR=14,T0=22,B=34,pw=W-L-RR,ph=H-T0-B,gw=pw/ms.length,bw=gw*.27,ys=vnice(Math.max(1,...ms.map(x=>Math.max(x.t,x.h)))),Y=v=>T0+ph-ph*v/ys,C0='#F2A58A',C1='#7FB6D9',nf=v=>v.toLocaleString('id-ID');
  let s=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;min-width:560px;color:var(--tx);display:block" role="img" aria-label="Perbandingan visit Telkomsel dan IndiHome per bulan">`;
  for(let k=0;k<=4;k++){const v=ys*k/4,y=Y(v);s+=`<line x1="${L}" x2="${W-RR}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}" stroke="currentColor" opacity=".12"/><text x="${L-6}" y="${(y+4).toFixed(1)}" text-anchor="end" font-size="11" fill="currentColor" opacity=".65">${nf(Math.round(v))}</text>`}
@@ -460,7 +493,7 @@ function renderV(){
  const K=vK(),hp=vhp(),b=vbase(),a=va(b.filter(vcur)),o=hp?va(b.filter(vprv)):null;
  const ha=st.vk=='aktif'?a.days:K.c,hb=o?(st.vk=='aktif'?o.days:K.p):0;
  const idx=ha&&a.csr?a.iv/a.csr/ha:null,pidx=o&&hb&&o.csr?o.iv/o.csr/hb:null,as=a.n?a.s/a.n:null,aw=a.n?a.w/a.n:null,pas=o&&o.n?o.s/o.n:null,paw=o&&o.n?o.w/o.n:null;
- const per=vlbl(),pm=hp?V.m[st.vm-1]:'';
+ const per=vlbl(),pm=hp?vpl():'';
  const nt=(pv,mo)=>hp?`${pm}: ${pv} · MoM ${mo}`:(st.vm=='all'?'Gabungan semua bulan, tanpa pembanding':'Bulan pertama data, tanpa pembanding');
  const kc=(t,v,s)=>`<div class="card kpi"><div class="t">${t} · ${per}</div><div class="v">${v}</div><div class="note">${s}</div></div>`;
  const sn=st.vs=='all'?'Total':SVN[st.vs];
@@ -479,7 +512,7 @@ function renderV(){
  $('vtn').textContent=`Tren harian ${per} · tipe service: ${SVN[st.vs]}. Area abu-abu pada grafik = hari Minggu. Klik baris tabel untuk memilih entitas pada grafik (maks. 8); tanpa pilihan, grafik menampilkan 5 teratas.`;
  $('vnote').textContent='';
 }
-$('vm').innerHTML=[['0','Juli'],['1','Agustus'],['2','September'],['3','Oktober'],['all','All Month']].map(x=>`<option value="${x[0]}">${x[1]}</option>`).join('');
+$('vm').innerHTML=[['0','Juli'],['1','Agustus'],['2','September'],['3','Oktober'],['4','November'+(VPART?` (1–${vlast()} Nov, parsial)`:'')],['all','All Month']].map(x=>`<option value="${x[0]}">${x[1]}</option>`).join('');
 $('vm').onchange=e=>{const v=e.target.value;st.vm=v=='all'?'all':+v;renderV()};
 $('vs').onchange=e=>{st.vs=e.target.value=='all'?'all':+e.target.value;renderV()};
 $('vk').onchange=e=>{st.vk=e.target.value;renderV()};
@@ -494,7 +527,7 @@ function finfo(){const p=st.p||1,L=[['Tab',['','tNPS Mobile','Tiket Mobile','Vis
  else if(p==2)L.push(['Bulan tiket',st.tm=='all'?T.m[0]+'–'+T.m[T.m.length-1]:T.m[st.tm]],['Level top tiket',['CASE_TYPE_1','CASE_TYPE_2','CASE_TYPE_3'][st.tl-5]]);
  else if(p==7)L.push(['Bulan KPI',['Juli','Agustus'][st.km]]);
  else if(p==6)L.push(['Bulan tiket fixed',st.ff=='all'?F.m[0]+'–'+F.m[F.m.length-1]:F.m[st.ff]]);
- else if(p==5)L.push(['Bulan load CAPS',cpl()],['Pembanding MoM',cphp()?CP.ms[st.cm-1]:'-']);else if(p==4)L.push(['Bulan waiting time',wlbl()],['Pembanding MoM',whp()?W.ms[st.wm-1]:'-']);else L.push(['Bulan visit',vlbl()],['Pembanding MoM',vhp()?V.m[st.vm-1]:'-'],['Tipe service',SVN[st.vs]],['Basis hari kerja',VKN[st.vk]],['Jumlah CSR (pembagi Index)',VCN.all]);
+ else if(p==5)L.push(['Bulan load CAPS',cpl()],['Pembanding MoM',cphp()?CP.ms[st.cm-1]:'-']);else if(p==4)L.push(['Bulan waiting time',wlbl()],['Pembanding MoM',whp()?W.ms[st.wm-1]:'-']);else L.push(['Bulan visit',vlbl()],['Pembanding MoM',vhp()?vpl():'-'],['Tipe service',SVN[st.vs]],['Basis hari kerja',VKN[st.vk]],['Jumlah CSR (pembagi Index)',VCN.all]);
  return L}
 function addXb(id){const el=$(id);if(!el||el.dataset.xb)return;el.dataset.xb='1';let h=el.previousElementSibling;while(h&&h.tagName!='H2')h=h.previousElementSibling;
  if(!h){const c=el.closest('.card');h=c&&c.querySelector('h2')}if(!h)return;
@@ -521,14 +554,14 @@ async function exportVisit(){
  [['vt1','Per Branch'],['vt2','Per GraPARI'],['vt3','Per CSR']].forEach(([k,n])=>{const t=vbuild(k);t.rows.sort((x,y)=>y.n-x.n);if(t.total)t.rows.push(t.total);add(n,aoaOf(t))});
  [['br','Tren Branch'],['un','Tren GraPARI'],['csr','Tren CSR']].forEach(([k,n])=>{const t=vtrend(k);t.rows.sort((x,y)=>y.n-x.n);t.cols=t.cols.map((c,i)=>i<2?c:[dlab(t.days[i-2]),c[1]]);add(n,aoaOf(t))});
  add('Data visit',[['Tanggal','Bulan','Branch','GraPARI','NIK','Nama CSR','Role','Service','Visit','Avg Waiting (m:ss)','Avg Serving (m:ss)'],...b.map(r=>{const nik=V.k[r[2]],s=S[nik];return[dd(r[0]).toISOString().slice(0,10),V.m[V.mo[r[0]]],vbrn(r),V.u[r[1]],nik,s?s[0]:'',s?s[1]:'',r[3]?'IndiHome':'Telkomsel',r[4],fT(r[5]/r[4]),fT(r[6]/r[4])]})]);
- await saveFile('Visit_Jabar_'+(st.vm=='all'?V.m[0]+'-'+V.m[3]:V.m[st.vm])+'.xlsx',xlsxBlob(wb));
+ await saveFile('Visit_Jabar_'+(st.vm=='all'?V.m[0]+'-'+V.m[VLM]:V.m[st.vm])+'.xlsx',xlsxBlob(wb));
 }
 /* ===== Waiting Time module ===== */
 const WBR=['Bandung','Cirebon','Soreang','Tasikmalaya'],WMD=['MOMO','TOMO'],WTP=['Lite','Small','Medium'],WSTD=['≤ 5 menit','≤ 10 menit','≤ 20 menit'],WCOL=['#4FB08C','#9AD07A','#F0C75E','#F2A05E','#EC5A4F','#B3262B'];
 W.u.forEach(x=>{if(!UBR.has(x[0]))UBR.set(x[0],WBR[x[1]])});
 st.wm=3;Object.assign(st.sort,{ww1:['name',1],ww2:['kpi',-1],ww3:['name',1],ww4:['kpi',1],ww5:['ord',1]});
 const isWC=r=>st.wm=='all'||r[1]==st.wm,isWP=r=>st.wm!='all'&&st.wm>0&&r[1]==st.wm-1;
-const wlbl=()=>st.wm=='all'?W.ms[0]+'–'+W.ms[W.ms.length-1]:W.ms[st.wm];
+const wlbl=()=>st.wm=='all'?W.ms[0]+'–'+W.ms[W.ms.length-1]:W.ms[st.wm]+(st.wm==W.ms.length-1&&VPART?` (1–${vlast()})`:'');
 const whp=()=>st.wm!='all'&&st.wm>0;
 const fi=n=>String(n).replace(/\B(?=(\d{3})+(?!\d))/g,'.');
 const wu=r=>W.u[r[0]];
@@ -909,9 +942,9 @@ F.rows.forEach(r=>{if(!UBR.has(F.un[r[1]]))UBR.set(F.un[r[1]],F.br[r[0]])});
 $('fu').innerHTML='<option value="ALL">Semua unit</option>'+[...UBR.keys()].sort().map(u=>`<option>${u}</option>`).join('');
 $('fu').onchange=e=>{st.u=e.target.value;render()};$('fs').onchange=e=>{st.s=e.target.value;$('fs').dataset.v=st.s;render()};$('fs').dataset.v=st.s;
 $('rs').onclick=()=>{st.vm=3;st.vs='all';st.vk='aktif';st.vd='br';st.vsel.clear();$('vq').value='';$('vmin').value=1;$('vcf').value='ALL';st.m=2;st.wm=3;st.hm=3;st.im=3;st.om=3;st.cm=1;st.ff=1;st.km=1;st.b='ALL';st.u='ALL';st.s='cs';$('fs').value='cs';$('fs').dataset.v='cs';sync();render()};
-$('fm').innerHTML=[['0','Agustus'],['1','September'],['2','Oktober'],['all','All Month']].map(x=>`<option value="${x[0]}">${x[1]}</option>`).join('');
+$('fm').innerHTML=[['0','Agustus'],['1','September'],['2','Oktober'],['3','November (1–'+(D.mn[3].match(/–(\d+)/)||[,'?'])[1]+' Nov, parsial)'],['all','All Month']].map(x=>`<option value="${x[0]}">${x[1]}</option>`).join('');
 $('fm').onchange=e=>{const v=e.target.value;st.m=v=='all'?v:+v;render()};
-$('wm').innerHTML=['Juli','Agustus','September','Oktober'].map((m,i)=>`<option value="${i}">${m}</option>`).join('')+'<option value="all">All Month</option>';$('cm').innerHTML=[['0','September'],['1','Oktober'],['all','All Month']].map(x=>`<option value="${x[0]}">${x[1]}</option>`).join('');$('cm').onchange=e=>{const v=e.target.value;st.cm=v=='all'?v:+v;renderCP()};['cq','cmin'].forEach(i=>$(i).oninput=renderCP);
+$('wm').innerHTML=['Juli','Agustus','September','Oktober','November'+(VPART?` (1–${vlast()} Nov, parsial)`:'')].map((m,i)=>`<option value="${i}">${m}</option>`).join('')+'<option value="all">All Month</option>';$('cm').innerHTML=[['0','September'],['1','Oktober'],['all','All Month']].map(x=>`<option value="${x[0]}">${x[1]}</option>`).join('');$('cm').onchange=e=>{const v=e.target.value;st.cm=v=='all'?v:+v;renderCP()};['cq','cmin'].forEach(i=>$(i).oninput=renderCP);
 $('hm').innerHTML=['Juli','Agustus','September','Oktober','All Month'].map((m,i)=>`<option value="${i==4?'all':i}">${m}</option>`).join('');$('hm').onchange=e=>{const v=e.target.value;st.hm=v=='all'?v:+v;renderH()};
 $('im').innerHTML=['Juli','Agustus','September','Oktober','All Month'].map((m,i)=>`<option value="${i==4?'all':i}">${m}</option>`).join('');$('im').onchange=e=>{const v=e.target.value;st.im=v=='all'?v:+v;renderI()};
 $('om').innerHTML=['Juli','Agustus','September','Oktober','All Month'].map((m,i)=>`<option value="${i==4?'all':i}">${m}</option>`).join('');$('om').onchange=e=>{const v=e.target.value;st.om=v=='all'?v:+v;renderO()};
@@ -924,13 +957,14 @@ $('xl').onclick=()=>st.p==11?exportTF():st.p==10?exportOrbit():st.p==9?exportInd
 /* ===== tNPS Fixed module ===== */
 st.fm=2;st.fb='ALL';st.fu='ALL';st.fn='ALL';st.fj='ALL';
 Object.assign(st.sort,{tf6:['nps',-1],tf1:['ord',1],tf2:['n',-1],tf3:['n',-1],tf4:['n',-1],tf5:['n',-1]});
-const tfC=r=>r[4]==st.fm,tfP=r=>st.fm>0&&r[4]==st.fm-1;
+const TFCUT=TF.m.map((x,i)=>{const d=Math.max(0,...TF.rows.filter(r=>r[4]==i).map(r=>r[10]));return d<ML[i]?d:99});
+const tfC=r=>r[4]==st.fm,tfP=r=>st.fm>0&&r[4]==st.fm-1&&r[10]<=TFCUT[st.fm];
 const TFIG=TF.ut.indexOf('GraPARI');
 function tfBase(skip){return TF.rows.filter(r=>(skip=='br'||st.fb=='ALL'||TF.br[r[0]]==st.fb)&&(skip=='ut'||st.fu=='ALL'||TF.ut[r[1]]==st.fu)&&(skip=='un'||st.fn=='ALL'||TF.un[r[2]]==st.fn)&&(skip=='jr'||st.fj=='ALL'||TF.jr[r[5]]==st.fj))}
 function tfmet(rs){const a=ag(rs.filter(tfC)),o=ag(rs.filter(tfP));
  return{...a,ps:o.nps,po:o.n,mom:dv(a.nps,o.nps),html:`<td>${a.n}</td><td>${a.p}</td><td>${a.a}</td><td>${a.d}</td><td>${nb(a.nps)}<b class="${a.nps>=0?'pos':'neg'}">${f1(a.nps)}</b></td><td>${f1(o.nps)}</td><td>${dl(dv(a.nps,o.nps))}</td>`}}
 const TFC=[['Total','n'],['Promotor','p'],['Passive','a'],['Detractor','d'],['tNPS','nps'],['tNPS bln lalu','ps'],['MoM','mom']];
-const tfpm=()=>st.fm>0?TF.m[st.fm-1]:'';
+const tfpm=()=>{if(st.fm<=0)return'';const c=TFCUT[st.fm],b=TF.m[st.fm-1].replace(/\s*\(.*\)/,'');return c<ML[st.fm-1]?b+' (1–'+c+')':TF.m[st.fm-1]};
 function tfTbl(id,skip,keyf,label,sel,onc,extra){
  const rs=tfBase(skip).filter(r=>keyf(r)!=null);
  const big=label=='Unit Type';const rows=[...group(rs,keyf)].map(([k,g])=>{const m=tfmet(g);return{key:k,name:k,...m,br:extra?extra(g):'',html:(big&&k=='GraPARI'?`<td style="font-size:1.3em;font-weight:800;color:#EC0000">${k}</td>`:`<td>${k}</td>`)+(extra?`<td style="text-align:left">${extra(g)}</td>`:'')+m.html}}).filter(x=>x.n>0);
@@ -1017,7 +1051,7 @@ function renderTF(){
  kc('tfk1','📞 tNPS Fixed – Jabar',A,O,'');kc('tfk2','🏬 tNPS Fixed – unit GraPARI',GA,GO,` · ${f1(A.n?GA.n/A.n*100:0)}% dari total respon`);
  $('tfm').value=String(st.fm);$('tfmeta').style.display='none';
  /* 1 total Jabar per bulan */
- const mrows=TF.m.map((m,i)=>{const a=ag(b.filter(r=>r[4]==i)),o=i>0?ag(b.filter(r=>r[4]==i-1)):null,pp=a.n?a.p/a.n*100:null,dd=a.n?a.d/a.n*100:null;
+ const mrows=TF.m.map((m,i)=>{const a=ag(b.filter(r=>r[4]==i)),o=i>0?ag(b.filter(r=>r[4]==i-1&&r[10]<=TFCUT[i])):null,pp=a.n?a.p/a.n*100:null,dd=a.n?a.d/a.n*100:null;
   return{key:m,name:m,ord:i,n:a.n,p:a.p,a:a.a,d:a.d,pp,dd,nps:a.nps,mom:o?dv(a.nps,o.nps):null,html:`<td>${m}</td><td>${a.n}</td><td>${a.p}</td><td>${a.a}</td><td>${a.d}</td><td>${f1(pp)}%</td><td>${f1(dd)}%</td><td>${nb(a.nps)}<b class="${a.nps>=0?'pos':'neg'}">${f1(a.nps)}</b></td><td>${o?dl(dv(a.nps,o.nps)):'–'}</td>`}}).filter(x=>x.n>0);
  table('tf1',mrows,[['Bulan','name'],['Total','n'],['Promotor','p'],['Passive','a'],['Detractor','d'],['% Promotor','pp'],['% Detractor','dd'],['%tNPS','nps'],['MoM','mom']],k=>{st.fm=TF.m.indexOf(k);renderTF()},per);
  tfTbl('tf2','ut',r=>TF.ut[r[1]],'Unit Type',st.fu,k=>tfSet('fu',k));
@@ -1027,7 +1061,7 @@ function renderTF(){
  tfBars('tfc1',cur,0);tfBars('tfc2',cur,2);tfCSR(cur);
  tfww('tfnw','p');tfww('tfnx','d');
 }
-$('tfm').innerHTML=TF.m.map((m,i)=>`<option value="${i}">${m}</option>`).join('');
+$('tfm').innerHTML=TF.m.map((m,i)=>`<option value="${i}">${['Agustus','September','Oktober ('+TF.m[2].replace(/.*\((.*)\)/,'$1')+')'][i]||m}</option>`).join('');
 $('tfm').onchange=e=>{st.fm=+e.target.value;renderTF()};
 $('tfr').onclick=()=>{st.fb='ALL';st.fu='ALL';st.fn='ALL';st.fj='ALL';renderTF()};
 async function exportTF(){
@@ -1041,17 +1075,133 @@ async function exportTF(){
  await saveFile('tNPS_Fixed_Jabar_'+TF.m[st.fm].replace(/[^\w]+/g,'_')+'.xlsx',xlsxBlob(wb));
 }
 
+
+/* ===== FU tNPS module ===== */
+st.fum=0;st.fub='ALL';
+function fua(rs){const n=rs.length,sb=rs.filter(r=>r.fus=='Submitted').length,ap=rs.filter(r=>r.aps=='Closed').length,nr=rs.filter(r=>r.aps=='Need Review').length,bl=rs.filter(r=>r.aps=='Belum diproses').length,
+ i=rs.filter(r=>r.sla=='In SLA').length,o=rs.filter(r=>r.sla=='Out SLA').length,av=k=>{const v=rs.map(r=>r[k]).filter(x=>x!=null);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null},sc=n?rs.reduce((a,r)=>a+r.sc,0)/n:null;
+ return{n,sb,dr:n-sb,ap,nr,bl,pa:n?ap/n*100:null,i,o,ps:i+o?i/(i+o)*100:null,hs:av('hs'),ha:av('ha'),ht:av('ht'),sc}}
+const fuh=h=>h==null?'–':h<48?h.toFixed(1)+' jam':(h/24).toFixed(1)+' hari';
+const fup=v=>v==null?'–':v.toFixed(1)+'%';
+const fuesc=t=>String(t||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+function fubase(){return FU.rows.filter(r=>st.fub=='ALL'||r.br==st.fub)}
+function fucur(){return fubase().filter(r=>st.fum=='all'||r.m==st.fum)}
+function renderFU(){
+ const cur=fucur(),prv=st.fum!='all'&&st.fum>0?fubase().filter(r=>r.m==st.fum-1):null,a=fua(cur),o=prv?fua(prv):null,per=st.fum=='all'?'Okt–'+FU.m[FU.m.length-1]:FU.m[st.fum],pm=o?FU.m[st.fum-1]:'';
+ $('fumeta').textContent=`Sumber: tNPS_Approval.xlsx · survey s.d. ${FU.upd} · ${cur.length} FU pada ${per}`+(st.fub!='ALL'?` · Branch ${st.fub}`:'');
+ const kc=(t,v,sub,c)=>`<div class="card kpi" style="border-left-color:${c}"><div class="t">${t} · ${per}</div><div class="v">${v}</div><div class="note">${sub}</div></div>`;
+ $('fuk').innerHTML=kc('📞 Jumlah FU',a.n,`Submitted ${a.sb} · Draft ${a.dr}`+(o?` · ${pm}: ${o.n}`:''),'var(--k1)')
+  +kc('✅ %Approval',fup(a.pa),`Approved (Closed) ${a.ap} · Need Review ${a.nr} · Belum diproses ${a.bl}`+(o?` · ${pm}: ${fup(o.pa)}`:''),'var(--k2)')
+  +kc('⏱️ SLA Approval',fup(a.ps),`In SLA ${a.i} · Out SLA ${a.o} · belum dinilai ${a.n-a.i-a.o}`+(o?` · ${pm}: ${fup(o.ps)}`:''),'var(--k3)')
+  +kc('⏳ Lead time rata-rata',fuh(a.ht),`Survey → submit FU ${fuh(a.hs)} · submit → approval ${fuh(a.ha)}`,'var(--k4)');
+ // per GraPARI
+ const g=[...group(cur,r=>r.u)].map(([k,rs])=>{const x=fua(rs);return{key:k,name:k,br:rs[0].br,...x,html:`<td>${k}</td><td style="text-align:left">${rs[0].br}</td><td><b>${x.n}</b></td><td>${x.sb}</td><td>${x.ap}</td><td><b>${fup(x.pa)}</b></td><td>${x.i}</td><td>${x.o}</td><td>${fup(x.ps)}</td><td>${x.sc.toFixed(1)}</td><td>${fuh(x.ht)}</td>`}});
+ st.sort.fu1=st.sort.fu1||['n',-1];
+ table('fu1',g,[['GraPARI','name'],['Branch','br'],['Jumlah FU','n'],['Submitted','sb'],['Approved','ap'],['%Approval','pa'],['In SLA','i'],['Out SLA','o'],['%SLA','ps'],['Rata-rata skor','sc'],['Lead time','ht']],null,null);
+ // SLA per branch
+ const bb=[...group(cur,r=>r.br)].map(([k,rs])=>{const x=fua(rs);return{key:k,name:k,...x}});bb.push({key:'Jabar',name:'Jabar',...a,tot:1});
+ $('fu2').innerHTML='<table><tr><th>Branch</th><th>Jumlah FU</th><th>Approved</th><th>%Approval</th><th>In SLA</th><th>Out SLA</th><th>Belum dinilai</th><th>%SLA</th><th>Survey → submit</th><th>Submit → approval</th><th>Survey → approval</th></tr>'+
+  bb.map(x=>`<tr${x.tot?' style="font-weight:700;background:var(--sf)"':''}><td>${x.name}</td><td>${x.n}</td><td>${x.ap}</td><td>${fup(x.pa)}</td><td>${x.i}</td><td style="color:${x.o?'#C0392B':'inherit'}">${x.o}</td><td>${x.n-x.i-x.o}</td><td><b>${fup(x.ps)}</b></td><td>${fuh(x.hs)}</td><td>${fuh(x.ha)}</td><td>${fuh(x.ht)}</td></tr>`).join('')+'</table>';
+ // Kategori 2 x branch
+ const k2=[...group(cur,r=>r.k2)].sort((x,y)=>y[1].length-x[1].length),mx2=k2.length?k2[0][1].length/cur.length*100:1,PAL=['#6C63D9'];
+ $('fu3').innerHTML=!cur.length?'<p class="note">Tidak ada FU pada periode ini.</p>':`<div style="display:flex;flex-direction:column;gap:8px;max-width:980px">`+k2.map(([k,rs],i)=>{const pc=rs.length/cur.length*100;return`<div style="display:grid;grid-template-columns:230px 1fr 120px;align-items:center;gap:12px" title="${k}: ${rs.length} dari ${cur.length} FU">
+  <div style="font-size:13.5px;text-align:right;color:var(--tx,#1F2340)">${k}</div>
+  <div style="background:#F0F0F7;border-radius:7px;height:24px;overflow:hidden"><div style="width:${(pc/mx2*100).toFixed(1)}%;height:100%;background:${PAL[Math.min(i,PAL.length-1)]};border-radius:7px"></div></div>
+  <div style="font-size:13.5px"><b>${pc.toFixed(1)}%</b> <span style="color:var(--mu)">(${rs.length} FU)</span></div></div>`}).join('')+`<div class="note" style="margin-top:2px">Total ${cur.length} FU${st.fub!='ALL'?' · Branch '+st.fub:' Jabar'}</div></div>`;
+ // themes
+ const th=(k,title)=>{const t=[...group(cur,r=>r[k])].sort((x,y)=>y[1].length-x[1].length);return`<table><tr><th>${title}</th><th>Jumlah</th><th>%</th><th>GraPARI</th></tr>`+t.map(([n,rs])=>`<tr><td>${n}</td><td><b>${rs.length}</b></td><td>${fup(rs.length/cur.length*100)}</td><td style="text-align:left;font-size:12px">${[...new Set(rs.map(r=>r.u.replace('GraPARI ','')))].join(', ')}</td></tr>`).join('')+'</table>'};
+ $('fu4').innerHTML=th('tf','Tema Customer Feedback');$('fu5').innerHTML=th('tc','Hasil Callback / Follow Up');
+ const d=cur.slice().sort((x,y)=>x.sd<y.sd?1:-1);
+ $('fu6').innerHTML='<table><tr><th>Tgl survey</th><th>GraPARI</th><th>Skor</th><th>Kategori 2</th><th style="min-width:220px">Customer Feedback</th><th style="min-width:260px">Callback Notes / Follow Up Notes</th><th>Approval</th><th>SLA</th></tr>'+
+  d.map(r=>`<tr><td style="white-space:nowrap">${r.sd.slice(8,10)}/${r.sd.slice(5,7)}</td><td style="text-align:left">${r.u.replace('GraPARI ','')}</td><td>${r.sc}</td><td style="text-align:left">${r.k2}</td><td style="text-align:left;white-space:normal">${fuesc(r.fb)||'<span style="color:var(--mu)">–</span>'}</td><td style="text-align:left;white-space:normal">${fuesc(r.cb)}${r.fun&&r.fun!=r.cb?`<div style="color:var(--mu);font-size:12px;margin-top:3px">FU: ${fuesc(r.fun)}</div>`:''}${!r.cb&&!r.fun?'<span style="color:var(--mu)">Belum ada callback</span>':''}</td><td>${r.aps}</td><td style="color:${r.sla=='Out SLA'?'#C0392B':'inherit'}">${r.sla}</td></tr>`).join('')+'</table>';
+}
+$('fum').innerHTML=FU.m.map((m,i)=>`<option value="${i}">${m.replace(/^Okt$/,'Oktober').replace(/^Nov \((1–\d+)\)$/,'November ($1 Nov, parsial)')}</option>`).join('')+'<option value="all">All Month</option>';$('fum').value='0';
+$('fum').onchange=e=>{const v=e.target.value;st.fum=v=='all'?'all':+v;renderFU()};
+$('fub').innerHTML=['ALL','Bandung','Cirebon','Soreang','Tasikmalaya'].map(b=>`<option value="${b}">${b=='ALL'?'Semua branch':b}</option>`).join('');
+$('fub').onchange=e=>{st.fub=e.target.value;renderFU()};
+async function exportFU(){const wb=XLSX.utils.book_new(),cur=fucur();
+ XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['Tgl survey','Bulan','Branch','GraPARI','NIK CSR','Skor','Kategori 1','Kategori 2','Service','KIP','Customer Feedback','Callback Notes','Follow Up Notes','Follow Up Status','Approval Status','Approval Notes','SLA','Survey→Submit (jam)','Submit→Approval (jam)','Tema Feedback','Tema Callback'],
+  ...cur.map(r=>[r.sd,FU.m[r.m],r.br,r.u,r.nik,r.sc,r.k1,r.k2,r.svc,r.kip,r.fb,r.cb,r.fun,r.fus,r.aps,r.apn,r.sla,r.hs,r.ha,r.tf,r.tc])]),'Detail FU');
+ await saveFile('FU_tNPS_Jabar_'+(st.fum=='all'?'All':FU.m[st.fum]).replace(/[^\w]+/g,'-')+'.xlsx',xlsxBlob(wb));}
+
+
+/* ===== ORDER module ===== */
+st.ot='all';st.ob='ALL';
+const OGN=['Completed (PS)','Fallout','Cancel','In progress'],OGC=['#6C63D9','#E8912D','#C0392B','#7FB6D9'];
+function oa(rs){const n=rs.length,g=[0,0,0,0];let i=0,o=0,h=0,hn=0,ov=0,op=0,fo=0,pv3=0,fv3=0;
+ for(const r of rs){g[r[5]]++;if(r[8]==1)i++;else if(r[8]==0)o++;else if(r[8]==3){ov++;if(r[5]==3)pv3++;else fv3++}else if(r[8]==2&&r[5]==3)op++;if(r[9]!=null){h+=r[9];hn++}if(r[6]>=0)fo++}
+ return{n,pv3,fv3,c:g[0],f:g[1],x:g[2],p:g[3],rp:n?g[0]/n*100:null,i,o,sl:i+o?i/(i+o)*100:null,ov,op,ah:hn?h/hn:null,fo}}
+const ofh=h=>h==null?'–':h<1?Math.round(h*60)+' mnt':h<48?h.toFixed(1)+' jam':(h/24).toFixed(1)+' hari';
+const ofp=v=>v==null?'–':v.toFixed(1)+'%';
+function obase(){return ORD.rows.filter(r=>(st.ob=='ALL'||ORD.br[r[1]]==st.ob))}
+function ocur(){return obase().filter(r=>st.ot=='all'||r[0]==st.ot)}
+function orSub(){const el=$('osub'),cnt=ORD.ty.map((_,i)=>ORD.rows.filter(r=>r[0]==i).length);
+ el.innerHTML='<span class="sl">Order Type ·</span>'+[['all','Semua',ORD.rows.length],...ORD.ty.map((t,i)=>[i,t,cnt[i]])].map(([k,l,n])=>`<button class="tab sb${String(st.ot)==String(k)?' on':''}" data-o="${k}">${l} <span style="font-weight:500;opacity:.7">(${n})</span></button>`).join('');
+ el.querySelectorAll('.sb').forEach(b=>b.onclick=()=>{const v=b.dataset.o;st.ot=v=='all'?'all':+v;renderOR()})}
+function renderOR(){
+ orSub();const cur=ocur(),a=oa(cur),tl=st.ot=='all'?'Semua Order Type':'Order Type '+ORD.ty[st.ot];
+ $('orttl').textContent=tl+(st.ob!='ALL'?' · '+st.ob:'');
+ $('ormeta').textContent=`Sumber: Order.xlsx · order ${ORD.d0}–${ORD.d1} Nov 2026 · data per ${ORD.cut} · ${a.n} order`;
+ const per=`Nov (${ORD.d0}–${ORD.d1})`,kc=(t,v,sub,c)=>`<div class="card kpi" style="border-left-color:${c}"><div class="t">${t} · ${per}</div><div class="v">${v}</div><div class="note">${sub}</div></div>`;
+ $('ork').innerHTML=kc('🧾 Total Order',fi(a.n),`MOMO ${fi(cur.filter(r=>r[10]==0).length)} · TOMO ${fi(cur.filter(r=>r[10]==1).length)}`,'var(--k1)')
+  +kc('✅ RE to PS',ofp(a.rp),`Completed ${fi(a.c)} dari ${fi(a.n)} order`,'var(--k2)')
+  +kc('⏱️ %SLA (RE → Provi)',ofp(a.sl),`In SLA ${fi(a.i)} · Out SLA ${a.o} · rata-rata ${ofh(a.ah)}`,'var(--k3)')
+  +kc('⚠️ Fallout',fi(a.f),`Masih fallout saat ini (${a.fv3} sudah lewat SLA) · pernah fallout ${fi(a.fo)} order`,'#E8912D')
+  +kc('🚫 Cancel',fi(a.x),`${ofp(a.n?a.x/a.n*100:null)} dari total order`,'#C0392B')
+  +kc('🔄 In progress',fi(a.p),`Sudah lewat SLA ${a.pv3} · masih dalam SLA ${a.op}`,'#7FB6D9');
+ const mkRow=(k,rs,extra)=>{const x=oa(rs);return{key:k,name:k,...x,...(extra||{}),html:(extra&&extra.brh||'')+`<td><b>${fi(x.n)}</b></td><td>${fi(x.c)}</td><td><b>${ofp(x.rp)}</b></td><td>${x.f}</td><td>${x.x}</td><td>${x.p}</td><td>${x.i}</td><td style="color:${x.o?'#C0392B':'inherit'}">${x.o}</td><td><b>${ofp(x.sl)}</b></td><td>${ofh(x.ah)}</td>`}};
+ const CO=[['Total order','n'],['Completed','c'],['%RE to PS','rp'],['Fallout','f'],['Cancel','x'],['In progress','p'],['In SLA','i'],['Out SLA','o'],['%SLA','sl'],['Rata-rata RE→Provi','ah']];
+ const br=ORD.br.map((b,i)=>mkRow(b,cur.filter(r=>r[1]==i),{brh:`<td>${b}</td>`})).filter(x=>x.n);
+ $('or1').innerHTML='<table><tr><th>Branch</th>'+CO.map(c=>`<th>${c[0]}</th>`).join('')+'</tr>'+br.map(x=>`<tr>${x.html}</tr>`).join('')+`<tr style="font-weight:700;background:var(--sf)">${mkRow('Jabar',cur,{brh:`<td>${st.ob=='ALL'?'Jabar':'Total'}</td>`}).html}</tr></table>`;
+ const gu=[...group(cur,r=>ORD.u[r[2]])].map(([u,rs])=>mkRow(u,rs,{br:ORD.br[rs[0][1]],brh:`<td>${u}</td><td style="text-align:left">${ORD.br[rs[0][1]]}</td>`}));
+ st.sort.or2=st.sort.or2||['n',-1];table('or2',gu,[['GraPARI','name'],['Branch','br'],...CO],null,null);
+ // daily
+ const D0=1,D1=30,W=1120,H=280,L=44,R=12,T=26,B=40,cw=(W-L-R)/(D1-D0+1),dd={};cur.forEach(r=>{(dd[r[3]]=dd[r[3]]||[0,0,0,0])[r[5]]++});
+ const mx=Math.max(1,...Object.values(dd).map(v=>v[0]+v[1]+v[2]+v[3]))*1.15,Y=v=>T+(H-T-B)*(1-v/mx),dow=d=>new Date(2026,10,d).getDay();
+ let g=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto">`;
+ for(let k=0;k<=4;k++){const v=mx/1.15*k/4,y=Y(v);g+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="#E6E7EF"/><text x="${L-6}" y="${y+4}" text-anchor="end" font-size="11" fill="#8A8DA3">${Math.round(v)}</text>`}
+ for(let d=D0;d<=D1;d++){const x=L+(d-D0)*cw,v=dd[d];if(v){let acc=0;v.forEach((c,j)=>{if(!c)return;const y0=Y(acc),y1=Y(acc+c);g+=`<rect x="${x+cw*0.15}" y="${y1}" width="${cw*0.7}" height="${y0-y1}" fill="${OGC[j]}"><title>${d} Nov · ${OGN[j]}: ${c}</title></rect>`;acc+=c});g+=`<text x="${x+cw/2}" y="${Y(acc)-4}" text-anchor="middle" font-size="10.5" font-weight="700" fill="#2B2D42">${acc}</text>`}
+  g+=`<text x="${x+cw/2}" y="${H-B+15}" text-anchor="middle" font-size="10.5" fill="${dow(d)==0?'#D7263D':'#6B7089'}">${d}</text>`}
+ g+=`<text x="${L}" y="${H-6}" font-size="11" fill="#6B7089">Tanggal order (Order Ts) · merah = hari Minggu</text></svg>`;
+ const nd=Object.keys(dd).length,tot=cur.length;
+ $('or3').innerHTML=`<div class="note" style="display:flex;gap:16px;flex-wrap:wrap;margin:0 0 4px">${OGN.map((n,j)=>`<span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:${OGC[j]};vertical-align:-1px"></span> ${n}</span>`).join('')}<span>Rata-rata <b>${nd?(tot/nd).toFixed(1):0}</b> order/hari (${nd} hari ada order)</span></div>`+g;
+ // per order type
+ const tb=obase(),ty=ORD.ty.map((t,i)=>({t,i,...oa(tb.filter(r=>r[0]==i))})),ta=oa(tb);
+ const trow=(x,lab,bold)=>`<tr${bold?' style="font-weight:700;background:var(--sf)"':st.ot===x.i?' style="background:#EEEDFC"':''}><td>${lab}</td><td>${fi(x.n)}</td><td>${fi(x.c)}</td><td><b>${ofp(x.rp)}</b></td><td>${x.f}</td><td>${x.x}</td><td>${x.p}</td><td>${x.i}</td><td style="color:${x.o?'#C0392B':'inherit'}">${x.o}</td><td><b>${ofp(x.sl)}</b></td><td>${ofh(x.ah)}</td><td style="color:${x.ov?'#C0392B':'inherit'}">${x.ov}</td></tr>`;
+ $('or4').innerHTML='<table><tr><th>Order Type</th><th>Total order</th><th>Completed</th><th>%RE to PS</th><th>Fallout</th><th>Cancel</th><th>In progress</th><th>In SLA</th><th>Out SLA</th><th>%SLA</th><th>Rata-rata RE→Provi</th><th>Fallout + in progress lewat SLA</th></tr>'+ty.filter(x=>x.n).map(x=>trow(x,x.t)).join('')+trow(ta,'Total',1)+'</table>';
+ const ps=[...group(cur,r=>r[4])].sort((x,y)=>y[1].length-x[1].length);
+ $('or5').innerHTML='<table><tr><th>Process State</th><th>Kelompok</th><th>Jumlah</th><th>%</th></tr>'+ps.map(([k,rs])=>`<tr><td style="text-align:left">${ORD.ps[k]}</td><td style="text-align:left"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${OGC[rs[0][5]]}"></span> ${OGN[rs[0][5]]}</td><td><b>${rs.length}</b></td><td>${ofp(rs.length/cur.length*100)}</td></tr>`).join('')+'</table>';
+ const cp=cur.filter(r=>r[9]!=null),bk=[['< 1 jam',0,1],['1 – 6 jam',1,6],['6 – 24 jam',6,24],['1 – 3 hari',24,72],['3 – 7 hari',72,168],['> 7 hari',168,1e9]];
+ $('or6').innerHTML='<table><tr><th>Durasi RE → Provi</th><th>Jumlah</th><th>%</th></tr>'+bk.map(([l,a0,a1])=>{const n=cp.filter(r=>r[9]>=a0&&r[9]<a1).length;return`<tr><td style="text-align:left">${l}</td><td><b>${n}</b></td><td>${ofp(cp.length?n/cp.length*100:null)}</td></tr>`}).join('')+`<tr style="font-weight:700;background:var(--sf)"><td>Total COMPLETED</td><td>${cp.length}</td><td>100%</td></tr></table>`;
+ // fallout
+ const fr=cur.filter(r=>r[6]>=0),fcg=[...group(fr,r=>r[6])].sort((x,y)=>y[1].length-x[1].length);
+ $('or7').innerHTML=!fr.length?'<p class="note">Tidak ada order dengan Fallout Category pada pilihan ini.</p>':'<table><tr><th>Fallout Category</th><th>Order pernah fallout</th><th>% dari order fallout</th><th>% dari total order</th><th>Masih fallout</th><th>Akhirnya Completed</th><th>Cancel</th><th>In progress</th><th style="min-width:280px">Reason teratas</th></tr>'+
+  fcg.map(([k,rs])=>{const g=[0,0,0,0];rs.forEach(r=>g[r[5]]++);const top=[...group(rs.filter(r=>r[7]>=0),r=>r[7])].sort((x,y)=>y[1].length-x[1].length).slice(0,3).map(([q,z])=>`${ORD.fr[q]} (${z.length})`).join('; ');
+   return`<tr><td style="text-align:left"><b>${ORD.fc[k]}</b></td><td><b>${rs.length}</b></td><td>${ofp(rs.length/fr.length*100)}</td><td>${ofp(rs.length/cur.length*100)}</td><td style="color:${g[1]?'#C0392B':'inherit'}">${g[1]}</td><td>${g[0]}</td><td>${g[2]}</td><td>${g[3]}</td><td style="text-align:left;white-space:normal;font-size:12.5px">${top||'–'}</td></tr>`}).join('')+
+  `<tr style="font-weight:700;background:var(--sf)"><td>Total</td><td>${fr.length}</td><td>100%</td><td>${ofp(fr.length/cur.length*100)}</td><td>${fr.filter(r=>r[5]==1).length}</td><td>${fr.filter(r=>r[5]==0).length}</td><td>${fr.filter(r=>r[5]==2).length}</td><td>${fr.filter(r=>r[5]==3).length}</td><td></td></tr></table>`;
+ const rr=[...group(fr.filter(r=>r[7]>=0),r=>r[7]+'|'+r[6])].map(([k,rs])=>({k,rs})).sort((x,y)=>y.rs.length-x.rs.length).slice(0,25);
+ $('or8').innerHTML=!rr.length?'<p class="note">Tidak ada fallout reason.</p>':'<table><tr><th>#</th><th style="min-width:300px">Fallout Reason (diringkas)</th><th>Fallout Category</th><th>Order</th><th>Masih fallout</th><th>Order Type</th></tr>'+rr.map(({rs},i)=>`<tr><td>${i+1}</td><td style="text-align:left;white-space:normal">${ORD.fr[rs[0][7]]}</td><td style="text-align:left">${ORD.fc[rs[0][6]]}</td><td><b>${rs.length}</b></td><td>${rs.filter(r=>r[5]==1).length}</td><td style="text-align:left">${[...new Set(rs.map(r=>ORD.ty[r[0]]))].join(', ')}</td></tr>`).join('')+'</table>';
+}
+$('orm').innerHTML=`<option value="0">November (${ORD.d0}–${ORD.d1} Nov, parsial)</option>`;
+$('orb').innerHTML=['ALL',...ORD.br].map(b=>`<option value="${b}">${b=='ALL'?'Semua branch':b}</option>`).join('');
+$('orb').onchange=e=>{st.ob=e.target.value;renderOR()};
+async function exportOrder(){const wb=XLSX.utils.book_new(),cur=ocur();
+ XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['Tgl order','Order Type','Branch','GraPARI','Unit Type','Bisnis Model','Process State','Kelompok','Target SLA (hari)','RE→Provi (jam)','Status SLA','Fallout Category','Fallout Reason (diringkas)'],
+  ...cur.map(r=>[r[3]+' Nov 2026',ORD.ty[r[0]],ORD.br[r[1]],ORD.u[r[2]],ORD.ut[r[11]],r[10]?'TOMO':'MOMO',ORD.ps[r[4]],OGN[r[5]],r[13],r[9],['Out SLA','In SLA','Open (dalam SLA)','Open (lewat SLA)'][r[8]]||'-',r[6]>=0?ORD.fc[r[6]]:'-',r[7]>=0?ORD.fr[r[7]]:'-'])]),'Order');
+ await saveFile('Order_Jabar_'+(st.ot=='all'?'Semua':ORD.ty[st.ot])+'.xlsx',xlsxBlob(wb));}
+
 /* ===== menu gabungan tNPS & Tiket ===== */
 (function(){
- const MAP={tn:{m:1,f:11,l:'tNPS',b:'mtn'},tk:{m:2,f:6,l:'Tiket',b:'mtk'}},LS={tn:1,tk:2};
+ const MAP={tn:{m:1,f:11,u:12,l:'tNPS',b:'mtn'},tk:{m:2,f:6,l:'Tiket',b:'mtk'}},LS={tn:1,tk:2};
  const orig=showTab;
- const grpOf=p=>p==1||p==11?'tn':p==2||p==6?'tk':null;
- showTab=function(p){orig(p);p=+p;const g=grpOf(p);
+ const grpOf=p=>p==1||p==11||p==12?'tn':p==2||p==6?'tk':null;
+ showTab=function(p){p=+p;$('pg13').style.display='none';$('osub').style.display='none';$('orw').style.display='none';if(p==13){orig(13);$('pg13').style.display='';$('osub').style.display='';$('orw').style.display='';document.querySelector('.bar').style.display='none';$('xl').textContent='⬇ Unduh Excel Order';renderOR()}else if(p==12){orig(1);st.p=12;$('pg1').style.display='none';$('pg12').style.display='';document.querySelector('.bar').style.display='none';$('fm').parentElement.style.display='none';$('xl').textContent='⬇ Unduh Excel FU tNPS';renderFU()}else if(p!=13){orig(p);$('pg12').style.display='none'}const g=grpOf(p);$('tfw').style.display=p==11?'':'none';$('fuw').style.display=p==12?'':'none';$('sbu').style.display=g=='tn'?'':'none';
   ['tn','tk'].forEach(k=>{const b=$(MAP[k].b);if(b)b.classList.toggle('on',g==k)});
   const sb=$('subtabs');
   if(g){LS[g]=p;sb.style.display='';$('sl').textContent=MAP[g].l+' ·';sb.querySelectorAll('.sb').forEach(b=>b.classList.toggle('on',MAP[g][b.dataset.s]==p))}
   else sb.style.display='none'};
  ['tn','tk'].forEach(k=>{$(MAP[k].b).onclick=()=>showTab(LS[k])});
+ {const ox=$('xl').onclick;$('xl').onclick=()=>st.p==12?exportFU():st.p==13?exportOrder():ox()}
  document.querySelectorAll('#subtabs .sb').forEach(b=>b.onclick=()=>{const g=grpOf(st.p);if(g)showTab(MAP[g][b.dataset.s])});
 })();
 

@@ -48,8 +48,8 @@ h2{color:var(--tx)}.tab.on{background:linear-gradient(90deg,#2B2150,#4E3FA3);bor
 .ct{position:relative;height:20px;background:var(--bg);border-radius:10px}.cb{height:100%;border-radius:10px;min-width:3px}.cm{position:absolute;top:-3px;bottom:-3px;width:3px;border-radius:2px;background:#6E7392;opacity:.75}.cmk{display:inline-block;width:3px;height:11px;background:#6E7392;margin-right:5px;vertical-align:middle;border-radius:2px}
 .cv{text-align:right;white-space:nowrap}.cj{color:var(--mu);font-size:12px}
 @media(max-width:640px){.cr{grid-template-columns:1fr}.cv{text-align:left}}
-select#fm,select#tm,select#vm,select#wm,select#cm,select#ff,select#km,select#hm{font-weight:700;font-size:15px;color:#B00010;background:#FFF0F0;border:2px solid #EC0000;padding:6px 10px}
-select#fm option,select#tm option,select#vm option,select#wm option,select#cm option,select#ff option,select#km option,select#hm option{font-weight:700;color:#1F2340;background:#FFFFFF}
+select#fm,select#tm,select#vm,select#wm,select#cm,select#ff,select#km,select#hm,select#tfm,select#fum,select#orm{font-weight:700;font-size:15px;color:#B00010;background:#FFF0F0;border:2px solid #EC0000;padding:6px 10px}
+select#fm option,select#tm option,select#vm option,select#wm option,select#cm option,select#ff option,select#km option,select#hm option,select#tfm option,select#fum option,select#orm option{font-weight:700;color:#1F2340;background:#FFFFFF}
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]) select#fm,:root:not([data-theme=light]) select#tm,:root:not([data-theme=light]) select#vm,:root:not([data-theme=light]) select#wm,:root:not([data-theme=light]) select#cm,:root:not([data-theme=light]) select#ff,:root:not([data-theme=light]) select#km,:root:not([data-theme=light]) select#hm{color:#FFB3B3;background:#3A1D26;border-color:#EC4B4B}}
 .hd label[id$=mw]{font-weight:700;color:var(--tx)}
 
@@ -106,13 +106,16 @@ select#om{font-weight:700;font-size:15px;color:#B00010;background:#FFF0F0;border
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .gk{background:#3A1D26;border-color:#8A3A47;color:#FFB3B3}:root:not([data-theme=light]) .gs{background:#17332B;border-color:#2E8F70;color:#9BE3C6}:root:not([data-theme=light]) .gv{background:#241F45;border-color:#5A4CB0;color:#C9BFF7}:root:not([data-theme=light]) .gb.on{color:#fff}:root:not([data-theme=light]) .gb .gi{background:rgba(255,255,255,.1)}:root:not([data-theme=light]) #tabs{background:rgba(255,255,255,.05)}}
 #ft2 td,#ft3 td,#ft4 td{text-align:center!important}
 #ft2 th,#ft3 th,#ft4 th{text-align:center!important}
-.hid{display:none!important}.subtabs{display:flex;gap:8px;align-items:center;margin:10px 0 0;padding-left:6px}.subtabs .sl{font-size:12px;color:var(--mu);font-weight:600}.subtabs .tab.sb{padding:6px 14px;font-size:13px}
+.hid{display:none!important}.subtabs{display:flex;gap:8px;align-items:center;margin:10px 0 0;padding-left:6px}.subtabs .sl{font-size:14px;color:var(--mu);font-weight:600}.subtabs .tab.sb{padding:8px 16px;font-size:15px;font-weight:700}
+.tabs .tab{font-size:17px;font-weight:700;padding:11px 22px;gap:8px}
+.tab.sb{font-size:15px;font-weight:700;padding:8px 16px}
+@media(max-width:600px){.tabs .tab{font-size:15px;padding:9px 16px}}
 </style><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script></head><body><div class="w">
 <div class="hd"><div><h1><span class="mq">MONIQ</span> - Monitoring by SQ Jabar</h1>
 <div class="sub" id="meta"></div></div>
-<div style="display:flex;gap:10px;align-items:flex-end;margin-left:auto"><label>Bulan<select id="fm"></select></label><label id="tmw" style="display:none">Bulan tiket<select id="tm"></select></label><label id="kmw" style="display:none">Bulan KPI<select id="km"></select></label><label id="ffw" style="display:none">Bulan tiket fixed<select id="ff"></select></label><label id="vmw" style="display:none">Bulan visit<select id="vm"></select></label><label id="omw" style="display:none">Bulan sales ORBIT<select id="om"></select></label><label id="imw" style="display:none">Bulan sales IndiHome<select id="im"></select></label><label id="hmw" style="display:none">Bulan sales Halo<select id="hm"></select></label><label id="wmw" style="display:none">Bulan waiting time<select id="wm"></select></label><label id="cmw" style="display:none">Bulan load CAPS<select id="cm"></select></label><button class="chip on" id="xl">⬇ Unduh Excel tNPS</button></div></div>
+<div style="display:flex;gap:10px;align-items:flex-end;margin-left:auto"><label><select id="fm"></select></label><label id="tmw" style="display:none"><select id="tm"></select></label><label id="kmw" style="display:none"><select id="km"></select></label><label id="ffw" style="display:none"><select id="ff"></select></label><label id="vmw" style="display:none"><select id="vm"></select></label><label id="omw" style="display:none"><select id="om"></select></label><label id="imw" style="display:none"><select id="im"></select></label><label id="hmw" style="display:none"><select id="hm"></select></label><label id="wmw" style="display:none"><select id="wm"></select></label><label id="cmw" style="display:none"><select id="cm"></select></label><label id="tfw" style="display:none"><select id="tfm"></select></label><label id="fuw" style="display:none"><select id="fum"></select></label><label id="orw" style="display:none"><select id="orm"></select></label><button class="chip on" id="xl">⬇ Unduh Excel tNPS</button></div></div>
 <div class="grp" id="grp" style="display:none"><button class="gb gk" data-g="kpi"><span class="gi">🏆</span><span><b>KPI</b><small>MOMO &amp; TOMO</small></span></button><button class="gb gs" data-g="sales"><span class="gi">💰</span><span><b>SALES</b><small>Halo · IndiHome · ORBIT</small></span></button><button class="gb gv" data-g="svc"><span class="gi">🛎️</span><span><b>SERVICE</b><small>Visit · Waiting · tNPS · Tiket · CAPS</small></span></button></div>
-<div class="tabs" id="tabs"><button class="tab" data-g="kpi" data-p="7">🏆 KPI</button><button class="tab on" data-g="svc" data-p="3">🏬 Visit Jabar</button><button class="tab" data-g="svc" data-p="4">⏱️ Waiting Time</button><button class="tab mt" id="mtn" data-g="svc">📊 tNPS</button><button class="tab hid" data-g="svc" data-p="1">📊 tNPS Mobile</button><button class="tab hid" data-g="svc" data-p="11">📞 tNPS Fixed</button><button class="tab mt" id="mtk" data-g="svc">🎫 Tiket</button><button class="tab hid" data-g="svc" data-p="2">🎫 Tiket Mobile</button><button class="tab hid" data-g="svc" data-p="6">📡 Tiket Fixed</button><button class="tab" data-g="svc" data-p="5">🛡️ CAPS</button></div><div class="subtabs" id="subtabs" style="display:none"><span class="sl" id="sl"></span><button class="tab sb" data-s="m">📱 Mobile</button><button class="tab sb" data-s="f">🏠 Fixed</button></div>
+<div class="tabs" id="tabs"><button class="tab" data-g="kpi" data-p="7">🏆 KPI</button><button class="tab on" data-g="svc" data-p="3">🏬 Visit Jabar</button><button class="tab" data-g="svc" data-p="4">⏱️ Waiting Time</button><button class="tab mt" id="mtn" data-g="svc">📊 tNPS</button><button class="tab hid" data-g="svc" data-p="1">📊 tNPS Mobile</button><button class="tab hid" data-g="svc" data-p="11">📞 tNPS Fixed</button><button class="tab mt" id="mtk" data-g="svc">🎫 Tiket</button><button class="tab hid" data-g="svc" data-p="2">🎫 Tiket Mobile</button><button class="tab hid" data-g="svc" data-p="6">📡 Tiket Fixed</button><button class="tab" data-g="svc" data-p="5">🛡️ CAPS</button><button class="tab" data-g="svc" data-p="13">🧾 Order</button></div><div class="subtabs" id="osub" style="display:none"><span class="sl">Order Type ·</span></div><div class="subtabs" id="subtabs" style="display:none"><span class="sl" id="sl"></span><button class="tab sb" data-s="m">📱 Mobile</button><button class="tab sb" data-s="f">🏠 Fixed</button><button class="tab sb" data-s="u" id="sbu">📞 FU tNPS</button></div>
 <div class="bar">
  <label>Branch Jabar<div class="chips" id="fb"></div></label>
  <label>unit_name<select id="fu"></select></label>
@@ -139,9 +142,10 @@ select#om{font-weight:700;font-size:15px;color:#B00010;background:#FFF0F0;border
 <div id="pg2" style="display:none"><div class="card" id="tk"><div class="hd" style="margin-bottom:10px"><div><h2 style="margin:0"><span class="ic">🎫</span>Report Tiket – Jabar</h2><div class="sub" id="tmeta"></div></div>
 <div style="display:flex;gap:10px;align-items:flex-end;margin-left:auto;flex-wrap:wrap"><label style="display:none">Level top tiket<select id="tl"><option value="5">CASE_TYPE_1 (kategori)</option><option value="6" selected>CASE_TYPE_2 (sub-kategori)</option><option value="7">CASE_TYPE_3 (detail)</option></select></label></div></div>
 <div class="grid" id="tkpi"></div>
+<h2 style="margin-top:6px"><span class="ic">📆</span>Trend Tiket Harian <span id="tdlh">Jabar</span></h2><div id="tdl" style="margin-bottom:10px"></div>
 <h2 style="margin-top:6px"><span class="ic">🗺️</span>Tiket per Jabar (branch)</h2><div class="tw" id="tt1"></div>
 <h2 style="margin-top:16px"><span class="ic">🏢</span>Tiket/Unit</h2><div class="tw" style="max-height:400px" id="tt2"></div>
-<h2 style="margin-top:18px"><span class="ic">📣</span>Tiket LAPUL per Jabar (branch)</h2><p class="note" id="tlpn" style="margin:0 0 8px"></p><div class="tw" id="tlp"></div>
+<h2 style="margin-top:18px"><span class="ic">📣</span>Tiket LAPUL per Jabar (branch)</h2><p class="note" id="tlpn" style="margin:0 0 8px"></p><div class="tw" id="tlp"></div><h2 style="margin-top:14px"><span class="ic">🏢</span>Tiket LAPUL per Unit Creator (GraPARI)</h2><div class="tw" style="max-height:360px" id="tlpu"></div>
 <h2 style="margin-top:18px"><span class="ic">📅</span>Report MoM Tiket</h2>
 <p class="note" style="margin:0 0 8px">Mengikuti filter branch dan unit_name. Kenaikan OSL ditandai merah, penurunan hijau. Perubahan jumlah tiket dan closing ditampilkan netral.</p>
 <h2><span class="ic">📈</span>Trend Tiket/Bulan</h2><div class="tw" id="tmx1" style="display:none"></div><div class="two"><div class="card"><h2><span class="ic">🎫</span>Jumlah Tiket &amp; MoM</h2><div id="tmx1a"></div></div><div class="card"><h2><span class="ic">✅</span>% Closing &amp; MoM</h2><div id="tmx1b"></div></div></div>
@@ -150,8 +154,29 @@ select#om{font-weight:700;font-size:15px;color:#B00010;background:#FFF0F0;border
 <h2 style="margin-top:14px"><span class="ic">🏢</span>MoM per unit_name</h2><div class="tw" style="max-height:420px" id="tmx3"></div>
 <h2 style="margin-top:14px" class="mar"><span class="ic">🔥</span>MoM top tiket</h2><div class="tw mar" id="tmx4" style="max-height:255px"></div>
 <div class="two" style="margin-top:12px"><div><h2><span class="ic">🏆</span>Top 10 Tiket</h2><div class="tw" id="tt3"></div></div><div><h2><span class="ic">🚨</span>Top 10 Tiket OSL</h2><div class="tw" id="tt4"></div></div></div></div></div>
+<div id="pg12" style="display:none"><div class="card"><div class="hd" style="margin-bottom:10px"><div><h2 style="margin:0"><span class="ic">📞</span>Report Follow Up (FU) Detractor tNPS – Jabar</h2><div class="sub" id="fumeta"></div></div>
+<div style="display:flex;gap:10px;align-items:flex-end;margin-left:auto;flex-wrap:wrap"><label style="font-size:12px;color:var(--mu)">Branch<select id="fub"></select></label></div></div>
+<div class="grid" id="fuk"></div>
+<h2 style="margin-top:8px"><span class="ic">🏬</span>Jumlah FU &amp; %Approval per GraPARI</h2><div class="tw" style="max-height:380px" id="fu1"></div>
+<h2 style="margin-top:16px"><span class="ic">⏱️</span>SLA Approval per Branch</h2><p class="note" style="margin:0 0 8px">%SLA = FU dengan status In SLA ÷ FU yang sudah dinilai SLA (In + Out). Lead time dihitung dari tanggal survey → submit FU → approval.</p><div class="tw" id="fu2"></div>
+<h2 style="margin-top:16px"><span class="ic">🧩</span>% Kategori 2 dari Total FU Jabar</h2><div class="tw" id="fu3"></div>
+<h2 style="margin-top:16px"><span class="ic">💬</span>Resume Customer Feedback &amp; Hasil Callback</h2><p class="note" style="margin:0 0 8px">Tema dikelompokkan otomatis dari kata kunci di kolom Customer Feedback dan Callback Notes / Follow Up Notes.</p>
+<div class="two"><div><div class="tw" id="fu4"></div></div><div><div class="tw" id="fu5"></div></div></div>
+<h2 style="margin-top:16px"><span class="ic">📝</span>Detail Notes Pelanggan &amp; Callback</h2><div class="tw" style="max-height:460px" id="fu6"></div>
+</div></div>
+<div id="pg13" style="display:none"><div class="card"><div class="hd" style="margin-bottom:10px"><div><h2 style="margin:0"><span class="ic">🧾</span>Report Order – <span id="orttl">Semua Order Type</span></h2><div class="sub" id="ormeta"></div></div>
+<div style="display:flex;gap:10px;align-items:flex-end;margin-left:auto;flex-wrap:wrap"><select id="orb"></select></div></div>
+<div class="grid" id="ork"></div>
+<h2 style="margin-top:8px"><span class="ic">🗺️</span>Jumlah Order per Branch</h2><div class="tw" id="or1"></div>
+<h2 style="margin-top:16px"><span class="ic">🏬</span>Jumlah Order per GraPARI</h2><div class="tw" style="max-height:400px" id="or2"></div>
+<h2 style="margin-top:16px"><span class="ic">📆</span>Trend Order Harian</h2><div id="or3"></div>
+<h2 style="margin-top:16px"><span class="ic">✅</span>Status Order, RE to PS &amp; %SLA per Order Type</h2><p class="note" style="margin:0 0 8px">%RE to PS = order COMPLETED ÷ total order. %SLA = order COMPLETED dengan durasi RE Ts → Provi Ts ≤ target Kategori Durasi (3 atau 7 hari) ÷ order COMPLETED. Order yang belum selesai ditandai “lewat SLA” jika sejak RE Ts sudah melewati target per data terakhir.</p><div class="tw" id="or4"></div>
+<div class="two" style="margin-top:12px"><div><h2><span class="ic">🔎</span>Detail Process State</h2><div class="tw" style="max-height:360px" id="or5"></div></div><div><h2><span class="ic">⏱️</span>Durasi RE → Provi (order COMPLETED)</h2><div class="tw" id="or6"></div></div></div>
+<h2 style="margin-top:16px"><span class="ic">⚠️</span>Resume Fallout Category</h2><p class="note" style="margin:0 0 8px">Order yang memiliki Fallout Category (pernah fallout), termasuk yang akhirnya COMPLETED. Kolom “Masih fallout” = Process State saat ini FALLOUT.</p><div class="tw" id="or7"></div>
+<h2 style="margin-top:16px"><span class="ic">🧰</span>Top Fallout Reason</h2><div class="tw" style="max-height:420px" id="or8"></div>
+</div></div>
 <div id="pg11" style="display:none"><div class="card"><div class="hd" style="margin-bottom:10px"><div><h2 style="margin:0"><span class="ic">📞</span>Report tNPS Fixed – Jabar (IndiHome)</h2><div class="sub" id="tfmeta"></div></div>
-<div style="display:flex;gap:10px;align-items:flex-end;margin-left:auto;flex-wrap:wrap"><label>Bulan<select id="tfm"></select></label><button class="chip" id="tfr">Reset filter</button></div></div>
+<div style="display:flex;gap:10px;align-items:flex-end;margin-left:auto;flex-wrap:wrap"><button class="chip" id="tfr">Reset filter</button></div></div>
 <div class="grid"><div class="card kpi" id="tfk1"></div><div class="card kpi" id="tfk2"></div></div>
 <h2 style="margin-top:6px"><span class="ic">🗺️</span>Pencapaian %tNPS Total Jabar</h2><div class="tw" id="tf1"></div>
 <h2 style="margin-top:16px"><span class="ic">🧭</span>Pencapaian tNPS / Unit Type</h2><div class="tw" id="tf2"></div>
@@ -168,9 +193,10 @@ select#om{font-weight:700;font-size:15px;color:#B00010;background:#FFF0F0;border
 </div></div>
 <div id="pg6" style="display:none"><div class="card"><div class="hd" style="margin-bottom:10px"><div><h2 style="margin:0"><span class="ic">📡</span>Report Tiket Fixed – Jabar</h2></div></div>
 <div class="grid" id="fkpi"></div>
+<h2 style="margin-top:6px"><span class="ic">📆</span>Trend Tiket Harian <span id="fdlh">Jabar</span></h2><div id="fdl" style="margin-bottom:10px"></div>
 <h2 style="margin-top:6px"><span class="ic">🗺️</span>Tiket by Branch · Trend &amp; MoM</h2><div id="ftb"></div>
 <h2 style="margin-top:16px"><span class="ic">🏢</span>Tiket by GraPARI</h2><div class="tw" style="max-height:310px" id="ft2"></div>
-<h2 style="margin-top:16px"><span class="ic">🛰️</span>GraPARI dengan Tiket Insera</h2><div class="tw" style="max-height:310px" id="ft3"></div><h2 style="margin-top:16px"><span class="ic">🌐</span>GraPARI dengan Tiket GAMAS</h2><div class="tw" style="max-height:310px" id="ft4"></div>
+<div id="fi3"><h2 style="margin-top:16px"><span class="ic">🛰️</span>GraPARI dengan Tiket Insera</h2><div class="tw" style="max-height:310px" id="ft3"></div></div><h2 style="margin-top:16px"><span class="ic">🌐</span>GraPARI dengan Tiket GAMAS <span style="font-size:12px;font-weight:400;color:var(--mu)">(tiket yang di kolom Notes menyebut hashtag atau keterangan GAMAS)</span></h2><div class="tw" style="max-height:310px" id="ft4"></div><h2 style="margin-top:16px"><span class="ic">🔁</span>Tiket LAPUL / GAUL per Unit Creator (GraPARI) <span style="font-size:12px;font-weight:400;color:var(--mu)">(LAPUL = lapor ulang, GAUL = gangguan ulang; dari isian Lapul/Gaul atau keterangan LAPUL/GAUL di kolom Notes)</span></h2><div class="tw" style="max-height:310px" id="ft7"></div>
 <div class="two" style="margin-top:12px"><div><h2><span class="ic">🏆</span>Top 10 Tiket</h2><div class="tw" id="ft5"></div></div><div><h2><span class="ic">🚨</span>Top 10 OSL</h2><div class="tw" id="ft6"></div></div></div></div></div>
 <div id="pg7" style="display:none"><div class="card"><div class="hd" style="margin-bottom:6px"><div><h2 style="margin:0"><span class="ic">🏆</span>Report KPI GraPARI – MOMO &amp; TOMO</h2></div></div>
 <h2 style="margin-top:12px"><span class="ic">🏬</span>KPI MOMO</h2><div class="tw kt" style="max-height:600px" id="kt1"></div>
@@ -217,7 +243,7 @@ select#om{font-weight:700;font-size:15px;color:#B00010;background:#FFF0F0;border
 <p class="note" id="wnote"></p></div></div>
 <div id="pg3" style="display:none">
 <div class="bar" style="margin-top:0"><label>Tipe service<select id="vs"><option value="all">Semua</option><option value="0">Telkomsel (Mobile)</option><option value="1">IndiHome</option></select></label>
-<label>Basis hari kerja (Index)<select id="vk"><option value="aktif">Hari aktif (ada visit)</option><option value="mf">Senin–Jumat</option><option value="ms">Senin–Sabtu</option></select></label>
+<label style="display:none">Basis hari kerja (Index)<select id="vk"><option value="aktif">Hari aktif (ada visit)</option><option value="mf">Senin–Jumat</option><option value="ms">Senin–Sabtu</option></select></label>
 </div>
 <div class="grid" id="vkpi"></div>
 <div class="card"><div class="hd" style="margin-bottom:8px"><h2 style="margin:0"><span class="ic">📈</span>Tren visit harian</h2><label>Tampilkan per<select id="vd"><option value="br">Branch</option><option value="un">GraPARI</option><option value="csr">CSR (NIK)</option></select></label></div>
