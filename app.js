@@ -26,10 +26,10 @@ function table(id,rows,cols,onclick,selKey){
   EX[id]={rows,cols};addXb(id);
   const [sk,sd]=st.sort[id]||['n',-1];
   rows.sort((x,y)=>{const a=x[sk],b=y[sk];if(typeof a=='string')return sd*a.localeCompare(b);return sd*((a??-1e9)-(b??-1e9))});
-  let h='<table><thead><tr>'+cols.map(c=>`<th data-k="${c[1]}">${c[0]}${sk==c[1]?(sd>0?' ▲':' ▼'):''}</th>`).join('')+'</tr></thead><tbody>';
+  let h='<table><thead><tr>'+cols.map(c=>`<th data-k="${c[1]}"${sk==c[1]?' data-s="1"':''} title="Klik untuk urutkan tertinggi ↔ terendah">${c[0]}${sk==c[1]?(sd>0?' ▲':' ▼'):''}</th>`).join('')+'</tr></thead><tbody>';
   for(const r of rows)h+=`<tr class="${onclick?'cl ':''}${selKey&&r.key==selKey?'sel':''}" data-key="${String(r.key).replace(/"/g,'&quot;')}">${r.html}</tr>`;
   $(id).innerHTML=h+'</tbody></table>';
-  $(id).querySelectorAll('th').forEach(th=>th.onclick=()=>{const k=th.dataset.k;const cur=st.sort[id];st.sort[id]=[k,cur[0]==k?-cur[1]:(k=='name'?1:-1)];render()});
+  $(id).querySelectorAll('th').forEach(th=>th.onclick=e=>{e.stopPropagation();const k=th.dataset.k;const cur=st.sort[id]||['n',-1];st.sort[id]=[k,cur[0]==k?-cur[1]:(k=='name'||k=='br'?1:-1)];table(id,rows,cols,onclick,selKey)});
   if(onclick)$(id).querySelectorAll('tr.cl').forEach(tr=>tr.onclick=()=>onclick(tr.dataset.key));
 }
 function kpi(el,title,a,o,sub){
@@ -71,7 +71,8 @@ async function exportXlsx(){
  if(mhp()){sum.push(k('tNPS Mobile Jabar - '+pml(),b0),k('tNPS '+CSL()+' - '+pml(),b0.filter(inCS)),['MoM tNPS Mobile','','','','',rd(dv(ag(b1).nps,ag(b0).nps))],['MoM tNPS Customer Service','','','','',rd(dv(ag(b1.filter(inCS)).nps,ag(b0.filter(inCS)).nps))])}
  add('Ringkasan',sum);
  [['t1','Per Jabar'],['t2','Per unit_name'],['cc0','%Category All'],['cc1','%Category Promotor'],['cc2','%Category Detractor'],['cc3','%Category Passive'],['nw','What Went Well'],['nx','What Went Wrong'],['t4','Per CSR respon CS']].forEach(([id,n])=>{const e=EX[id];if(e)add(n,[e.cols.map(c=>c[0]),...e.rows.map(r=>e.cols.map(c=>rd(r[c[1]])))])});
- add('Data respon',[['Bulan','Jabar (branch)','unit_name','NIK','Nama CSR','Job Function','Skor q5','Kategori tNPS','q6_part1'],...sc.map(r=>{const s=S[r[2]];return[MN[r[6]],r[0],r[1],r[2],s?s[0]:'',s?s[1]:'',r[3],['Promotor','Passive','Detractor'][cls(r[3])],CATS[r[5]]]})]);
+ if(!D._x&&D.x){D.rows.forEach((r,i)=>r.x=D.x[i]);D._x=1}
+ add('Data respon',[['Bulan','Tanggal survey','MSISDN','id_trx','Jabar (branch)','unit_name','NIK','Nama CSR','Job Function','Skor q5','Kategori tNPS','Respon Customer Service','q6_part1','Komentar pelanggan'],...sc.map(r=>{const s=S[r[2]],x=r.x||['','','',''];return[MN[r[6]],x[2],x[0],x[1],r[0],r[1],r[2],s?s[0]:'',s?s[1]:'',r[3],['Promotor','Passive','Detractor'][cls(r[3])],r[4]==0?'Ya':'Tidak',CATS[r[5]],x[3]]})]);
  const tag=st.m=='all'?'Agu-Okt':MN[st.m].split(' ')[0];
  const out=XLSX.write(wb,{bookType:'xlsx',type:'array'});
  await saveFile('tNPS_Jabar_'+tag+'.xlsx',new Blob([out],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
@@ -479,15 +480,16 @@ function vchart(tr){
  s+='</svg>';
  return s+`<div class="lg" style="margin:6px 0 4px">${rows.map((o,j)=>`<span><span class="dot" style="background:${VCOL[j%VCOL.length]}"></span><b>${o.name}</b> (${o.n})</span>`).join('')}</div>`}
 function vcmp(){
- const b=V.rows.filter(r=>vf(r,st.b,st.u)),ms=V.m.map((m,i)=>{let t=0,h=0;for(const r of b)if(V.mo[r[0]]==i){if(r[3]==0)t+=r[4];else h+=r[4]}return{m:i==VLM&&VPART?`${m} (1–${vlast()})`:m,i,t,h}});
- const W=900,H=250,L=54,RR=14,T0=22,B=34,pw=W-L-RR,ph=H-T0-B,gw=pw/ms.length,bw=gw*.27,ys=vnice(Math.max(1,...ms.map(x=>Math.max(x.t,x.h)))),Y=v=>T0+ph-ph*v/ys,C0='#F2A58A',C1='#7FB6D9',nf=v=>v.toLocaleString('id-ID');
+ const b=V.rows.filter(r=>vf(r,st.b,st.u)),ms=V.m.map((m,i)=>{let t=0,h=0,pt=0,ph_=0;const cut=i==VLM&&VPART;for(const r of b){const mo=V.mo[r[0]];if(mo==i){if(r[3]==0)t+=r[4];else h+=r[4]}else if(i>0&&mo==i-1&&(!cut||r[0]-V.ms[i-1]<=VCUT)){if(r[3]==0)pt+=r[4];else ph_+=r[4]}}return{m:i==VLM&&VPART?`${m} (1–${vlast()})`:m,i,t,h,pt,ph:ph_,pl:cut?`${V.m[i-1]} 1–${vlast()}`:V.m[i-1]}});
+ const W=900,H=292,L=54,RR=14,T0=22,B=76,pw=W-L-RR,ph=H-T0-B,gw=pw/ms.length,bw=gw*.27,ys=vnice(Math.max(1,...ms.map(x=>Math.max(x.t,x.h)))),Y=v=>T0+ph-ph*v/ys,C0='#F2A58A',C1='#7FB6D9',nf=v=>v.toLocaleString('id-ID');
  let s=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;min-width:560px;color:var(--tx);display:block" role="img" aria-label="Perbandingan visit Telkomsel dan IndiHome per bulan">`;
  for(let k=0;k<=4;k++){const v=ys*k/4,y=Y(v);s+=`<line x1="${L}" x2="${W-RR}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}" stroke="currentColor" opacity=".12"/><text x="${L-6}" y="${(y+4).toFixed(1)}" text-anchor="end" font-size="11" fill="currentColor" opacity=".65">${nf(Math.round(v))}</text>`}
  ms.forEach((x,i)=>{const cx=L+gw*i+gw/2,tot=x.t+x.h;
   if(st.vm==x.i)s+=`<rect x="${(cx-gw/2+4).toFixed(1)}" y="${T0-8}" width="${(gw-8).toFixed(1)}" height="${ph+8}" rx="6" fill="currentColor" opacity=".06"/>`;
   [[x.t,cx-bw-2,C0,'Telkomsel (Mobile)'],[x.h,cx+2,C1,'IndiHome']].forEach(([v,bx,c,nm])=>{const y=Y(v);s+=`<rect x="${bx.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${(T0+ph-y).toFixed(1)}" rx="3" fill="${c}"><title>${x.m} · ${nm}: ${nf(v)} visit</title></rect><text x="${(bx+bw/2).toFixed(1)}" y="${(y-5).toFixed(1)}" text-anchor="middle" font-size="11" font-weight="600" fill="currentColor">${nf(v)}</text>${(T0+ph-y)>22&&tot?`<text x="${(bx+bw/2).toFixed(1)}" y="${(y+17).toFixed(1)}" text-anchor="middle" font-size="12" font-weight="700" fill="#1F2340">${(v/tot*100).toFixed(1)}%</text>`:''}`});
-  s+=`<text x="${cx.toFixed(1)}" y="${H-10}" text-anchor="middle" font-size="12" font-weight="600" fill="currentColor">${x.m}</text>`});
- return`<div class="card" style="grid-column:1/-1"><h2><span class="ic">📱</span>Perbandingan Visit Telkomsel (Mobile) vs IndiHome per bulan</h2><div class="tw">${s}</svg></div><div class="lg" style="margin-top:6px"><span><span class="dot" style="background:${C0}"></span>Telkomsel (Mobile)</span><span><span class="dot" style="background:${C1}"></span>IndiHome</span></div></div>`}
+  const mm=(c,p)=>p?((c-p)/p*100):null,mt=(v,big)=>v==null?'<tspan opacity=".55">–</tspan>':`<tspan fill="${v>=0?'#2E7D32':'#C0392B'}" font-weight="700">${v>=0?'▲ +':'▼ '}${v.toFixed(1)}%</tspan>`,mT=mm(tot,x.pt+x.ph);
+  s+=`<text x="${cx.toFixed(1)}" y="${T0+ph+18}" text-anchor="middle" font-size="12" font-weight="600" fill="currentColor">${x.m}</text><text x="${cx.toFixed(1)}" y="${T0+ph+35}" text-anchor="middle" font-size="11.5" fill="currentColor">${nf(tot)} · MoM ${mt(mT)}<title>${x.i?`vs ${x.pl}: ${nf(x.pt+x.ph)} visit`:'Tidak ada bulan pembanding'}</title></text><text x="${cx.toFixed(1)}" y="${T0+ph+51}" text-anchor="middle" font-size="10.5" fill="currentColor" opacity=".85">Tsel ${mt(mm(x.t,x.pt))} · IH ${mt(mm(x.h,x.ph))}</text>${x.i&&i==ms.length-1&&VPART?`<text x="${cx.toFixed(1)}" y="${T0+ph+66}" text-anchor="middle" font-size="10" fill="currentColor" opacity=".6">vs ${x.pl}</text>`:''}`});
+ return`<div class="card" style="grid-column:1/-1"><h2><span class="ic">📱</span>Perbandingan Visit Telkomsel (Mobile) vs IndiHome per bulan &amp; MoM</h2><div class="tw">${s}</svg></div><div class="lg" style="margin-top:6px"><span><span class="dot" style="background:${C0}"></span>Telkomsel (Mobile)</span><span><span class="dot" style="background:${C1}"></span>IndiHome</span></div></div>`}
 function vtot(t){if(!t.total)return;EX.vt1.rows.push(t.total);const tb=$('vt1').querySelector('tbody');if(tb)tb.insertAdjacentHTML('beforeend',`<tr style="font-weight:700;border-top:2px solid var(--bd)">${t.total.html}</tr>`)}
 function renderV(){
  const K=vK(),hp=vhp(),b=vbase(),a=va(b.filter(vcur)),o=hp?va(b.filter(vprv)):null;
@@ -495,12 +497,13 @@ function renderV(){
  const idx=ha&&a.csr?a.iv/a.csr/ha:null,pidx=o&&hb&&o.csr?o.iv/o.csr/hb:null,as=a.n?a.s/a.n:null,aw=a.n?a.w/a.n:null,pas=o&&o.n?o.s/o.n:null,paw=o&&o.n?o.w/o.n:null;
  const per=vlbl(),pm=hp?vpl():'';
  const nt=(pv,mo)=>hp?`${pm}: ${pv} · MoM ${mo}`:(st.vm=='all'?'Gabungan semua bulan, tanpa pembanding':'Bulan pertama data, tanpa pembanding');
- const kc=(t,v,s)=>`<div class="card kpi"><div class="t">${t} · ${per}</div><div class="v">${v}</div><div class="note">${s}</div></div>`;
+ const mb=m=>m==null||isNaN(m)?'':`<span style="display:inline-block;vertical-align:middle;margin-left:10px;padding:3px 10px;border-radius:999px;font-size:15px;font-weight:800;background:${m>=0?'#E3F4E8':'#FDE7E7'};color:${m>=0?'#1E7B3C':'#C0392B'}">${m>=0?'▲ +':'▼ '}${Math.abs(m)<0.05?'0.0':m.toFixed(1)}% <span style="font-size:11px;font-weight:700;opacity:.8">MoM</span></span>`;
+ const kc=(t,v,s,m)=>`<div class="card kpi"><div class="t">${t} · ${per}</div><div class="v">${v}${mb(m)}</div><div class="note">${s}</div></div>`;
  const sn=st.vs=='all'?'Total':SVN[st.vs];
- $('vkpi').innerHTML=kc('👥 Visit '+sn,a.n.toLocaleString('id-ID'),nt(o?o.n.toLocaleString('id-ID'):'',fp(o?vp(a.n,o.n):null)))
-  +kc('📱 Visit Telkomsel (Mobile)',a.m0.toLocaleString('id-ID'),nt(o?o.m0.toLocaleString('id-ID'):'',fp(o?vp(a.m0,o.m0):null)))
-  +kc('🏠 Visit IndiHome',a.m1.toLocaleString('id-ID'),nt(o?o.m1.toLocaleString('id-ID'):'',fp(o?vp(a.m1,o.m1):null)))
-  +kc('📈 Index Visit / CSR / Hari Kerja',fx1(idx),nt(fx1(pidx),fpg(o?vp(idx,pidx):null)))
+ $('vkpi').innerHTML=kc('👥 Visit '+sn,a.n.toLocaleString('id-ID'),nt(o?o.n.toLocaleString('id-ID'):'',fp(o?vp(a.n,o.n):null)),o?vp(a.n,o.n):null)
+  +kc('📱 Visit Telkomsel (Mobile)',a.m0.toLocaleString('id-ID'),nt(o?o.m0.toLocaleString('id-ID'):'',fp(o?vp(a.m0,o.m0):null)),o?vp(a.m0,o.m0):null)
+  +kc('🏠 Visit IndiHome',a.m1.toLocaleString('id-ID'),nt(o?o.m1.toLocaleString('id-ID'):'',fp(o?vp(a.m1,o.m1):null)),o?vp(a.m1,o.m1):null)
+  +kc('📈 Index Visit / CSR / Hari Kerja',fx1(idx),nt(fx1(pidx),fpg(o?vp(idx,pidx):null)),o?vp(idx,pidx):null)
   +vcmp();
  const t1=vbuild('vt1'),t2=vbuild('vt2'),t3=vbuild('vt3'),tr=vtrend(st.vd);
  table('vt1',t1.rows,t1.cols,k=>{st.b=st.b==k?'ALL':k;sync();render()},st.b);vtot(t1);
@@ -513,7 +516,7 @@ function renderV(){
  $('vnote').textContent='';
 }
 $('vm').innerHTML=[['0','Juli'],['1','Agustus'],['2','September'],['3','Oktober'],['4','November'+(VPART?` (1–${vlast()} Nov, parsial)`:'')],['all','All Month']].map(x=>`<option value="${x[0]}">${x[1]}</option>`).join('');
-$('vm').onchange=e=>{const v=e.target.value;st.vm=v=='all'?'all':+v;renderV()};
+$('vm').onchange=e=>{const v=e.target.value;st.vm=v=='all'?'all':+v;renderV();if(window.dmSync)dmSync()};
 $('vs').onchange=e=>{st.vs=e.target.value=='all'?'all':+e.target.value;renderV()};
 $('vk').onchange=e=>{st.vk=e.target.value;renderV()};
 
@@ -957,7 +960,7 @@ $('xl').onclick=()=>st.p==11?exportTF():st.p==10?exportOrbit():st.p==9?exportInd
 /* ===== tNPS Fixed module ===== */
 st.fm=2;st.fb='ALL';st.fu='ALL';st.fn='ALL';st.fj='ALL';
 Object.assign(st.sort,{tf6:['nps',-1],tf1:['ord',1],tf2:['n',-1],tf3:['n',-1],tf4:['n',-1],tf5:['n',-1]});
-const TFCUT=TF.m.map((x,i)=>{const d=Math.max(0,...TF.rows.filter(r=>r[4]==i).map(r=>r[10]));return d<ML[i]?d:99});
+const TFCUT=TF.m.map((x,i)=>{const d=Math.max(0,...TF.rows.filter(r=>r[4]==i).map(r=>r[10]));return i==TF.m.length-1&&d<ML[i]?d:99});
 const tfC=r=>r[4]==st.fm,tfP=r=>st.fm>0&&r[4]==st.fm-1&&r[10]<=TFCUT[st.fm];
 const TFIG=TF.ut.indexOf('GraPARI');
 function tfBase(skip){return TF.rows.filter(r=>(skip=='br'||st.fb=='ALL'||TF.br[r[0]]==st.fb)&&(skip=='ut'||st.fu=='ALL'||TF.ut[r[1]]==st.fu)&&(skip=='un'||st.fn=='ALL'||TF.un[r[2]]==st.fn)&&(skip=='jr'||st.fj=='ALL'||TF.jr[r[5]]==st.fj))}
@@ -1044,6 +1047,15 @@ function tfCSR(){
  table('tf6',rows,[['Nama CSR','name'],['GraPARI','unit'],['Branch','br'],...TFC],()=>{});
  tfCap('tf6',5);
  $('tf6n').textContent=`Hanya CSR dengan minimal ${MN} respon di bulan ${TF.m[st.fm]}; ${rows.length} CSR. Tampil 5 teratas, scroll ke bawah untuk selebihnya. Klik judul kolom untuk mengurutkan.`}
+function tfDV(){
+ if(!TF._x&&TF.x){TF.rows.forEach((r,i)=>r.x=TF.x[i]);TF._x=1}
+ const esc=t=>String(t||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+ const rs=tfBase().filter(r=>r[4]==st.fm&&r[1]==TFIG&&r[3]<=6).map(r=>{const t=(r.x&&r.x[3])||r[8]||'';return{r,t:t.trim()}}).filter(o=>o.t.length>=3&&!/^(nan|-|\.)$/i.test(o.t)).sort((a,b)=>a.r[3]-b.r[3]||((b.r.x||[])[2]||'').localeCompare((a.r.x||[])[2]||''));
+ const all=tfBase().filter(r=>r[4]==st.fm&&r[1]==TFIG&&r[3]<=6).length,wc=rs.filter(o=>o.r[9]>=0).length;
+ $('tfdvn').innerHTML=`${rs.length} dari ${all} detractor unit GraPARI (skor 0–6) pada ${TF.m[st.fm]} menuliskan komentar · ${wc} di antaranya tercatat nama CSR-nya. Diurutkan dari skor terendah.`;
+ if(!rs.length){$('tfdv').innerHTML='<p class="note">Tidak ada detractor GraPARI dengan freetext pada pilihan ini.</p>';return}
+ $('tfdv').innerHTML='<table><tr><th>Tgl survey</th><th>GraPARI</th><th>Branch</th><th>Nama CSR</th><th>Journey</th><th>Skor</th><th>Kategori Q6</th><th style="min-width:340px">Freetext pelanggan</th></tr>'+rs.map(({r,t})=>{const nk=r[9]>=0?TF.cs[r[9]]:'',sv=nk&&D.siad[nk],d=(r.x&&r.x[2])||'';
+  return`<tr><td style="white-space:nowrap">${d?d.slice(8,10)+'/'+d.slice(5,7):r[10]+' '+TF.m[r[4]].slice(0,3)}</td><td style="text-align:left;font-weight:700">${r[2]>=0?TF.un[r[2]]:'(unit tidak terpetakan)'}</td><td>${TF.br[r[0]]}</td><td style="text-align:left">${sv?esc(sv[0]):nk?nk:'<span style="color:var(--mu)">–</span>'}</td><td style="text-align:left">${esc(TF.jr[r[5]])}</td><td><b style="color:#C0392B">${r[3]}</b></td><td style="text-align:left">${esc(TF.rs[r[6]])}</td><td style="text-align:left;white-space:normal">${esc(t)}</td></tr>`}).join('')+'</table>';}
 function renderTF(){
  const hp=st.fm>0,pl=tfpm(),per=TF.m[st.fm],b=tfBase(),cur=b.filter(tfC),A=ag(cur),O=ag(b.filter(tfP));
  const gb=b.filter(r=>r[1]==TFIG),GA=ag(gb.filter(tfC)),GO=ag(gb.filter(tfP));
@@ -1059,9 +1071,9 @@ function renderTF(){
  tfTbl('tf4','un',r=>r[2]>=0?TF.un[r[2]]:null,'unit_name (GraPARI)',st.fn,k=>tfSet('fn',k),g=>TF.br[g[0][0]]);tfCap('tf4',10);
  tfTbl('tf5','jr',r=>TF.jr[r[5]],'Journey',st.fj,k=>tfSet('fj',k));
  tfBars('tfc1',cur,0);tfBars('tfc2',cur,2);tfCSR(cur);
- tfww('tfnw','p');tfww('tfnx','d');
+ tfww('tfnw','p');tfww('tfnx','d');tfDV();
 }
-$('tfm').innerHTML=TF.m.map((m,i)=>`<option value="${i}">${['Agustus','September','Oktober ('+TF.m[2].replace(/.*\((.*)\)/,'$1')+')'][i]||m}</option>`).join('');
+$('tfm').innerHTML=TF.m.map((m,i)=>`<option value="${i}">${['Agustus','September','Oktober','November'][i]}${/\(/.test(m)?' ('+m.replace(/.*\((.*)\)/,'$1')+' '+m.slice(0,3)+', parsial)':''}</option>`).join('');
 $('tfm').onchange=e=>{st.fm=+e.target.value;renderTF()};
 $('tfr').onclick=()=>{st.fb='ALL';st.fu='ALL';st.fn='ALL';st.fj='ALL';renderTF()};
 async function exportTF(){
@@ -1072,6 +1084,8 @@ async function exportTF(){
  [['tf1','Total Jabar per bulan'],['tf2','Unit Type'],['tf3','Branch'],['tf4','unit_name'],['tf5','Journey'],['tfc1','Top Kategori Promotor'],['tfc2','Top Kategori Detractor'],['tf6','Top tNPS per CSR'],['tfnw','Tema Promotor GraPARI'],['tfnx','Tema Detractor GraPARI']].forEach(([id,n])=>{const e=EX[id];if(e)add(n,[e.cols.map(c=>c[0]),...e.rows.map(r=>e.cols.map(c=>rd(r[c[1]])))])});
  const kom=TF.rows.filter(r=>r[1]==TFIG&&r[4]==st.fm&&r[8]).map(r=>[TF.m[r[4]],TF.br[r[0]],TF.un[r[2]],TF.jr[r[5]],r[3],cls(r[3])==0?'Promotor':'Detractor',TF.rs[r[6]],(cls(r[3])==0?TFPT:TFDT)[r[7]]?.[0]||'',r[8]]);
  add('Komentar GraPARI',[['Bulan','Branch','GraPARI','Journey','Skor','Kelas','Kategori Q6','Tema','Komentar'],...kom]);
+ if(!TF._x&&TF.x){TF.rows.forEach((r,i)=>r.x=TF.x[i]);TF._x=1}
+ add('Data respon',[['Bulan','Tanggal survey','MSISDN / No. Internet','id_trx','Branch','Unit Type','unit_name','Journey','Skor','Kelas','Kategori Q6','Komentar pelanggan','NIK CSR','Nama CSR'],...tfBase().filter(r=>r[4]==st.fm).map(r=>{const x=r.x||['','','',''],nk=r[9]>=0?TF.cs[r[9]]:'',sv=nk&&D.siad[nk];return[TF.m[r[4]],x[2],x[0],x[1],TF.br[r[0]],TF.ut[r[1]],r[2]>=0?TF.un[r[2]]:'',TF.jr[r[5]],r[3],['Promotor','Passive','Detractor'][cls(r[3])],TF.rs[r[6]],x[3],nk,sv?sv[0]:'']})]);
  await saveFile('tNPS_Fixed_Jabar_'+TF.m[st.fm].replace(/[^\w]+/g,'_')+'.xlsx',xlsxBlob(wb));
 }
 
@@ -1126,21 +1140,38 @@ async function exportFU(){const wb=XLSX.utils.book_new(),cur=fucur();
 
 
 /* ===== ORDER module ===== */
-st.ot='all';st.ob='ALL';
+st.ot='all';st.ob='ALL';st.ou='ALL';
 const OGN=['Completed (PS)','Fallout','Cancel','In progress'],OGC=['#6C63D9','#E8912D','#C0392B','#7FB6D9'];
 function oa(rs){const n=rs.length,g=[0,0,0,0];let i=0,o=0,h=0,hn=0,ov=0,op=0,fo=0,pv3=0,fv3=0;
  for(const r of rs){g[r[5]]++;if(r[8]==1)i++;else if(r[8]==0)o++;else if(r[8]==3){ov++;if(r[5]==3)pv3++;else fv3++}else if(r[8]==2&&r[5]==3)op++;if(r[9]!=null){h+=r[9];hn++}if(r[6]>=0)fo++}
  return{n,pv3,fv3,c:g[0],f:g[1],x:g[2],p:g[3],rp:n?g[0]/n*100:null,i,o,sl:i+o?i/(i+o)*100:null,ov,op,ah:hn?h/hn:null,fo}}
 const ofh=h=>h==null?'–':h<1?Math.round(h*60)+' mnt':h<48?h.toFixed(1)+' jam':(h/24).toFixed(1)+' hari';
 const ofp=v=>v==null?'–':v.toFixed(1)+'%';
-function obase(){return ORD.rows.filter(r=>(st.ob=='ALL'||ORD.br[r[1]]==st.ob))}
-function ocur(){return obase().filter(r=>st.ot=='all'||r[0]==st.ot)}
+function obase(skipU){const ui=st.ou=='ALL'?-1:ORD.u.indexOf(st.ou);return ORD.rows.filter(r=>(st.ob=='ALL'||ORD.br[r[1]]==st.ob)&&(skipU||st.ou=='ALL'||r[2]==ui))}
+function ocur(skipU){return obase(skipU).filter(r=>st.ot=='all'||r[0]==st.ot)}
 function orSub(){const el=$('osub'),cnt=ORD.ty.map((_,i)=>ORD.rows.filter(r=>r[0]==i).length);
  el.innerHTML='<span class="sl">Order Type ·</span>'+[['all','Semua',ORD.rows.length],...ORD.ty.map((t,i)=>[i,t,cnt[i]])].map(([k,l,n])=>`<button class="tab sb${String(st.ot)==String(k)?' on':''}" data-o="${k}">${l} <span style="font-weight:500;opacity:.7">(${n})</span></button>`).join('');
  el.querySelectorAll('.sb').forEach(b=>b.onclick=()=>{const v=b.dataset.o;st.ot=v=='all'?'all':+v;renderOR()})}
+
+function orAO(cur){
+ const el=$('orao'),ao=ORD.ty.indexOf('AO');if(st.ot!==ao||!ORD.tg){el.innerHTML='';return ''}
+ const pr=ORD.d1/30,units=Object.keys(ORD.tg).filter(u=>(st.ob=='ALL'||ORD.tgb[u]==st.ob)&&(st.ou=='ALL'||u==st.ou));
+ const rows=units.map(u=>{const ui=ORD.u.indexOf(u),rs=ui<0?[]:cur.filter(r=>r[2]==ui),ps=rs.filter(r=>r[5]==0).length,t=ORD.tg[u],tm=t*pr;
+  return{key:u,name:u,br:ORD.tgb[u],t,tm,n:rs.length,ps,a:t?ps/t*100:null,am:tm?ps/tm*100:null,gap:ps-Math.round(tm),html:''}});
+ rows.forEach(x=>x.html=`<td>${x.name}</td><td style="text-align:left">${x.br}</td><td>${fi(x.t)}</td><td>${x.tm.toFixed(1)}</td><td>${fi(x.n)}</td><td><b>${fi(x.ps)}</b></td><td><b style="color:${x.a>=x.tm/x.t*100?'#2E7D32':'#C0392B'}">${ofp(x.a)}</b></td><td><b style="color:${x.am>=100?'#2E7D32':'#C0392B'}">${ofp(x.am)}</b></td><td style="color:${x.gap>=0?'#2E7D32':'#C0392B'}">${x.gap>=0?'+':''}${x.gap}</td>`);
+ const T=rows.reduce((a,x)=>a+x.t,0),P=rows.reduce((a,x)=>a+x.ps,0),N=rows.reduce((a,x)=>a+x.n,0),TM=T*pr;
+ // CSR
+ const sd=D.siad||{},cs=[...group(cur,r=>r[14])].map(([k,rs])=>{const nik=ORD.nik[k],sv=sd[nik],x=oa(rs),uu=[...group(rs,r=>r[2])].sort((p,q)=>q[1].length-p[1].length)[0][0];
+  return{key:nik||'-',name:sv?sv[0]:'(tidak ada di SIAD)',nik:nik||'-',job:sv?sv[1]:'',gp:sv&&sv[4]?sv[4]:ORD.u[uu],...x,html:`<td>${nik||'–'}</td><td style="text-align:left;font-weight:700">${sv?sv[0]:'<span style="color:var(--mu)">(tidak ada di SIAD)</span>'}</td><td style="text-align:left">${sv?sv[1].replace(/_/g,' '):''}</td><td style="text-align:left">${sv&&sv[4]?sv[4]:ORD.u[uu]}</td><td><b>${x.n}</b></td><td>${x.c}</td><td><b>${ofp(x.rp)}</b></td><td>${ofh(x.ah)}</td>`}});
+ const sdc=cs.filter(x=>x.job).length;
+ el.innerHTML=`<h2 style="margin-top:16px"><span class="ic">🧑‍💼</span>Performansi/CSR</h2><p class="note" style="margin:0 0 8px">Order AO per CSR berdasarkan NIK pembuat order, nama &amp; GraPARI dari data SIAD · ${cs.length} CSR (${sdc} tercocokkan SIAD) · ditampilkan 10 teratas, gulir untuk melihat lainnya.</p><div class="tw" style="max-height:432px" id="orao2"></div>`;
+ st.sort.orao2=st.sort.orao2||['n',-1];table('orao2',cs,[['NIK','nik'],['Nama CSR','name'],['Job Function','job'],['GraPARI','gp'],['Total AO','n'],['PS','c'],['%RE to PS','rp'],['Rata-rata Provi Time','ah']],null,null);
+ return{T,P,TM};
+}
 function renderOR(){
  orSub();const cur=ocur(),a=oa(cur),tl=st.ot=='all'?'Semua Order Type':'Order Type '+ORD.ty[st.ot];
- $('orttl').textContent=tl+(st.ob!='ALL'?' · '+st.ob:'');
+ $('orttl').textContent=tl+(st.ou!='ALL'?' · '+st.ou:st.ob!='ALL'?' · '+st.ob:'');
+ $('orfl').innerHTML=st.ou!='ALL'?`<div class="note" style="margin:0 0 10px;padding:8px 12px;border-radius:8px;background:#FDF0E3;color:#7A4A12">Filter GraPARI aktif: <b>${st.ou}</b> – semua angka, chart dan tabel di bawah hanya untuk GraPARI ini. <a href="#" onclick="st.ou='ALL';renderOR();return false" style="color:#B5541C;font-weight:700">Tampilkan semua GraPARI</a></div>`:'';
  $('ormeta').textContent=`Sumber: Order.xlsx · order ${ORD.d0}–${ORD.d1} Nov 2026 · data per ${ORD.cut} · ${a.n} order`;
  const per=`Nov (${ORD.d0}–${ORD.d1})`,kc=(t,v,sub,c)=>`<div class="card kpi" style="border-left-color:${c}"><div class="t">${t} · ${per}</div><div class="v">${v}</div><div class="note">${sub}</div></div>`;
  $('ork').innerHTML=kc('🧾 Total Order',fi(a.n),`MOMO ${fi(cur.filter(r=>r[10]==0).length)} · TOMO ${fi(cur.filter(r=>r[10]==1).length)}`,'var(--k1)')
@@ -1149,12 +1180,16 @@ function renderOR(){
   +kc('⚠️ Fallout',fi(a.f),`Masih fallout saat ini (${a.fv3} sudah lewat SLA) · pernah fallout ${fi(a.fo)} order`,'#E8912D')
   +kc('🚫 Cancel',fi(a.x),`${ofp(a.n?a.x/a.n*100:null)} dari total order`,'#C0392B')
   +kc('🔄 In progress',fi(a.p),`Sudah lewat SLA ${a.pv3} · masih dalam SLA ${a.op}`,'#7FB6D9');
- const mkRow=(k,rs,extra)=>{const x=oa(rs);return{key:k,name:k,...x,...(extra||{}),html:(extra&&extra.brh||'')+`<td><b>${fi(x.n)}</b></td><td>${fi(x.c)}</td><td><b>${ofp(x.rp)}</b></td><td>${x.f}</td><td>${x.x}</td><td>${x.p}</td><td>${x.i}</td><td style="color:${x.o?'#C0392B':'inherit'}">${x.o}</td><td><b>${ofp(x.sl)}</b></td><td>${ofh(x.ah)}</td>`}};
- const CO=[['Total order','n'],['Completed','c'],['%RE to PS','rp'],['Fallout','f'],['Cancel','x'],['In progress','p'],['In SLA','i'],['Out SLA','o'],['%SLA','sl'],['Rata-rata RE→Provi','ah']];
- const br=ORD.br.map((b,i)=>mkRow(b,cur.filter(r=>r[1]==i),{brh:`<td>${b}</td>`})).filter(x=>x.n);
- $('or1').innerHTML='<table><tr><th>Branch</th>'+CO.map(c=>`<th>${c[0]}</th>`).join('')+'</tr>'+br.map(x=>`<tr>${x.html}</tr>`).join('')+`<tr style="font-weight:700;background:var(--sf)">${mkRow('Jabar',cur,{brh:`<td>${st.ob=='ALL'?'Jabar':'Total'}</td>`}).html}</tr></table>`;
- const gu=[...group(cur,r=>ORD.u[r[2]])].map(([u,rs])=>mkRow(u,rs,{br:ORD.br[rs[0][1]],brh:`<td>${u}</td><td style="text-align:left">${ORD.br[rs[0][1]]}</td>`}));
- st.sort.or2=st.sort.or2||['n',-1];table('or2',gu,[['GraPARI','name'],['Branch','br'],...CO],null,null);
+ const isAO=st.ot===ORD.ty.indexOf('AO')&&!!ORD.tg,tgB=b=>Object.keys(ORD.tg||{}).filter(u=>ORD.tgb[u]==b&&(st.ou=='ALL'||u==st.ou)).reduce((a,u)=>a+ORD.tg[u],0),tgAll=()=>ORD.br.filter(b=>st.ob=='ALL'||b==st.ob).reduce((a,b)=>a+tgB(b),0);
+ const mkRow=(k,rs,t,extra)=>{const x=oa(rs),ac=isAO&&t?x.c/t*100:null;return{key:k,name:k,...x,t:isAO?t:null,ac,...(extra||{}),html:(extra&&extra.brh||'')+`<td>${isAO?fi(t):'–'}</td><td><b>${fi(x.n)}</b></td><td>${fi(x.c)}</td><td><b>${ofp(x.rp)}</b></td><td><b style="color:${ac==null?'inherit':ac>=ORD.d1/30*100?'#2E7D32':'#C0392B'}">${ofp(ac)}</b></td><td>${ofh(x.ah)}</td>`}};
+ const CO=[['Target','t'],['Total Order','n'],['PS','c'],['%RE to PS','rp'],['%Acv','ac'],['Rata-rata Provi Time','ah']];
+ const br=ORD.br.filter(b=>st.ob=='ALL'||b==st.ob).map(b=>mkRow(b,cur.filter(r=>ORD.br[r[1]]==b),tgB(b),{brh:`<td>${b}</td>`})).filter(x=>x.n||x.t);
+ {const g=orAO(cur);if(g){$('ork').innerHTML+=kc('🎯 Acv to target',ofp(g.T?g.P/g.T*100:null),`AO COMPLETED (PS) ${fi(g.P)} ÷ target Nov ${fi(g.T)}`,'#2E9E6B')}}
+ $('or1n').innerHTML=isAO?`Target = target AO November per GraPARI (dijumlahkan per branch). %Acv = PS ÷ target bulan; warna hijau = sudah sesuai laju target s.d. ${ORD.d1} Nov (${(ORD.d1/30*100).toFixed(1)}% dari target). Rata-rata Provi Time = RE Ts → Provi Ts order COMPLETED.`:'Target hanya tersedia untuk Order Type AO. Rata-rata Provi Time = RE Ts → Provi Ts order COMPLETED. Fallout, cancel dan in progress dapat dilihat di Detail Process State.';
+ $('or1').innerHTML='<table><tr><th>Branch</th>'+CO.map(c=>`<th>${c[0]}</th>`).join('')+'</tr>'+br.map(x=>`<tr>${x.html}</tr>`).join('')+`<tr style="font-weight:700;background:var(--sf)">${mkRow('Jabar',cur,tgAll(),{brh:`<td>${st.ob=='ALL'&&st.ou=='ALL'?'Jabar':'Total'}</td>`}).html}</tr></table>`;
+ const curA=ocur(true),gmap=new Map([...group(curA,r=>ORD.u[r[2]])]);if(isAO)Object.keys(ORD.tg).filter(u=>st.ob=='ALL'||ORD.tgb[u]==st.ob).forEach(u=>{if(!gmap.has(u))gmap.set(u,[])});
+ const gu=[...gmap].map(([u,rs])=>{const b=rs.length?ORD.br[rs[0][1]]:ORD.tgb[u]||'';return mkRow(u,rs,isAO?(ORD.tg[u]||0):null,{br:b,brh:`<td>${u}</td><td style="text-align:left">${b}</td>`})});
+ st.sort.or2=st.sort.or2||['n',-1];table('or2',gu,[['GraPARI','name'],['Branch','br'],...CO],k=>{st.ou=st.ou==k?'ALL':k;renderOR();$('pg13').scrollIntoView({behavior:'smooth'})},st.ou);
  // daily
  const D0=1,D1=30,W=1120,H=280,L=44,R=12,T=26,B=40,cw=(W-L-R)/(D1-D0+1),dd={};cur.forEach(r=>{(dd[r[3]]=dd[r[3]]||[0,0,0,0])[r[5]]++});
  const mx=Math.max(1,...Object.values(dd).map(v=>v[0]+v[1]+v[2]+v[3]))*1.15,Y=v=>T+(H-T-B)*(1-v/mx),dow=d=>new Date(2026,10,d).getDay();
@@ -1184,24 +1219,128 @@ function renderOR(){
 }
 $('orm').innerHTML=`<option value="0">November (${ORD.d0}–${ORD.d1} Nov, parsial)</option>`;
 $('orb').innerHTML=['ALL',...ORD.br].map(b=>`<option value="${b}">${b=='ALL'?'Semua branch':b}</option>`).join('');
-$('orb').onchange=e=>{st.ob=e.target.value;renderOR()};
+$('orb').onchange=e=>{st.ob=e.target.value;st.ou='ALL';renderOR()};
 async function exportOrder(){const wb=XLSX.utils.book_new(),cur=ocur();
  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['Tgl order','Order Type','Branch','GraPARI','Unit Type','Bisnis Model','Process State','Kelompok','Target SLA (hari)','RE→Provi (jam)','Status SLA','Fallout Category','Fallout Reason (diringkas)'],
   ...cur.map(r=>[r[3]+' Nov 2026',ORD.ty[r[0]],ORD.br[r[1]],ORD.u[r[2]],ORD.ut[r[11]],r[10]?'TOMO':'MOMO',ORD.ps[r[4]],OGN[r[5]],r[13],r[9],['Out SLA','In SLA','Open (dalam SLA)','Open (lewat SLA)'][r[8]]||'-',r[6]>=0?ORD.fc[r[6]]:'-',r[7]>=0?ORD.fr[r[7]]:'-'])]),'Order');
  await saveFile('Order_Jabar_'+(st.ot=='all'?'Semua':ORD.ty[st.ot])+'.xlsx',xlsxBlob(wb));}
+
+
+/* ===== Kawalan Admin CC module ===== */
+st.as='ao';st.am=2;st.ab='ALL';
+const ACM=['Agustus','September','Oktober','November'],ACS=['Agu','Sep','Okt','Nov'],ACL=[31,30,31,30];
+const ACT={ao:['AO','ao'],mo:['Modoroso','mo'],tk:['create tiket','tk'],nm:['Order Non Modoroso','nm'],on:['ONTRUST','on']};
+const acp=v=>v==null||isNaN(v)?'–':v.toFixed(1)+'%',acx=(c,p)=>p?((c-p)/p*100):null,acmom=v=>v==null?'–':`<span style="color:${v>=0?'#2E7D32':'#C0392B'}">${v>=0?'▲ +':'▼ '}${v.toFixed(1)}%</span>`;
+const acBrIdx=(o)=>{const b=o.br||[];return st.ab=='ALL'?null:b.indexOf(st.ab)};
+function acBase(k){const o=ACC[k],bi=o.br?o.br.indexOf(st.ab):-1,col={ao:7,mo:6,tk:3,nm:5,on:2}[k];return o.rows.filter(r=>st.ab=='ALL'||r[col]==bi)}
+function acCur(k){return acBase(k).filter(r=>st.am=='all'||r[0]==st.am)}
+function acPrv(k){if(st.am=='all'||st.am==0)return null;const cut=st.am==3?ACC[k].nmax:99;return acBase(k).filter(r=>r[0]==st.am-1&&r[1]<=cut)}
+const acPer=k=>st.am=='all'?'Agu–Nov':ACS[st.am]+(st.am==3?` (1–${ACC[k].nmax})`:''),acPm=k=>st.am=='all'||st.am==0?'':ACS[st.am-1]+(st.am==3?` (1–${ACC[k].nmax})`:'');
+function acKpi(k,t,v,sub,c){return`<div class="card kpi" style="border-left-color:${c}"><div class="t">${t} · ${acPer(k)}</div><div class="v">${v}</div><div class="note">${sub}</div></div>`}
+function acTrend(k,rows,gfn,names,colors){
+ if(st.am=='all'){const W=1120,H=260,L=48,R=12,T=26,B=40,cw=(W-L-R)/4,c=[0,1,2,3].map(m=>{const a=names.map(()=>0);rows.filter(r=>r[0]==m).forEach(r=>a[gfn(r)]++);return a}),mx=Math.max(1,...c.map(a=>a.reduce((x,y)=>x+y,0)))*1.15,Y=v=>T+(H-T-B)*(1-v/mx);
+  let g=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto">`;for(let m=0;m<4;m++){let acc=0;const x=L+m*cw;c[m].forEach((v,j)=>{if(!v)return;g+=`<rect x="${x+cw*.25}" y="${Y(acc+v)}" width="${cw*.5}" height="${Y(acc)-Y(acc+v)}" fill="${colors[j]}"><title>${ACM[m]} · ${names[j]}: ${v}</title></rect>`;acc+=v});g+=`<text x="${x+cw/2}" y="${Y(acc)-5}" text-anchor="middle" font-size="12" font-weight="700" fill="#2B2D42">${fi(acc)}</text><text x="${x+cw/2}" y="${H-B+16}" text-anchor="middle" font-size="12" fill="#6B7089">${ACM[m]}${m==3?' (1–'+ACC[k].nmax+')':''}</text>`}
+  return acLeg(names,colors,'Per bulan (pilih satu bulan untuk trend harian)')+g+'</svg>'}
+ const m=st.am,nd=ACL[m],last=m==3?ACC[k].nmax:nd,W=1120,H=270,L=44,R=12,T=26,B=40,cw=(W-L-R)/nd,dd={};rows.forEach(r=>{(dd[r[1]]=dd[r[1]]||names.map(()=>0))[gfn(r)]++});
+ const pv=acPrv(k),pd={};if(pv)pv.forEach(r=>pd[r[1]]=(pd[r[1]]||0)+1);
+ const mx=Math.max(1,...Object.values(dd).map(a=>a.reduce((x,y)=>x+y,0)),...Object.values(pd))*1.15,Y=v=>T+(H-T-B)*(1-v/mx),dow=d=>new Date(2026,7+m,d).getDay();
+ let g=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto">`;
+ for(let q=0;q<=4;q++){const v=mx/1.15*q/4,y=Y(v);g+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="#E6E7EF"/><text x="${L-6}" y="${y+4}" text-anchor="end" font-size="11" fill="#8A8DA3">${Math.round(v)}</text>`}
+ for(let d=1;d<=nd;d++){const x=L+(d-1)*cw,a=dd[d];if(a){let acc=0;a.forEach((v,j)=>{if(!v)return;g+=`<rect x="${x+cw*.15}" y="${Y(acc+v)}" width="${cw*.7}" height="${Y(acc)-Y(acc+v)}" fill="${colors[j]}"><title>${d} ${ACS[m]} · ${names[j]}: ${v}${pv?` · ${ACS[m-1]} tgl ${d}: ${pd[d]||0}`:''}</title></rect>`;acc+=v});g+=`<text x="${x+cw/2}" y="${Y(acc)-4}" text-anchor="middle" font-size="10" font-weight="700" fill="#2B2D42">${acc}</text>`}
+  g+=`<text x="${x+cw/2}" y="${H-B+15}" text-anchor="middle" font-size="10.5" fill="${dow(d)==0?'#D7263D':'#6B7089'}">${d}</text>`}
+ if(m>0){const pts=[];for(let d=1;d<=Math.min(nd,ACL[m-1]);d++){const v=acBase(k).filter(r=>r[0]==m-1&&r[1]==d).length;pts.push(`${(L+(d-1)*cw+cw/2).toFixed(1)},${Y(v).toFixed(1)}`)}g+=`<polyline fill="none" stroke="#E8912D" stroke-width="2" stroke-dasharray="5 4" points="${pts.join(' ')}"/>`}
+ const tot=rows.length,days=new Set(rows.map(r=>r[1])).size,pk=Object.entries(dd).map(([d,a])=>[d,a.reduce((x,y)=>x+y,0)]).sort((x,y)=>y[1]-x[1])[0];
+ return acLeg(names,colors,`Rata-rata <b>${days?(tot/days).toFixed(1):0}</b>/hari aktif${pk?` · puncak <b>${pk[0]} ${ACS[m]}</b> (${pk[1]})`:''}${m>0?` · <span style="display:inline-block;width:18px;border-top:2px dashed #E8912D;vertical-align:3px"></span> ${ACM[m-1]} (tanggal yang sama)`:''}`)+g+`<text x="${L}" y="${H-6}" font-size="11" fill="#6B7089">Tanggal (merah = hari Minggu)</text></svg>`}
+function acLeg(n,c,extra){return`<div class="note" style="display:flex;gap:16px;flex-wrap:wrap;margin:0 0 4px">${n.length>1?n.map((x,j)=>`<span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:${c[j]};vertical-align:-1px"></span> ${x}</span>`).join(''):''}<span>${extra}</span></div>`}
+function acSimple(rows,lab,labels,idx){const g=[...group(rows,r=>r[idx])].sort((x,y)=>y[1].length-x[1].length),n=rows.length,mx=g.length?g[0][1].length:1;
+ return`<table><tr><th style="text-align:left">${lab}</th><th>Jumlah</th><th>%</th><th style="width:45%"></th></tr>`+g.map(([k,rs])=>`<tr><td style="text-align:left">${labels[k]}</td><td><b>${fi(rs.length)}</b></td><td>${acp(rs.length/n*100)}</td><td><div style="background:#F0F0F7;border-radius:6px;height:16px"><div style="width:${(rs.length/mx*100).toFixed(1)}%;height:100%;background:#6C63D9;border-radius:6px"></div></div></td></tr>`).join('')+`<tr style="font-weight:700;background:var(--sf)"><td style="text-align:left">Total</td><td>${fi(n)}</td><td>100%</td><td></td></tr></table>`}
+const H2=(ic,t,n)=>`<h2 style="margin-top:16px"><span class="ic">${ic}</span>${t}</h2>${n?`<p class="note" style="margin:0 0 8px">${n}</p>`:''}`;
+function acSub(){const el=$('asub');el.innerHTML='<span class="sl">Report ·</span>'+Object.entries(ACT).map(([k,v])=>`<button class="tab sb${st.as==k?' on':''}" data-a="${k}">${v[0]}</button>`).join('');el.querySelectorAll('.sb').forEach(b=>b.onclick=()=>{st.as=b.dataset.a;renderAC()})}
+function renderAC(){
+ acSub();const k=st.as,o=ACC[k],cur=acCur(k),prv=acPrv(k),pm=acPm(k),n=cur.length,np=prv?prv.length:null;
+ $('acttl').textContent=ACT[k][0]+(st.ab!='ALL'?' · '+st.ab:'');
+ $('acmeta').textContent=`Sumber: ${ACC.src} · ${{ao:'sheet AO - 0 (tanggal: TGL ORDER)',mo:'sheet MODOROSO - 1 (tanggal: TGL ORDER)',tk:'sheet INPUT TIKET - 2 (tanggal: TANGGAL INPUT)',nm:'sheet INPUT ORDER NON MODOROSO - 6 (tanggal: TANGGAL ORDER)',on:'sheet ONTRUST ONT HVC - 5 (tanggal: TGL INPUT)'}[k]} · data s.d. ${ACC[k].nmax} Nov 2026`;
+ const brs=['ALL',...(o.br||[]).filter(b=>b!='(kosong)'&&b!='Lainnya')];if($('acb').dataset.k!=k){$('acb').innerHTML=brs.map(b=>`<option value="${b}">${b=='ALL'?'Semua branch':b}</option>`).join('');$('acb').dataset.k=k;if(!brs.includes(st.ab))st.ab='ALL';$('acb').value=st.ab}
+ const momT=pm?` · ${pm}: ${fi(np)} · MoM ${acmom(acx(n,np))}`:'';let K='',Bd='';
+ if(k=='ao'){const c=cur.filter(r=>r[3]==0),i=cur.filter(r=>r[3]==1),cp=cur.filter(r=>r[4]==0).length,cc=cur.filter(r=>r[4]==1).length;
+  K=acKpi(k,'🆕 Total AO',fi(n),'Order AO yang dikawal'+momT,'var(--k1)')+acKpi(k,'✅ CLOSED',fi(c.length),`${acp(n?c.length/n*100:null)} · Completed ${fi(cp)} · Cancelled ${fi(cc)}`,'var(--k2)')+acKpi(k,'🔄 INPROGRESS',fi(i.length),`${acp(n?i.length/n*100:null)} dari total AO`,'#E8912D');
+  const g=[...group(cur,r=>r[2])].map(([u,rs])=>{const a=rs.filter(r=>r[3]==0).length,ip=rs.length-a,b=group(rs,r=>r[7]),bb=[...b].sort((x,y)=>y[1].length-x[1].length)[0][0];return{key:o.u[u],name:o.u[u],br:o.br[bb],n:rs.length,cl:a,cp:rs.filter(r=>r[4]==0).length,cc:rs.filter(r=>r[4]==1).length,ip,pc:a/rs.length*100,html:`<td>${o.u[u]}</td><td style="text-align:left">${o.br[bb]}</td><td><b>${rs.length}</b></td><td>${a}</td><td>${rs.filter(r=>r[4]==0).length}</td><td>${rs.filter(r=>r[4]==1).length}</td><td style="color:${ip?'#C0392B':'inherit'};font-weight:${ip?700:400}">${ip}</td><td>${acp(a/rs.length*100)}</td>`}});
+  Bd=H2('📆','Trend Monitoring Daily AO')+'<div id="act1"></div>'+H2('🏬','Detail AO per Unit','Status dari kolom HASIL (CLOSED / INPROGRESS). Completed dan Cancelled dari kolom INPROGRESS.')+'<div class="tw" style="max-height:420px" id="act2"></div>'+H2('⚠️','Fallout Group – AO berstatus INPROGRESS')+'<div class="two"><div class="tw" id="act3"></div><div class="tw" id="act4"></div></div>'+H2('📝','Detail AO INPROGRESS')+'<div class="tw" style="max-height:420px" id="act5"></div>';
+  $('ack').innerHTML=K;$('acbody').innerHTML=Bd;$('act1').innerHTML=acTrend(k,cur,r=>r[3],['CLOSED','INPROGRESS'],['#6C63D9','#E8912D']);
+  st.sort.act2=st.sort.act2||['n',-1];table('act2',g,[['Unit (Channel Input)','name'],['Branch','br'],['Total AO','n'],['CLOSED','cl'],['Completed','cp'],['Cancelled','cc'],['INPROGRESS','ip'],['% CLOSED','pc']],null,null);
+  $('act3').innerHTML=i.length?acSimple(i,'Fallout Group',o.fg,5):'<p class="note">Tidak ada AO berstatus INPROGRESS pada pilihan ini.</p>';
+  $('act4').innerHTML=i.length?acSimple(i,'Last Update (INPROGRESS)',o.lu,6):'';
+  $('act5').innerHTML=i.length?'<table><tr><th>Tgl order</th><th>Unit</th><th>Branch</th><th>Order ID</th><th>Fallout Group</th><th>Last Update</th><th>Umur (hari)</th><th>Eskalasi ke</th><th style="min-width:240px">Fallout status / Keterangan</th></tr>'+i.slice().sort((a,b)=>a[0]-b[0]||a[1]-b[1]).map(r=>`<tr><td>${r[1]} ${ACS[r[0]]}</td><td style="text-align:left">${o.u[r[2]]}</td><td>${o.br[r[7]]}</td><td style="font-size:12px">${r[11]}</td><td style="text-align:left">${o.fg[r[5]]}</td><td style="text-align:left">${o.lu[r[6]]}</td><td>${r[9]}</td><td style="text-align:left;font-size:12px">${r[12]||'–'}</td><td style="text-align:left;white-space:normal;font-size:12.5px">${[o.fs[r[8]],r[10]].filter(Boolean).join(' · ')||'–'}</td></tr>`).join('')+'</table>':'';}
+ if(k=='mo'){const c=cur.filter(r=>r[4]==0).length,i=n-c;
+  K=acKpi(k,'🔁 Total Order Modoroso',fi(n),'Order yang dikawal'+momT,'var(--k1)')+acKpi(k,'✅ CLOSED',fi(c),`${acp(n?c/n*100:null)} · Completed ${fi(cur.filter(r=>r[5]==0).length)} · Cancelled ${fi(cur.filter(r=>r[5]==1).length)}`,'var(--k2)')+acKpi(k,'🔄 INPROGRESS',fi(i),`${acp(n?i/n*100:null)} dari total order`,'#E8912D');
+  Bd=H2('📆','Trend Daily Kawalan Modoroso')+'<div id="act1"></div>'+H2('📡','Order Type per Channel Name berdasarkan LAST STATUS')+'<div class="tw" style="max-height:520px" id="act2"></div>'+H2('🧾','Ringkasan per Order Type')+'<div class="tw" id="act3"></div>';
+  $('ack').innerHTML=K;$('acbody').innerHTML=Bd;$('act1').innerHTML=acTrend(k,cur,r=>r[4],['CLOSED','INPROGRESS'],['#6C63D9','#E8912D']);
+  const chs=[...group(cur,r=>r[2])].sort((x,y)=>y[1].length-x[1].length);
+  $('act2').innerHTML='<table data-nosort><tr><th style="text-align:left">Channel Name</th><th style="text-align:left">Order Type</th><th>CLOSED</th><th>INPROGRESS</th><th>Total</th><th>% CLOSED</th></tr>'+chs.map(([ch,rs])=>{const ots=[...group(rs,r=>r[3])].sort((x,y)=>y[1].length-x[1].length),cc=rs.filter(r=>r[4]==0).length;
+   return ots.map(([ot,q],j)=>{const a=q.filter(r=>r[4]==0).length;return`<tr><td style="text-align:left;font-weight:700">${j?'':o.ch[ch]}</td><td style="text-align:left">${o.ot[ot]}</td><td>${fi(a)}</td><td style="color:${q.length-a?'#C0392B':'inherit'}">${fi(q.length-a)}</td><td><b>${fi(q.length)}</b></td><td>${acp(a/q.length*100)}</td></tr>`}).join('')+`<tr style="background:var(--sf);font-weight:700"><td></td><td style="text-align:left">Subtotal ${o.ch[ch]}</td><td>${fi(cc)}</td><td>${fi(rs.length-cc)}</td><td>${fi(rs.length)}</td><td>${acp(cc/rs.length*100)}</td></tr>`}).join('')+`<tr style="font-weight:700;background:#E9E8FB"><td style="text-align:left">Total</td><td></td><td>${fi(c)}</td><td>${fi(i)}</td><td>${fi(n)}</td><td>${acp(n?c/n*100:null)}</td></tr></table>`;
+  const ots=[...group(cur,r=>r[3])].sort((x,y)=>y[1].length-x[1].length);
+  $('act3').innerHTML='<table><tr><th style="text-align:left">Order Type</th><th>CLOSED</th><th>Completed</th><th>Cancelled</th><th>INPROGRESS</th><th>Total</th><th>% CLOSED</th></tr>'+ots.map(([ot,q])=>{const a=q.filter(r=>r[4]==0).length;return`<tr><td style="text-align:left">${o.ot[ot]}</td><td>${fi(a)}</td><td>${fi(q.filter(r=>r[5]==0).length)}</td><td>${fi(q.filter(r=>r[5]==1).length)}</td><td>${fi(q.length-a)}</td><td><b>${fi(q.length)}</b></td><td>${acp(a/q.length*100)}</td></tr>`}).join('')+'</table>';}
+ if(k=='tk'){K=acKpi(k,'🎫 Total Create Tiket',fi(n),'Tiket yang diinput Admin CC'+momT,'var(--k1)');
+  Bd=H2('📡','Channel Petugas yang Melaporkan')+'<div class="tw" id="act2" style="max-width:900px"></div>'+H2('📆','Trend Daily Create Tiket')+'<div id="act1"></div>';
+  $('ack').innerHTML=K;$('acbody').innerHTML=Bd;$('act2').innerHTML=n?acSimple(cur,'Channel',o.ch,2):'<p class="note">Tidak ada data.</p>';$('act1').innerHTML=acTrend(k,cur,r=>0,['Tiket'],['#6C63D9']);}
+ if(k=='nm'){const ci=o.st.indexOf('COMPLETED'),c=cur.filter(r=>r[4]==ci).length;
+  K=acKpi(k,'🧾 Total Order Non Modoroso',fi(n),'Order yang diinput'+momT,'var(--k1)')+acKpi(k,'✅ % Complete',acp(n?c/n*100:null),`COMPLETED ${fi(c)} dari ${fi(n)} order`,'var(--k2)')+acKpi(k,'⏳ Belum Complete',fi(n-c),o.st.filter(x=>x!='COMPLETED').map(x=>`${x} ${cur.filter(r=>o.st[r[4]]==x).length}`).join(' · '),'#E8912D');
+  Bd=H2('📆','Trend Daily Order Non Modoroso')+'<div id="act1"></div>'+H2('🧮','Requestor × Jenis Permintaan','Jumlah order per REQUESTOR dan PERMINTAAN (kolom E). % Complete = STATUS ORDER COMPLETED ÷ total order.')+'<div class="tw" id="act2"></div>'+H2('✅','Status Order')+'<div class="tw" id="act3" style="max-width:900px"></div>';
+  $('ack').innerHTML=K;$('acbody').innerHTML=Bd;
+  $('act1').innerHTML=acTrend(k,cur,r=>r[4]==ci?0:1,['COMPLETED','Belum complete'],['#6C63D9','#E8912D']);
+  const pms=[...group(cur,r=>r[3])].sort((x,y)=>y[1].length-x[1].length).map(x=>x[0]),rqs=[...group(cur,r=>r[2])].sort((x,y)=>y[1].length-x[1].length);
+  $('act2').innerHTML=n?'<table><tr><th style="text-align:left">Requestor</th>'+pms.map(p=>`<th>${o.pm[p]}</th>`).join('')+'<th>Total</th><th>Completed</th><th>% Complete</th></tr>'+rqs.map(([rq,rs])=>{const cc=rs.filter(r=>r[4]==ci).length;return`<tr><td style="text-align:left">${o.rq[rq]}</td>`+pms.map(p=>{const q=rs.filter(r=>r[3]==p);return`<td>${q.length?fi(q.length):'·'}</td>`}).join('')+`<td><b>${fi(rs.length)}</b></td><td>${fi(cc)}</td><td><b>${acp(cc/rs.length*100)}</b></td></tr>`}).join('')+
+   '<tr style="font-weight:700;background:var(--sf)"><td style="text-align:left">Total</td>'+pms.map(p=>`<td>${fi(cur.filter(r=>r[3]==p).length)}</td>`).join('')+`<td>${fi(n)}</td><td>${fi(c)}</td><td>${acp(c/n*100)}</td></tr>`+'<tr style="background:#E9E8FB"><td style="text-align:left;font-weight:700">% Complete</td>'+pms.map(p=>{const q=cur.filter(r=>r[3]==p);return`<td><b>${acp(q.filter(r=>r[4]==ci).length/q.length*100)}</b></td>`}).join('')+'<td></td><td></td><td></td></tr></table>':'<p class="note">Tidak ada data.</p>';
+  $('act3').innerHTML=n?acSimple(cur,'Status Order',o.st,4):'';}
+ if(k=='on'){K=acKpi(k,'📶 Total Permintaan ONTRUST',fi(n),'Permintaan ONT HVC'+momT,'var(--k1)');
+  Bd=H2('🗺️','Jumlah Permintaan per Branch')+'<div class="tw" id="act2" style="max-width:900px"></div>'+H2('📆','Trend Daily Permintaan ONTRUST')+'<div id="act1"></div>';
+  $('ack').innerHTML=K;$('acbody').innerHTML=Bd;$('act2').innerHTML=n?acSimple(cur,'Branch',o.br,2):'<p class="note">Tidak ada data.</p>';$('act1').innerHTML=acTrend(k,cur,r=>0,['Permintaan'],['#6C63D9']);}
+}
+$('acm').innerHTML=ACM.map((m,i)=>`<option value="${i}">${m}${i==3?' (1–'+Math.max(...Object.values(ACC).filter(v=>v&&v.nmax).map(v=>v.nmax))+' Nov, parsial)':''}</option>`).join('')+'<option value="all">All Month</option>';$('acm').value='2';
+$('acm').onchange=e=>{const v=e.target.value;st.am=v=='all'?'all':+v;renderAC()};
+$('acb').onchange=e=>{st.ab=e.target.value;renderAC()};
+async function exportAC(){const k=st.as,o=ACC[k],cur=acCur(k),wb=XLSX.utils.book_new(),d=r=>`${r[1]} ${ACS[r[0]]} 2026`;let aoa;
+ if(k=='ao')aoa=[['Tgl order','Unit (Channel Input)','Branch','HASIL','Status (INPROGRESS)','Fallout Group','Last Update','Umur','Order ID','Eskalasi ke','Fallout status','Keterangan'],...cur.map(r=>[d(r),o.u[r[2]],o.br[r[7]],r[3]?'INPROGRESS':'CLOSED',['COMPLETED','CANCELLED','INPROGRESS'][r[4]],o.fg[r[5]],o.lu[r[6]],r[9],r[11],r[12],o.fs[r[8]],r[10]])];
+ if(k=='mo')aoa=[['Tgl order','Channel Name','Order Type','Branch','LAST STATUS','Status','Last Update'],...cur.map(r=>[d(r),o.ch[r[2]],o.ot[r[3]],o.br[r[6]],r[4]?'INPROGRESS':'CLOSED',['COMPLETED','CANCELLED','INPROGRESS'][r[5]],o.lu[r[7]]])];
+ if(k=='tk')aoa=[['Tgl input','Channel Petugas yang melaporkan','Branch','Jenis Keluhan'],...cur.map(r=>[d(r),o.ch[r[2]],o.br[r[3]],o.j[r[4]]])];
+ if(k=='nm')aoa=[['Tgl order','Requestor','Permintaan','Status Order','Branch'],...cur.map(r=>[d(r),o.rq[r[2]],o.pm[r[3]],o.st[r[4]],o.br[r[5]]])];
+ if(k=='on')aoa=[['Tgl input','Branch','Status Input'],...cur.map(r=>[d(r),o.br[r[2]],o.si[r[3]]])];
+ XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(aoa),ACT[k][0].slice(0,31));await saveFile('Kawalan_Admin_CC_'+ACT[k][0].replace(/\s+/g,'_')+'_'+(st.am=='all'?'Agu-Nov':ACS[st.am])+'.xlsx',xlsxBlob(wb))}
+
+
+/* ===== generic sort untuk tabel statis ===== */
+(function(){
+ const isTot=tr=>{const st_=(tr.getAttribute('style')||'');return /font-weight:\s*700|background:\s*var\(--sf\)|#E9E8FB/i.test(st_)};
+ const val=t=>{t=(t||'').replace(/[▲▼⇅]/g,'').trim();if(t===''||t==='–'||t==='-'||t==='·')return null;
+  let m=t.match(/^([+−-]?[\d.,]+)\s*(jam|hari|mnt)\b/);if(m){let v=parseFloat(m[1].replace(',','.'));return m[2]=='hari'?v*24:m[2]=='mnt'?v/60:v}
+  m=t.match(/^[+−-]?\d{1,3}(\.\d{3})+(?![\d,])/);if(m)return parseFloat(m[0].replace(/\./g,'').replace('−','-'));
+  m=t.match(/^[+−-]?\d+(?:[.,]\d+)?/);if(m)return parseFloat(m[0].replace(',','.').replace('−','-'));return t.toLowerCase()};
+ document.addEventListener('click',e=>{const th=e.target.closest('th');if(!th||th.dataset.k)return;const tb=th.closest('table');if(!tb||tb.hasAttribute('data-nosort'))return;
+  const hr=th.parentElement,idx=[...hr.children].indexOf(th),body=tb.tBodies[0]||tb,all=[...body.querySelectorAll(':scope > tr')].filter(r=>r!==hr&&!r.querySelector('th'));
+  const data=all.filter(r=>!isTot(r)),tots=all.filter(isTot);if(data.length<2)return;
+  const dir=th.dataset.dir=='-1'?1:-1;hr.querySelectorAll('th').forEach(x=>{x.removeAttribute('data-s');x.textContent=x.textContent.replace(/ [▲▼]$/,'');delete x.dataset.dir});
+  th.dataset.dir=dir;th.setAttribute('data-s','1');th.textContent=th.textContent+(dir>0?' ▲':' ▼');
+  data.sort((a,b)=>{const x=val(a.children[idx]&&a.children[idx].textContent),y=val(b.children[idx]&&b.children[idx].textContent);
+   if(x===null&&y===null)return 0;if(x===null)return 1;if(y===null)return -1;if(typeof x=='string'||typeof y=='string')return dir*String(x).localeCompare(String(y));return dir*(x-y)});
+  const par=data[0].parentElement;data.concat(tots).forEach(r=>par.appendChild(r))});
+})();
 
 /* ===== menu gabungan tNPS & Tiket ===== */
 (function(){
  const MAP={tn:{m:1,f:11,u:12,l:'tNPS',b:'mtn'},tk:{m:2,f:6,l:'Tiket',b:'mtk'}},LS={tn:1,tk:2};
  const orig=showTab;
  const grpOf=p=>p==1||p==11||p==12?'tn':p==2||p==6?'tk':null;
- showTab=function(p){p=+p;$('pg13').style.display='none';$('osub').style.display='none';$('orw').style.display='none';if(p==13){orig(13);$('pg13').style.display='';$('osub').style.display='';$('orw').style.display='';document.querySelector('.bar').style.display='none';$('xl').textContent='⬇ Unduh Excel Order';renderOR()}else if(p==12){orig(1);st.p=12;$('pg1').style.display='none';$('pg12').style.display='';document.querySelector('.bar').style.display='none';$('fm').parentElement.style.display='none';$('xl').textContent='⬇ Unduh Excel FU tNPS';renderFU()}else if(p!=13){orig(p);$('pg12').style.display='none'}const g=grpOf(p);$('tfw').style.display=p==11?'':'none';$('fuw').style.display=p==12?'':'none';$('sbu').style.display=g=='tn'?'':'none';
+ showTab=function(p){p=+p;$('pg13').style.display='none';$('osub').style.display='none';$('orw').style.display='none';$('pg14').style.display='none';$('asub').style.display='none';$('acw').style.display='none';if(p==14){orig(14);$('pg14').style.display='';$('asub').style.display='';$('acw').style.display='';document.querySelector('.bar').style.display='none';$('xl').textContent='⬇ Unduh Excel Admin CC';renderAC()}else if(p==13){orig(13);$('pg13').style.display='';$('osub').style.display='';$('orw').style.display='';document.querySelector('.bar').style.display='none';$('xl').textContent='⬇ Unduh Excel Order';renderOR()}else if(p==12){orig(1);st.p=12;$('pg1').style.display='none';$('pg12').style.display='';document.querySelector('.bar').style.display='none';$('fm').parentElement.style.display='none';$('xl').textContent='⬇ Unduh Excel FU tNPS';renderFU()}else if(p!=13&&p!=14){orig(p);$('pg12').style.display='none'}const g=grpOf(p);$('tfw').style.display=p==11?'':'none';$('fuw').style.display=p==12?'':'none';$('sbu').style.display=g=='tn'?'':'none';
   ['tn','tk'].forEach(k=>{const b=$(MAP[k].b);if(b)b.classList.toggle('on',g==k)});
   const sb=$('subtabs');
   if(g){LS[g]=p;sb.style.display='';$('sl').textContent=MAP[g].l+' ·';sb.querySelectorAll('.sb').forEach(b=>b.classList.toggle('on',MAP[g][b.dataset.s]==p))}
-  else sb.style.display='none'};
+  else sb.style.display='none';dmSync()};
  ['tn','tk'].forEach(k=>{$(MAP[k].b).onclick=()=>showTab(LS[k])});
- {const ox=$('xl').onclick;$('xl').onclick=()=>st.p==12?exportFU():st.p==13?exportOrder():ox()}
+ const DMM={"Master_CAPS": [["raw data GraPARI Jabar", "Master_CAPS__raw_data_GraPARI_Jabar.csv"], ["Target", "Master_CAPS__Target.csv"]], "Master_FU_tNPS": [["Okt", "Master_FU_tNPS__Okt.csv"], ["Nov", "Master_FU_tNPS__Nov.csv"]], "Master_Order": [["Nov", "Master_Order__Nov.csv"], ["Target AO Nov", "Master_Order__Target_AO_Nov.csv"]], "Master_Tiket_Fixed": [["Okt", "Master_Tiket_Fixed__Okt.csv"], ["sept", "Master_Tiket_Fixed__sept.csv"], ["agt", "Master_Tiket_Fixed__agt.csv"], ["Nov", "Master_Tiket_Fixed__Nov.csv"]], "Master_Tiket_Mobile": [["Agt", "Master_Tiket_Mobile__Agt.csv"], ["Sept", "Master_Tiket_Mobile__Sept.csv"], ["Okt", "Master_Tiket_Mobile__Okt.csv"], ["Nov", "Master_Tiket_Mobile__Nov.csv"]], "Master_Visit_Agustus": [["Agustus", "Master_Visit_Agustus__Agustus.csv"]], "Master_Visit_Juli": [["Juli", "Master_Visit_Juli__Juli.csv"]], "Master_Visit_November": [["November", "Master_Visit_November__November.csv"]], "Master_Visit_Oktober": [["Oktober", "Master_Visit_Oktober__Oktober.csv"]], "Master_Visit_September": [["September", "Master_Visit_September__September.csv"]], "Master_Waiting_Time": [["Sheet1", "Master_Waiting_Time__Sheet1.csv"]], "Master_tNPS_Fixed": [["Agt", "Master_tNPS_Fixed__Agt.csv"], ["Sept", "Master_tNPS_Fixed__Sept.csv"], ["Okt", "Master_tNPS_Fixed__Okt.csv"], ["Nov", "Master_tNPS_Fixed__Nov.csv"]], "Master_tNPS_Mobile": [["Agt", "Master_tNPS_Mobile__Agt.csv"], ["Sept", "Master_tNPS_Mobile__Sept.csv"], ["Okt", "Master_tNPS_Mobile__Okt.csv"], ["Nov", "Master_tNPS_Mobile__Nov.csv"]]},DMF={1:['Master_tNPS_Mobile'],11:['Master_tNPS_Fixed'],12:['Master_FU_tNPS'],2:['Master_Tiket_Mobile'],6:['Master_Tiket_Fixed'],4:['Master_Waiting_Time'],5:['Master_CAPS'],13:['Master_Order']},VMN=['Juli','Agustus','September','Oktober','November'];
+ const dmList=()=>st.p==14?[]:st.p==3?(st.vm=='all'?VMN:[VMN[st.vm]]).map(m=>'Master_Visit_'+m):(DMF[st.p]||[]);
+ window.dmSync=()=>{const L=dmList();$('dm').style.display=L.length?'':'none';$('dm').textContent='⬇ Data master'+(st.p==3?(st.vm=='all'?' (5 file)':' '+VMN[st.vm]):'')};
+ $('dm').onclick=async()=>{const L=dmList();if(!L.length)return;const b=$('dm');b.disabled=true;b.textContent='⏳ Mengunduh data master…';try{if(typeof XLSX=='undefined')throw new Error('library Excel belum termuat, pastikan terhubung ke internet lalu muat ulang halaman');for(const f of L){const wb=XLSX.utils.book_new();for(const [sn,fn] of DMM[f]){const r=await fetch('master/'+fn);if(!r.ok)throw new Error(fn+' ('+r.status+')');const w=XLSX.read(await r.text(),{type:'string',raw:true});XLSX.utils.book_append_sheet(wb,w.Sheets[w.SheetNames[0]],sn.slice(0,31))}await saveFile(f+'.xlsx',xlsxBlob(wb))}}catch(e){alert('Gagal mengunduh data master: '+e.message)}b.disabled=false;dmSync()};
+ {const ox=$('xl').onclick;$('xl').onclick=()=>st.p==12?exportFU():st.p==13?exportOrder():st.p==14?exportAC():ox()}
  document.querySelectorAll('#subtabs .sb').forEach(b=>b.onclick=()=>{const g=grpOf(st.p);if(g)showTab(MAP[g][b.dataset.s])});
 })();
 
