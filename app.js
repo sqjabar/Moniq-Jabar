@@ -1,4 +1,5 @@
 
+/* data D dimuat dari data/D.json oleh loader.js */
 // rows: [branch,unit,nik,score,catClass,catIdx,month] month:0=bulan lalu,1=bulan ini
 const R=D.rows,S=D.siad,CATS=D.cats,MN=D.mn;const ML=[31,30,31,30],DCUT=MN.map((m,i)=>{const d=Math.max(0,...R.filter(r=>r[6]==i).map(r=>r[9]));return d<ML[i]?d:99});
 const EX={};
@@ -12,7 +13,7 @@ const dl=v=>v==null?'–':`<span class="dl ${v>=0?'pos':'neg'}">${v>=0?'▲ +':'
 const isCur=r=>st.m=='all'||r[6]==st.m,isPrv=r=>st.m!='all'&&st.m>0&&r[6]==st.m-1&&r[9]<=DCUT[st.m];const pml=()=>{const c=DCUT[st.m],b=MN[st.m-1].replace(/\s*\(.*\)/,'');return c<ML[st.m-1]?b+' (1–'+c+')':MN[st.m-1]};
 const lbl=()=>st.m=='all'?MN.join(' + '):MN[st.m];const mhp=()=>st.m!='all'&&st.m>0;
 const inCS=r=>st.s=='all'||r[4]==0;
-const CSL=()=>st.s=='all'?'All Respon':'Customer Service';
+const CSL=()=>st.s=='all'?'All Respon':'People';
 const base=()=>R.filter(r=>(st.b=='ALL'||r[0]==st.b)&&(st.u=='ALL'||r[1]==st.u));
 function nb(v){if(v==null)return'';const c=v>=0?'var(--g)':'var(--r)';return`<span class="nb"><i style="background:${c};${v>=0?'left:50%':'right:50%'};width:${Math.abs(v)/2}%"></i></span>`}
 function group(rs,keyf){const m=new Map();for(const r of rs){const k=keyf(r);if(!m.has(k))m.set(k,[]);m.get(k).push(r)}return m}
@@ -21,7 +22,7 @@ function met(rs){const cur=rs.filter(isCur),prv=rs.filter(isPrv);
  const a=ag(cur),o=ag(prv),c=ag(cur.filter(inCS)),co=ag(prv.filter(inCS));
  return{...a,ps:o.nps,po:o.n,mom:dv(a.nps,o.nps),cn:c.n,cnps:c.nps,cps:co.nps,cmom:dv(c.nps,co.nps),tot:rs.length,
  html:`<td>${a.n}</td><td>${a.p}</td><td>${a.a}</td><td>${a.d}</td><td>${nb(a.nps)}<b class="${a.nps>=0?'pos':'neg'}">${f1(a.nps)}</b></td><td>${f1(o.nps)}</td><td>${dl(dv(a.nps,o.nps))}</td><td>${c.n}</td><td>${f1(c.nps)}</td><td>${f1(co.nps)}</td><td>${dl(dv(c.nps,co.nps))}</td>`}}
-const HC=[['Total','n'],['Promotor','p'],['Passive','a'],['Detractor','d'],['tNPS','nps'],['tNPS bln lalu','ps'],['MoM','mom'],['Resp CS','cn'],['tNPS CS','cnps'],['CS bln lalu','cps'],['MoM CS','cmom']];
+const HC=[['Total','n'],['Promotor','p'],['Passive','a'],['Detractor','d'],['tNPS','nps'],['tNPS bln lalu','ps'],['MoM','mom'],['Resp People','cn'],['tNPS People','cnps'],['People bln lalu','cps'],['MoM People','cmom']];
 function table(id,rows,cols,onclick,selKey){
   EX[id]={rows,cols};addXb(id);
   const [sk,sd]=st.sort[id]||['n',-1];
@@ -40,7 +41,7 @@ function kpi(el,title,a,o,sub){
  <div class="note">${mhp()?`<b>${pml()}:</b> tNPS ${f1(o.nps)}`:(st.m==0?`MoM tidak tersedia (tidak ada data sebelum ${MN[0]})`:'MoM tidak berlaku untuk gabungan')}</div>`}
 function render(){
  const b=base(),b1=b.filter(isCur),b0=b.filter(isPrv),bs=b.filter(r=>isCur(r)||isPrv(r));
- const pl=mhp()?pml():'bln lalu';HC[5][0]='tNPS '+pl;HC[9][0]=(st.s=='all'?'All':'CS')+' '+pl;HC[7][0]='Resp '+(st.s=='all'?'All':'CS');HC[8][0]='tNPS '+(st.s=='all'?'All':'CS');HC[10][0]='MoM '+(st.s=='all'?'All':'CS');
+ const pl=mhp()?pml():'bln lalu';HC[5][0]='tNPS '+pl;HC[9][0]=(st.s=='all'?'All':'People')+' '+pl;HC[7][0]='Resp '+(st.s=='all'?'All':'People');HC[8][0]='tNPS '+(st.s=='all'?'All':'People');HC[10][0]='MoM '+(st.s=='all'?'All':'People');
  kpi('k1','📊 tNPS Mobile – Jabar',ag(b1),ag(b0),'(P − D) ÷ total × 100');
  kpi('k2','🎧 tNPS '+CSL(),ag(b1.filter(inCS)),ag(b0.filter(inCS)),'');
  const ub=R.filter(r=>(isCur(r)||isPrv(r))&&(st.u=='ALL'||r[1]==st.u));
@@ -50,10 +51,10 @@ function render(){
  rows=[...group(bb,r=>r[1])].map(([k,rs])=>{const m=met(rs);return{key:k,name:k,br:rs[0][0],...m,html:`<td>${k}</td><td style="text-align:left">${rs[0][0]}</td>`+(m.html.match(/<td[^>]*>.*?<\/td>/gs)||[]).slice(0,7).join('')}});
  table('t2',rows,[['unit_name','name'],['Branch','br'],...HC.slice(0,7)],k=>{st.u=st.u==k?'ALL':k;sync();render()},st.u);
  {const bc=b1;renderCat(bc);narr('nw',bc,'p');narr('nx',bc,'d');tanal('nw','p',b);tanal('nx','d',b)}
- $('t4h').textContent=st.s=='all'?'CSR All Respon':'CSR Respon Customer Service';
+ $('t4h').textContent=st.s=='all'?'CSR All Respon':'CSR Respon People';
  const cmode=(arr=>{const c=new Map();arr.forEach(v=>c.set(v,(c.get(v)||0)+1));return[...c].sort((a,b)=>b[1]-a[1])[0][0]});
- const cg=[...group(bs.filter(inCS),r=>r[2])].map(([k,rs])=>{const m=met(rs),x=S[k],cr=rs.filter(isCur),un=cmode(rs.map(r=>r[1])),br=cmode(rs.map(r=>r[0]));return{key:k,name:(x?x[0]:(k=='NA'?'(tanpa NIK)':k)),unit:un,br,...m,html:`<td>${(x?x[0]:(k=='NA'?'(tanpa NIK)':k))}</td><td style="text-align:left">${un}</td><td style="text-align:left">${br}</td>`+(m.html.match(/<td>.*?<\/td>/g)||[]).slice(0,7).join('')}}).filter(r=>r.n>0&&S[r.key]&&!/^T0/i.test(r.key)&&!/^T0/i.test(r.name));
- table('t4',cg,[['Nama CSR','name'],['GraPARI','unit'],['Branch','br'],...HC.slice(0,7)]);
+ const cg=[...group(bs.filter(inCS),r=>r[2])].map(([k,rs])=>{const m=met(rs),x=S[k],cr=rs.filter(isCur),un=cmode(rs.map(r=>r[1])),br=cmode(rs.map(r=>r[0]));return{key:k,name:(x?x[0]:(k=='NA'?'(tanpa NIK)':k)),unit:un,br,...m,html:`<td>${(x?x[0]:(k=='NA'?'(tanpa NIK)':k))}</td><td style="text-align:left">${un}</td>`+(m.html.match(/<td>.*?<\/td>/g)||[]).slice(0,7).join('')}}).filter(r=>r.n>0&&S[r.key]&&!/^T0/i.test(r.key)&&!/^T0/i.test(r.name));
+ table('t4',cg,[['Nama CSR','name'],['GraPARI','unit'],...HC.slice(0,7)]);
   renderT();if(st.p==3)renderV();if(st.p==4)renderW();if(st.p==5)renderCP();if(st.p==6)renderF();if(st.p==7)renderK();if(st.p==8)renderH();if(st.p==9)renderI();if(st.p==10)renderO();if(st.p==11)renderTF();
  $('meta').textContent=`Sumber: tNPS_Mobile_4.xlsx (${D.period}) · hanya baris dengan kolom Jabar terisi · ${b1.length} respon pada periode ${lbl()}${mhp()?' (dibanding '+pml()+')':''}`;
 }
@@ -67,16 +68,17 @@ async function exportXlsx(){
  const wb=XLSX.utils.book_new(),add=(n,aoa)=>XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(aoa),n);
  const b=base(),b1=b.filter(isCur),b0=b.filter(isPrv),sc=b.filter(r=>isCur(r)||isPrv(r));
  const k=(n,rs)=>{const a=ag(rs);return[n,a.n,a.p,a.a,a.d,rd(a.nps)]};
- const sum=[['Laporan tNPS Mobile Jabar'],['Periode',lbl()],['Branch Jabar',st.b=='ALL'?'Semua':st.b],['unit_name',st.u=='ALL'?'Semua':st.u],['Respon Kategori',CSL()],['Rumus','(Promotor - Detractor) / total respon x 100'],[],['Metrik','Respon','Promotor','Passive','Detractor','tNPS'],k('tNPS Mobile Jabar - '+lbl(),b1),k('tNPS Customer Service - '+lbl(),b1.filter(inCS))];
- if(mhp()){sum.push(k('tNPS Mobile Jabar - '+pml(),b0),k('tNPS '+CSL()+' - '+pml(),b0.filter(inCS)),['MoM tNPS Mobile','','','','',rd(dv(ag(b1).nps,ag(b0).nps))],['MoM tNPS Customer Service','','','','',rd(dv(ag(b1.filter(inCS)).nps,ag(b0.filter(inCS)).nps))])}
+ const sum=[['Laporan tNPS Mobile Jabar'],['Periode',lbl()],['Branch Jabar',st.b=='ALL'?'Semua':st.b],['unit_name',st.u=='ALL'?'Semua':st.u],['Respon Kategori',CSL()],['Rumus','(Promotor - Detractor) / total respon x 100'],[],['Metrik','Respon','Promotor','Passive','Detractor','tNPS'],k('tNPS Mobile Jabar - '+lbl(),b1),k('tNPS People - '+lbl(),b1.filter(inCS))];
+ if(mhp()){sum.push(k('tNPS Mobile Jabar - '+pml(),b0),k('tNPS '+CSL()+' - '+pml(),b0.filter(inCS)),['MoM tNPS Mobile','','','','',rd(dv(ag(b1).nps,ag(b0).nps))],['MoM tNPS People','','','','',rd(dv(ag(b1.filter(inCS)).nps,ag(b0.filter(inCS)).nps))])}
  add('Ringkasan',sum);
- [['t1','Per Jabar'],['t2','Per unit_name'],['cc0','%Category All'],['cc1','%Category Promotor'],['cc2','%Category Detractor'],['cc3','%Category Passive'],['nw','What Went Well'],['nx','What Went Wrong'],['t4','Per CSR respon CS']].forEach(([id,n])=>{const e=EX[id];if(e)add(n,[e.cols.map(c=>c[0]),...e.rows.map(r=>e.cols.map(c=>rd(r[c[1]])))])});
+ [['t1','Per Jabar'],['t2','Per unit_name'],['cc0','%Category All'],['cc1','%Category Promotor'],['cc2','%Category Detractor'],['cc3','%Category Passive'],['nw','What Went Well'],['nx','What Went Wrong'],['t4','Per CSR respon People']].forEach(([id,n])=>{const e=EX[id];if(e)add(n,[e.cols.map(c=>c[0]),...e.rows.map(r=>e.cols.map(c=>rd(r[c[1]])))])});
  if(!D._x&&D.x){D.rows.forEach((r,i)=>r.x=D.x[i]);D._x=1}
- add('Data respon',[['Bulan','Tanggal survey','MSISDN','id_trx','Jabar (branch)','unit_name','NIK','Nama CSR','Job Function','Skor q5','Kategori tNPS','Respon Customer Service','q6_part1','Komentar pelanggan'],...sc.map(r=>{const s=S[r[2]],x=r.x||['','','',''];return[MN[r[6]],x[2],x[0],x[1],r[0],r[1],r[2],s?s[0]:'',s?s[1]:'',r[3],['Promotor','Passive','Detractor'][cls(r[3])],r[4]==0?'Ya':'Tidak',CATS[r[5]],x[3]]})]);
+ add('Data respon',[['Bulan','Tanggal survey','MSISDN','id_trx','Jabar (branch)','unit_name','NIK','Nama CSR','Job Function','Skor q5','Kategori tNPS','Respon People','q6_part1','Komentar pelanggan'],...sc.map(r=>{const s=S[r[2]],x=r.x||['','','',''];return[MN[r[6]],x[2],x[0],x[1],r[0],r[1],r[2],s?s[0]:'',s?s[1]:'',r[3],['Promotor','Passive','Detractor'][cls(r[3])],r[4]==0?'Ya':'Tidak',CATS[r[5]],x[3]]})]);
  const tag=st.m=='all'?'Agu-Okt':MN[st.m].split(' ')[0];
  const out=XLSX.write(wb,{bookType:'xlsx',type:'array'});
  await saveFile('tNPS_Jabar_'+tag+'.xlsx',new Blob([out],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
 }
+/* data T dimuat dari data/T.json oleh loader.js */
 Object.assign(st.sort,{tt1:['n',-1],tt2:['n',-1],tt3:['n',-1],tt4:['n',-1]});st.tm=2;st.tl=6;
 const TCUT=T.m.map((m,i)=>{const d=Math.max(0,...T.rows.filter(r=>r[2]==i).map(r=>r[9]));return d<ML[i]?d:99});const tpl=m=>{const c=TCUT[m+1],b=T.m[m];return c<ML[m]?b+' (1–'+c+')':b};
 const isTC=r=>st.tm=='all'||r[2]==st.tm,isTP=r=>st.tm!='all'&&st.tm>0&&r[2]==st.tm-1&&r[9]<=TCUT[st.tm];
@@ -203,7 +205,7 @@ function tanal(id,kind,b){
  const C=ag(b1.filter(r=>r[4]==0)),CO=ag(b0.filter(r=>r[4]==0));
  if(kind=='p'){
   L.push(`tNPS Jabar <b>${f1(A.nps)}</b>${hp?` (${sg(A.nps-O.nps)} dari ${pl}: ${f1(O.nps)})`:''} dari ${fi(A.n)} respon; Promotor <b>${f1(pp(A.p,A.n))}%</b> (${fi(A.p)} respon)${hp?`, ${pl}: ${f1(pp(O.p,O.n))}%`:''}.`);
-  if(C.n)L.push(`Respon Customer Service: tNPS <b>${f1(C.nps)}</b>${hp&&CO.n?` (${sg(C.nps-CO.nps)} dari ${f1(CO.nps)})`:''}, Detractor hanya ${fi(C.d)} dari ${fi(C.n)} respon.`);
+  if(C.n)L.push(`Respon People: tNPS <b>${f1(C.nps)}</b>${hp&&CO.n?` (${sg(C.nps-CO.nps)} dari ${f1(CO.nps)})`:''}, Detractor hanya ${fi(C.d)} dari ${fi(C.n)} respon.`);
   const bs=[...br].sort((a,b)=>b.nps-a.nps);
   if(bs.length>1){const up=hp?bs.filter(x=>x.mom!=null&&x.mom>0):[];L.push(`Branch tertinggi: ${nm(bs[0])} tNPS ${f1(bs[0].nps)}${mm(bs[0].mom)}`+(up.length?`. Branch yang naik: ${up.map(x=>`${x.k} ${mm(x.mom).trim()}`).join(', ')}.`:'.'))}
   const ut=[...un].sort((a,b)=>b.nps-a.nps).slice(0,3);
@@ -211,7 +213,7 @@ function tanal(id,kind,b){
   const ui=[...un2].filter(x=>x.mom>0).sort((a,b)=>b.mom-a.mom).slice(0,3);
   if(ui.length)L.push(`GraPARI dengan kenaikan tNPS terbesar vs ${pl} (min. 20 respon): ${ui.map(x=>`${nm(x)} ${f1(x.po)} → ${f1(x.nps)} (+${x.mom.toFixed(1)}%)`).join('; ')}.`);
   const p100=cs.filter(x=>x.nps===100&&x.n>=15).sort((a,b)=>b.n-a.n);
-  if(p100.length)L.push(`<b>${p100.length}</b> CSR (Customer Service) meraih tNPS 100 dengan minimal 15 respon, antara lain ${p100.slice(0,4).map(x=>`${x.name} (${x.n})`).join(', ')}.`);
+  if(p100.length)L.push(`<b>${p100.length}</b> CSR (respon People) meraih tNPS 100 dengan minimal 15 respon, antara lain ${p100.slice(0,4).map(x=>`${x.name} (${x.n})`).join(', ')}.`);
  }else{
   L.push(`Detractor <b>${fi(A.d)}</b> (${f1(pp(A.d,A.n))}% dari ${fi(A.n)} respon)${hp?`, ${pl}: ${fi(O.d)} (${f1(pp(O.d,O.n))}%)`:''}; Passive <b>${fi(A.a)}</b> (${f1(pp(A.a,A.n))}%)${hp?`, ${pl}: ${f1(pp(O.a,O.n))}%`:''}. ${A.a>A.d?'Passive lebih banyak dari Detractor, sehingga ruang perbaikan tNPS terbesar ada di menggeser Passive (skor 7–8) menjadi Promotor.':''}`);
   const bs=[...br].sort((a,b)=>a.nps-b.nps);
@@ -223,7 +225,7 @@ function tanal(id,kind,b){
   const md=[...gm(r=>r[1],1)].filter(x=>x.d>0).sort((a,b)=>b.d-a.d).slice(0,3);
   if(md.length)L.push(`Detractor terbanyak ada di: ${md.map(x=>`${nm(x)} (${fi(x.d)} dari ${fi(x.n)} respon = ${f1(pp(x.d,x.n))}%)`).join('; ')}.`);
   const cd=cs.filter(x=>x.d>0).sort((a,b)=>b.d-a.d||a.nps-b.nps).slice(0,4);
-  if(cd.length)L.push(`CSR (Customer Service) dengan Detractor terbanyak: ${cd.map(x=>`${x.name} (${fi(x.d)} dari ${fi(x.n)} respon, tNPS ${f1(x.nps)})`).join('; ')}. Perlu coaching dan review komentar pelanggan terkait.`);
+  if(cd.length)L.push(`CSR (respon People) dengan Detractor terbanyak: ${cd.map(x=>`${x.name} (${fi(x.d)} dari ${fi(x.n)} respon, tNPS ${f1(x.nps)})`).join('; ')}. Perlu coaching dan review komentar pelanggan terkait.`);
  }
  const box=`<div class="anl" style="margin:0 0 12px;padding:10px 14px;border-left:4px solid ${kind=='p'?'var(--g)':'var(--r)'};background:var(--soft,rgba(127,127,127,.08));border-radius:8px"><div style="font-weight:700;margin-bottom:4px">Analisa tNPS · ${per}${hp?' vs '+pl:''}</div><ul style="margin:0;padding-left:18px;line-height:1.55">${L.map(x=>`<li>${x}</li>`).join('')}</ul></div>`;
  $(id).insertAdjacentHTML('afterbegin',box);
@@ -306,6 +308,7 @@ async function exportTiket(){
  const out=XLSX.write(wb,{bookType:'xlsx',type:'array'});
  await saveFile('Tiket_Jabar_'+per+'.xlsx',new Blob([out],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
 }
+/* data F dimuat dari data/F.json oleh loader.js */
 st.ff=2;Object.assign(st.sort,{ft2:['n',-1],ft3:['n',-1],ft4:['n',-1]});
 const FC=r=>st.ff=='all'||r[2]==st.ff,FCUT=F.m.map((m,i)=>{const d=Math.max(0,...F.rows.filter(r=>r[2]==i).map(r=>r[9]));return d<ML[i]?d:99}),FP=r=>st.ff!='all'&&st.ff>0&&r[2]==st.ff-1&&r[9]<=FCUT[st.ff],fpl=k=>{const c=FCUT[k+1];return c<ML[k]?F.m[k]+' (1–'+c+')':F.m[k]},fhp=()=>st.ff!='all'&&st.ff>0;
 const flab=i=>F.m[i]+(i==2?' (1–31)':i==3?' (1–'+FCUT[3]+')':'');
@@ -370,6 +373,7 @@ async function exportFixed(){
  await saveFile('Tiket_Fixed_Jabar_'+per+'.xlsx',new Blob([XLSX.write(wb,{bookType:'xlsx',type:'array'})],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
 }
 
+/* data K dimuat dari data/K.json oleh loader.js */
 st.km=1;
 const KGC=['#5B47C0','#3F86D4','#8A6FDB','#E0654F','#4DA58C','#C7557F'];
 const kpct=v=>v==null||v===''?'–':(v*100).toFixed(2)+'%';
@@ -407,6 +411,7 @@ async function exportKPI(){
 }
 
 // ===== VISIT JABAR =====
+/* data V dimuat dari data/V.json oleh loader.js */
 V.mo=[];for(let d=0;d<=V.last;d++)V.mo.push(V.ms.filter(x=>d>=x).length-1);const VLM=V.m.length-1,VML=[31,31,30,31,30,31],VCUT=V.last-V.ms[VLM],VPART=VCUT<VML[VLM]-1;const vcutok=d=>!(VPART&&st.vm==VLM)||d-V.ms[VLM-1]<=VCUT;
 const UBR=new Map();R.forEach(r=>UBR.set(r[1],r[0]));T.rows.forEach(r=>{if(!UBR.has(T.un[r[1]]))UBR.set(T.un[r[1]],T.br[r[0]])});V.u.forEach((u,i)=>UBR.set(u,V.br[V.ub[i]]));
 const dd=d=>new Date(Date.UTC(2026,6,1+d)),dw=d=>dd(d).getUTCDay(),dnum=d=>dd(d).getUTCDate(),dmon=d=>dd(d).getUTCMonth()+1;
@@ -415,7 +420,7 @@ Object.assign(st,{vm:3,vs:'all',vk:'aktif',vd:'br',vc:'all',vsel:new Set()});
 Object.assign(st.sort,{vt1:['n',-1],vt2:['n',-1],vt3:['n',-1],vtr:['n',-1]});
 const SVN={all:'Semua',0:'Telkomsel (Mobile)',1:'IndiHome'};
 const VCN={all:'Sheet Jumlah CSR (SIAD Update)',csr:'Sheet Jumlah CSR (SIAD Update)'};
-const VCS={"GraPARI Bandung Elektronik Center": 12, "GraPARI Banjar": 3, "GraPARI Bantarkalong": 1, "GraPARI Bojongsoang": 2, "GraPARI Ciamis": 4, "GraPARI Cianjur": 4, "GraPARI Ciledug Cirebon": 2, "GraPARI Cimahi": 5, "GraPARI Ekstensi Cipanas": 1, "GraPARI Cirebon": 3, "GraPARI Cirebon Super Blok": 9, "GraPARI Dago": 9, "GraPARI Garut": 6, "GraPARI Indramayu": 4, "GraPARI Jatibarang": 2, "GraPARI Kuningan": 5, "GraPARI Lembang": 2, "GraPARI Lembong": 7, "GraPARI Majalaya": 3, "GraPARI Majalengka": 4, "GraPARI Metro Trade Center Bandung": 5, "GraPARI Miko Mall Bandung": 6, "GraPARI Padalarang": 4, "GraPARI Pamanukan": 2, "GraPARI Pamengpeuk": 1, "GraPARI Pangandaran": 3, "GraPARI Rancaekek": 4, "GraPARI Singaparna": 3, "GraPARI Soreang": 4, "GraPARI Subang": 4, "GraPARI Sukanagara": 1, "GraPARI Sumber": 4, "GraPARI Sumedang": 4, "GraPARI Supratman": 5, "GraPARI Tasikmalaya": 10, "GraPARI Trans Studio Mall Bandung": 8, "GraPARI Ujung Berung": 3};const VCSN=V.u.map(u=>VCS[u]||0);
+const VCS={"GraPARI Bandung Elektronik Center": 12, "GraPARI Banjar": 3, "GraPARI Bantarkalong": 1, "GraPARI Bojongsoang": 2, "GraPARI Ciamis": 4, "GraPARI Cianjur": 4, "GraPARI Ciledug Cirebon": 2, "GraPARI Cimahi": 5, "GraPARI Ekstensi Cipanas": 1, "GraPARI Cirebon": 3, "GraPARI Cirebon Super Blok": 9, "GraPARI Dago": 8, "GraPARI Garut": 6, "GraPARI Indramayu": 4, "GraPARI Jatibarang": 2, "GraPARI Kuningan": 5, "GraPARI Lembang": 2, "GraPARI Lembong": 7, "GraPARI Majalaya": 3, "GraPARI Majalengka": 4, "GraPARI Metro Trade Center Bandung": 5, "GraPARI Miko Mall Bandung": 6, "GraPARI Padalarang": 4, "GraPARI Pamanukan": 2, "GraPARI Pamengpeuk": 1, "GraPARI Pangandaran": 3, "GraPARI Rancaekek": 4, "GraPARI Singaparna": 3, "GraPARI Soreang": 4, "GraPARI Subang": 4, "GraPARI Sukanagara": 1, "GraPARI Sumber": 4, "GraPARI Sumedang": 4, "GraPARI Supratman": 5, "GraPARI Tasikmalaya": 10, "GraPARI Trans Studio Mall Bandung": 8, "GraPARI Ujung Berung": 3};const VCSN=V.u.map(u=>VCS[u]||0);
 const VKN={aktif:'Hari aktif (ada visit)',mf:'Senin–Jumat',ms:'Senin–Sabtu'};
 const fT=s=>{if(s==null)return'–';const t=Math.round(Math.abs(s)),m=Math.floor(t/60);return(s<0&&t>0?'-':'')+m+':'+String(t%60).padStart(2,'0')};
 const fTd=v=>v==null?'–':Math.abs(v)<0.5?'0:00':`<span class="dl ${v>0?'neg':'pos'}">${v>0?'▲ +':'▼ '}${fT(Math.abs(v))}</span>`;
@@ -530,7 +535,7 @@ function finfo(){const p=st.p||1,L=[['Tab',['','tNPS Mobile','Tiket Mobile','Vis
  else if(p==2)L.push(['Bulan tiket',st.tm=='all'?T.m[0]+'–'+T.m[T.m.length-1]:T.m[st.tm]],['Level top tiket',['CASE_TYPE_1','CASE_TYPE_2','CASE_TYPE_3'][st.tl-5]]);
  else if(p==7)L.push(['Bulan KPI',['Juli','Agustus'][st.km]]);
  else if(p==6)L.push(['Bulan tiket fixed',st.ff=='all'?F.m[0]+'–'+F.m[F.m.length-1]:F.m[st.ff]]);
- else if(p==5)L.push(['Bulan load CAPS',cpl()],['Pembanding MoM',cphp()?CP.ms[st.cm-1]:'-']);else if(p==4)L.push(['Bulan waiting time',wlbl()],['Pembanding MoM',whp()?W.ms[st.wm-1]:'-']);else L.push(['Bulan visit',vlbl()],['Pembanding MoM',vhp()?vpl():'-'],['Tipe service',SVN[st.vs]],['Basis hari kerja',VKN[st.vk]],['Jumlah CSR (pembagi Index)',VCN.all]);
+ else if(p==5)L.push(['Bulan load CAPS',cpl()],['Pembanding MoM',cphp()?cpPL():'-']);else if(p==4)L.push(['Bulan waiting time',wlbl()],['Pembanding MoM',whp()?W.ms[st.wm-1]:'-']);else L.push(['Bulan visit',vlbl()],['Pembanding MoM',vhp()?vpl():'-'],['Tipe service',SVN[st.vs]],['Basis hari kerja',VKN[st.vk]],['Jumlah CSR (pembagi Index)',VCN.all]);
  return L}
 function addXb(id){const el=$(id);if(!el||el.dataset.xb)return;el.dataset.xb='1';let h=el.previousElementSibling;while(h&&h.tagName!='H2')h=h.previousElementSibling;
  if(!h){const c=el.closest('.card');h=c&&c.querySelector('h2')}if(!h)return;
@@ -560,6 +565,7 @@ async function exportVisit(){
  await saveFile('Visit_Jabar_'+(st.vm=='all'?V.m[0]+'-'+V.m[VLM]:V.m[st.vm])+'.xlsx',xlsxBlob(wb));
 }
 /* ===== Waiting Time module ===== */
+/* data W dimuat dari data/W.json oleh loader.js */
 const WBR=['Bandung','Cirebon','Soreang','Tasikmalaya'],WMD=['MOMO','TOMO'],WTP=['Lite','Small','Medium'],WSTD=['≤ 5 menit','≤ 10 menit','≤ 20 menit'],WCOL=['#4FB08C','#9AD07A','#F0C75E','#F2A05E','#EC5A4F','#B3262B'];
 W.u.forEach(x=>{if(!UBR.has(x[0]))UBR.set(x[0],WBR[x[1]])});
 st.wm=3;Object.assign(st.sort,{ww1:['name',1],ww2:['kpi',-1],ww3:['name',1],ww4:['kpi',1],ww5:['ord',1]});
@@ -602,7 +608,7 @@ function renderW(){
  // Tipe
  // per GraPARI (filter branch saja)
  rows=wfill(wrows(wbOnlyB(),r=>wu(r)[0],k=>k,(k,g)=>{const u=wu(g[0]);return{br:WBR[u[1]],md:WMD[u[2]],tp:WTP[u[3]],std:WSTD[u[3]]}}).map(r=>{W.bk.forEach((_,i)=>r['b'+i]=r.sh[i]);return r}),
-  r=>`<td>${r.name}</td><td style="text-align:left">${r.br}</td><td style="text-align:left">${r.md}</td><td style="text-align:left">${r.tp} (${r.std})</td>`);rows.forEach(r=>{r.html=r.html.replace(/(<td><b>[^<]*<\/b><\/td>)<td>[^<]*<\/td>/,'$1')});
+  r=>`<td>${r.name}</td><td style="text-align:left">${r.br}</td><td style="text-align:left">${r.md}</td><td style="text-align:left">${r.tp} (${r.std})</td>`);rows.forEach(r=>{r.html=r.html.replace(/(<td><b>[^<]*<\/b><\/td>)<td>[^<]*<\/td>/,'$1');if(r.kpi!=null&&r.kpi<80){r.html=r.html.replace('<td><b>','<td style="color:#E60000"><b>').replace('<td>'+r.name+'</td>','<td style="color:#E60000;font-weight:700">'+r.name+'</td>')}});
  table('ww4',rows,[['GraPARI','name'],['Branch','br'],['Model','md'],['Tipe (standar)','tp'],...WCOLS.filter(c=>c[1]!='pk')],k=>{st.u=st.u==k?'ALL':k;sync();render()},st.u);
  $('wnote').textContent='';
 }
@@ -621,6 +627,7 @@ async function exportWait(){
 
 
 /* ===== Sales Halo module ===== */
+/* data H dimuat dari data/H.json oleh loader.js */
 H.uc=H.u.map(u=>VCS[u]||0);
 H.u.forEach((u,i)=>{if(!UBR.has(u))UBR.set(u,H.br[H.ub[i]])});
 st.hm=3;Object.assign(st.sort,{ht0:['sales',-1],ht1:['sales',-1],ht2:['sales',-1]});
@@ -688,6 +695,7 @@ async function exportHalo(){
 
 
 /* ===== Sales IndiHome module ===== */
+/* data IH dimuat dari data/IH.json oleh loader.js */
 IH.uc=IH.u.map(u=>VCS[u]||0);
 IH.u.forEach((u,i)=>{if(!UBR.has(u))UBR.set(u,IH.br[IH.ub[i]])});
 st.im=3;Object.assign(st.sort,{it0:['sales',-1],it1:['sales',-1],it2:['sales',-1]});
@@ -784,6 +792,7 @@ async function exportIndi(){
 
 
 /* ===== Sales ORBIT module ===== */
+/* data OH dimuat dari data/OH.json oleh loader.js */
 OH.uc=OH.u.map(u=>VCS[u]||0);
 OH.u.forEach((u,i)=>{if(!UBR.has(u))UBR.set(u,OH.br[OH.ub[i]])});
 st.om=3;Object.assign(st.sort,{ot0:['sales',-1],ot1:['sales',-1],ot2:['sales',-1]});
@@ -845,12 +854,14 @@ async function exportOrbit(){
 }
 
 /* ===== CAPS module ===== */
+/* data CP dimuat dari data/CP.json oleh loader.js */
 CP.u.forEach(u=>{if(!UBR.has(u)&&CP.r.some(r=>CP.u[r[4]]==u&&r[3]>=0))UBR.set(u,CP.br[(CP.r.find(r=>CP.u[r[4]]==u&&r[3]>=0))[3]])});
 CP.t={"GraPARI Bandung Elektronik Center":17.837134,"GraPARI Banjar":18.69813,"GraPARI Bantarkalong":0.849915,"GraPARI Ciamis":2.549745,"GraPARI Cianjur":6.795099,"GraPARI Ciledug Cirebon":4.250025,"GraPARI Cimahi":60.306502,"GraPARI Cirebon":49.300286,"GraPARI Cirebon Super Blok":43.350251,"GraPARI Dago":5.945711,"GraPARI Bojongsoang":3.480799,"GraPARI Ekstensi Cipanas":1.698775,"GraPARI Garut":32.29677,"GraPARI Indramayu":7.650044,"GraPARI Jatibarang":1.0,"GraPARI Kuningan":5.10003,"GraPARI Lembang":1.0,"GraPARI Lembong":49.264467,"GraPARI Majalaya":4.350999,"GraPARI Majalengka":8.701999,"GraPARI Metro Trade Center Bandung":5.096324,"GraPARI Miko Mall Bandung":35.674269,"GraPARI Padalarang":34.824882,"GraPARI Pamanukan":4.250025,"GraPARI Pangandaran":8.49915,"GraPARI Rancaekek":26.976196,"GraPARI Singaparna":1.0,"GraPARI Soreang":6.091399,"GraPARI Subang":0.850005,"GraPARI Sumber":3.40002,"GraPARI Sumedang":3.480799,"GraPARI Supratman":43.318755,"GraPARI Tasikmalaya":53.544646,"GraPARI Trans Studio Mall Bandung":17.837134,"GraPARI Ujung Berung":43.318755,"GraPARI Sukanagara":1.0,"GraPARI Pamengpeuk":1.0};CP.tb={"Bandung": 323.917808, "Cirebon": 119.150685, "Soreang": 53.082192, "Tasikmalaya": 118.438356};
-const cpT=v=>st.cm==1&&v!=null?v:null;
+CP.tn={"GraPARI Bandung Elektronik Center": 19.0, "GraPARI Banjar": 12.0, "GraPARI Bantarkalong": 1.0, "GraPARI Ciamis": 4.0, "GraPARI Cianjur": 6.0, "GraPARI Ciledug Cirebon": 7.0, "GraPARI Cimahi": 60.0, "GraPARI Cirebon": 42.0, "GraPARI Cirebon Super Blok": 16.0, "GraPARI Dago": 15.0, "GraPARI Bojongsoang": 6.0, "GraPARI Ekstensi Cipanas": 3.0, "GraPARI Garut": 31.0, "GraPARI Indramayu": 6.0, "GraPARI Jatibarang": 1.0, "GraPARI Kuningan": 6.0, "GraPARI Lembang": 1.0, "GraPARI Lembong": 88.0, "GraPARI Majalaya": 5.0, "GraPARI Majalengka": 13.0, "GraPARI Metro Trade Center Bandung": 6.0, "GraPARI Miko Mall Bandung": 44.0, "GraPARI Padalarang": 22.0, "GraPARI Pamanukan": 1.0, "GraPARI Pangandaran": 2.0, "GraPARI Rancaekek": 34.0, "GraPARI Singaparna": 1.0, "GraPARI Soreang": 8.0, "GraPARI Subang": 2.0, "GraPARI Sumber": 5.0, "GraPARI Sumedang": 9.0, "GraPARI Supratman": 37.0, "GraPARI Tasikmalaya": 52.0, "GraPARI Trans Studio Mall Bandung": 28.0, "GraPARI Ujung Berung": 71.0, "GraPARI Sukanagara": 1.0, "GraPARI Pamengpeuk": 1.0};CP.tbn={"Bandung": 401.0, "Cirebon": 86.0, "Soreang": 75.0, "Tasikmalaya": 104.0};CP.pr=8/30;
+const cpT=v=>(st.cm==1||st.cm==2)&&v!=null?(st.cm==2?v*CP.pr:v):null;
 st.cm=1;Object.assign(st.sort,{cp1:['n',-1],cp2:['n',-1],cp3:['n',-1],cp4:['n',-1],cp5:['n',-1],cp6:['n',-1],cp7:['n',-1],cp8:['n',-1],cp9:['n',-1]});
-const cpC=r=>st.cm=='all'||r[0]==st.cm,cpP=r=>st.cm!='all'&&st.cm>0&&r[0]==st.cm-1,cphp=()=>st.cm!='all'&&st.cm>0;
-const cpl=()=>st.cm=='all'?CP.ms[0]+' + '+CP.ms[1]:CP.ms[st.cm];
+const cpC=r=>st.cm=='all'?r[0]<3:r[0]==st.cm,cpP=r=>st.cm==2?r[0]==3:(st.cm!='all'&&st.cm>0&&r[0]==st.cm-1),cphp=()=>st.cm!='all'&&st.cm>0,cpPL=()=>CP.ms[st.cm==2?3:st.cm-1];
+const cpl=()=>st.cm=='all'?CP.ms.slice(0,3).join(' + '):CP.ms[st.cm];
 const cpUF=r=>st.u=='ALL'||CP.u[r[4]]==st.u;
 const cpBT=r=>st.b=='ALL'||CP.br[r[2]]==st.b,cpBG=r=>st.b=='ALL'||CP.br[r[3]]==st.b;
 const cpNon=r=>r[3]<0,cpGra=r=>r[3]>=0;
@@ -866,8 +877,8 @@ const CPCOLS=[['Total WO','n'],['Total MO','mo'],['Total CAPS','do'],['%RR','rr'
 function cpmode(a){const m=new Map();a.forEach(x=>m.set(x,(m.get(x)||0)+1));let b=null,c=-1;m.forEach((v,k)=>{if(v>c){c=v;b=k}});return b}
 function cptab(id,rs,keyf,namef,o){o=o||{};
  const rows=[...group(rs,keyf)].map(([k,g])=>{const m=o.tgt?cpm(g,o.tgt(k)):cpm(g);const br=o.br?o.br(g):null;return{key:String(k),name:namef(k),br,...m,html:`<td>${namef(k)}</td>`+(o.br?`<td style="text-align:left">${br}</td>`:'')+m.html}}).filter(r=>r.do+r.mo>0||(o.keep));
- table(id,rows,[[o.lab,'name'],...(o.br?[['Branch','br']]:[]),...(o.tgt?[...CPCOLS.slice(0,3),...CPTCOLS,...CPCOLS.slice(3)]:CPCOLS)],o.click,o.sel);
- if(o.tot!==false){const tt=o.tgt?rows.reduce((x,r)=>x+(r.t||0),0):0,m=o.tgt?cpm(rs,rows.some(r=>r.t!=null)?tt:null):cpm(rs),t={key:'Total',name:'Total',br:'',...m};EX[id].rows.push(t);const tb=$(id).querySelector('tbody');if(tb)tb.insertAdjacentHTML('beforeend',`<tr style="font-weight:700;border-top:2px solid var(--bd)"><td>Total</td>${o.br?'<td></td>':''}${m.html}</tr>`)}
+ table(id,rows,[[o.lab,'name'],...(o.br?[['Branch','br']]:[]),...(o.tgt?[...CPCOLS.slice(0,3),...(st.cm==2?[['Target (pro-rata 8/30)','t'],['Gap to Target','gap']]:CPTCOLS),...CPCOLS.slice(3)]:CPCOLS)],o.click,o.sel);
+ if(o.tot!==false){const tt=o.tgt?rows.reduce((x,r)=>x+(r.t||0),0):0,m=o.tgt?cpm(rs,rows.some(r=>r.t!=null)?(st.cm==2?tt/CP.pr:tt):null):cpm(rs),t={key:'Total',name:'Total',br:'',...m};EX[id].rows.push(t);const tb=$(id).querySelector('tbody');if(tb)tb.insertAdjacentHTML('beforeend',`<tr style="font-weight:700;border-top:2px solid var(--bd)"><td>Total</td>${o.br?'<td></td>':''}${m.html}</tr>`)}
  return rows}
 
 const CPBC=[['#8DB8EA','#CBE0F6'],['#A38BE0','#D3C9F2'],['#F2A58A','#F9D5C7'],['#B5A5EE','#DDD7F8'],['#9FB7C6','#D2DEE6'],['#7FB6D9','#C5DFEE'],['#D7A3D2','#EFD6EC'],['#8FCDB0','#CDEADB'],['#F0C27B','#F8E2BB'],['#6A55C8','#B9AEE8']];
@@ -879,8 +890,8 @@ function cpbars(id,rs,fi_,lab,labs,pal){
  EX[id]={rows:rows.map((r,i)=>({...r,no:i+1})),cols:[['No','no'],[lab,'name'],['Jumlah','n'],['% of total','pc'],['Jumlah bln lalu','pn'],['% bln lalu','pp'],['MoM %','mom'],['MoM jumlah','dn']]};addXb(id);
  if(!rows.length){$(id).innerHTML='<p class="note">Tidak ada data.</p>';return}
  const mx=Math.max(1,...rows.map(r=>Math.max(r.pc,r.pp||0)));
- $(id).innerHTML=`<div class="lg" style="margin:0 0 6px"><span><span class="dot" style="background:#8DB8EA"></span>Bulan terpilih (${cpl()})</span>${hp?'<span><span class="cmk"></span>Posisi bulan lalu ('+CP.ms[st.cm-1]+')</span>':''}<span>% of total dari ${fi(ct)} ${pal?'DO':'MO'}</span></div>`+
- rows.map((r,i)=>{const c=CPBC[i%CPBC.length];return`<div class="cr"><div class="cl"><span class="cn">${i+1}</span>${r.name}</div><div class="ct"><div class="cb" style="width:${(r.pc/mx*100).toFixed(1)}%;background:linear-gradient(90deg,${c[1]},${c[0]})"></div>${r.pp!=null?`<i class="cm" style="left:${(r.pp/mx*100).toFixed(1)}%" title="${CP.ms[st.cm-1]}: ${f1(r.pp)}%"></i>`:''}</div><div class="cv"><b>${f1(r.pc)}%</b> <span class="cj">${fi(r.n)}</span>${r.mom!=null?` ${dl(r.mom)}<span class="cj"> ${r.dn>=0?'+':''}${r.dn}</span>`:''}</div></div>`}).join('')}
+ $(id).innerHTML=`<div class="lg" style="margin:0 0 6px"><span><span class="dot" style="background:#8DB8EA"></span>Bulan terpilih (${cpl()})</span>${hp?'<span><span class="cmk"></span>Posisi bulan lalu ('+cpPL()+')</span>':''}<span>% of total dari ${fi(ct)} ${pal?'DO':'MO'}</span></div>`+
+ rows.map((r,i)=>{const c=CPBC[i%CPBC.length];return`<div class="cr"><div class="cl"><span class="cn">${i+1}</span>${r.name}</div><div class="ct"><div class="cb" style="width:${(r.pc/mx*100).toFixed(1)}%;background:linear-gradient(90deg,${c[1]},${c[0]})"></div>${r.pp!=null?`<i class="cm" style="left:${(r.pp/mx*100).toFixed(1)}%" title="${cpPL()}: ${f1(r.pp)}%"></i>`:''}</div><div class="cv"><b>${f1(r.pc)}%</b> <span class="cj">${fi(r.n)}</span>${r.mom!=null?` ${dl(r.mom)}<span class="cj"> ${r.dn>=0?'+':''}${r.dn}</span>`:''}</div></div>`}).join('')}
 function cptop(id,rs,fi_,lab,labs,ttl){
  const cur=rs.filter(cpC),prv=rs.filter(cpP),hp=cphp(),ct=cur.length,pt=prv.length;
  const gc=group(cur,r=>r[fi_]),gp=group(prv,r=>r[fi_]);
@@ -892,12 +903,13 @@ function cptop(id,rs,fi_,lab,labs,ttl){
  const m={key:'Total',name:'Total',n:ct,pc:ct?100:null,pn:hp?pt:null,pp:hp&&pt?100:null,mom:null,dn:hp?ct-pt:null};EX[id].rows.push(m);
  const tb=$(id).querySelector('tbody');if(tb)tb.insertAdjacentHTML('beforeend',`<tr style="font-weight:700;border-top:2px solid var(--bd)"><td>Total</td><td>${fi(ct)}</td><td>100%</td><td>${hp?fi(pt):'–'}</td><td>${hp?'100%':'–'}</td><td>–</td><td>${hp?(ct-pt>=0?'+':'')+(ct-pt):'–'}</td></tr>`)}
 function cpkpi(el,t,v,pv,isRR){const hp=cphp();let m='';if(hp&&v!=null&&pv!=null){m=isRR?dl(v-pv):cptm(pv?(v-pv)/pv*100:null)}
- $(el).innerHTML=`<div class="t">${t} · ${cpl()}</div><div class="v">${v==null?'–':isRR?f1(v)+'%':fi(v)} <span style="font-size:15px">${m?m+' MoM':''}</span></div>${hp&&pv!=null?`<div class="note">${CP.ms[st.cm-1]}: ${isRR?f1(pv)+'%':fi(pv)}</div>`:''}`}
+ $(el).innerHTML=`<div class="t">${t} · ${cpl()}</div><div class="v">${v==null?'–':isRR?f1(v)+'%':fi(v)} <span style="font-size:15px">${m?m+' MoM':''}</span></div>${hp&&pv!=null?`<div class="note">${cpPL()}: ${isRR?f1(pv)+'%':fi(pv)}</div>`:''}`}
 function cpscope(){return CP.r.filter(r=>cpGra(r)&&cpUF(r)&&cpBG(r))}
 
 function cptrend(){
- const M=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt'],WO=[5599,4414,3689,5682,4382,4957,4944,4496,4758,5896],RR=[85.7117,86.0897,84.0878,88.1,85.9,85.4,84.6076,82.8061,84.6,86.1092];
- function ch(id,title,sub,V,c1,c2,fmt,unit,pad){
+ const M=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov*'],WO=[5599,4414,3689,5682,4382,4957,4944,4496,4758,5896,1157],RR=[85.7117,86.0897,84.0878,88.1,85.9,85.4,84.6076,82.8061,84.6,86.1092,83.4918];
+ const pr=CP.r.filter(r=>r[0]==3),PW=pr.length,PR=PW?pr.reduce((a,r)=>a+r[1],0)/PW*100:null;
+ function ch(id,title,sub,V,c1,c2,fmt,unit,pad,pv){
   const W=560,H=250,L=44,R=18,T=34,B=34,mn=Math.min(...V),mx=Math.max(...V),lo=mn-(mx-mn)*pad,hi=mx+(mx-mn)*pad*.9;
   const X=i=>L+i*(W-L-R)/(V.length-1),Y=v=>T+(hi-v)/(hi-lo)*(H-T-B);
   const pts=V.map((v,i)=>X(i).toFixed(1)+','+Y(v).toFixed(1)),line='M'+pts.join(' L'),area=line+' L'+X(V.length-1).toFixed(1)+','+(H-B)+' L'+X(0).toFixed(1)+','+(H-B)+' Z';
@@ -907,18 +919,19 @@ function cptrend(){
    d+=`<circle cx="${x}" cy="${y}" r="${last?6:4}" fill="#fff" stroke="${last?c2:c1}" stroke-width="${last?3:2}"/>`;
    d+=`<text x="${x}" y="${y-(last?12:10)}" text-anchor="middle" font-size="${last?12:10}" font-weight="${last||ex?700:500}" fill="${last?c2:'#5b5470'}">${fmt(v)}</text>`;
    d+=`<text x="${x}" y="${H-12}" text-anchor="middle" font-size="10.5" fill="${last?c2:'#9a93a8'}" font-weight="${last?700:400}">${M[i]}</text>`});
-  const dl=V[li]-V[li-1],pc=unit=='%'?dl:dl/V[li-1]*100,up=dl>=0;
-  const chip=`<span style="background:${up?'#e3f6ec':'#fde8ea'};color:${up?'#1d8a55':'#c0392b'};padding:2px 9px;border-radius:12px;font-size:12px;font-weight:700">${up?'▲':'▼'} ${unit=='%'?Math.abs(dl).toFixed(2)+' pt':Math.abs(pc).toFixed(1)+'%'} MoM</span>`;
-  return `<div style="flex:1 1 380px;min-width:300px;background:linear-gradient(160deg,${c1}14,#fff 60%);border:1px solid ${c1}33;border-radius:14px;padding:12px 14px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><div><div style="font-weight:700;font-size:15px;color:#3b3550">${title}</div><div style="font-size:11.5px;color:#9a93a8">${sub}</div></div>${chip}</div><svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c1}" stop-opacity=".35"/><stop offset="1" stop-color="${c1}" stop-opacity="0"/></linearGradient><linearGradient id="${id}l" x1="0" x2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs>${g}<path d="${area}" fill="url(#${id})"/><path d="${line}" fill="none" stroke="url(#${id}l)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${d}</svg></div>`}
+  const base=pv!=null?pv:V[li-1],dl=V[li]-base,pc=unit=='%'?dl:dl/base*100,up=dl>=0,avg=V.slice(0,li).reduce((a,b)=>a+b,0)/li;
+  const chip=`<span style="background:${up?'#e3f6ec':'#fde8ea'};color:${up?'#1d8a55':'#c0392b'};padding:2px 9px;border-radius:12px;font-size:12px;font-weight:700">${up?'▲':'▼'} ${Math.abs(pc).toFixed(1)+'%'} MoM</span>`;
+  const side=`<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">${chip}<span style="background:#f1eff6;color:#3b3550;padding:2px 9px;border-radius:12px;font-size:12px;font-weight:700">Avg ${M[0]}–${M[li-1]}: ${unit=='%'?avg.toFixed(1)+'%':fmt(avg)}</span></div>`;
+  return `<div style="flex:1 1 380px;min-width:300px;background:linear-gradient(160deg,${c1}14,#fff 60%);border:1px solid ${c1}33;border-radius:14px;padding:12px 14px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><div><div style="font-weight:700;font-size:15px;color:#3b3550">${title}</div><div style="font-size:11.5px;color:#9a93a8">${sub}</div></div>${side}</div><svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c1}" stop-opacity=".35"/><stop offset="1" stop-color="${c1}" stop-opacity="0"/></linearGradient><linearGradient id="${id}l" x1="0" x2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs>${g}<path d="${area}" fill="url(#${id})"/><path d="${line}" fill="none" stroke="url(#${id}l)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${d}</svg></div>`}
  const fw=(v,k)=>Math.round(v).toLocaleString('id-ID'),fr=(v,k)=>v.toFixed(k?0:1)+'%';
- $('cptr').innerHTML='<h2 style="margin:0 0 4px">📈 Trend Jabar 2026</h2><div style="font-size:12px;color:#9a93a8;margin-bottom:10px">Jan–Okt 2026 · level Jabar (sumber: sheet Performansi JABAR) · Okt = data s.d. 31 Okt</div><div style="display:flex;gap:14px;flex-wrap:wrap">'+ch('tw','Trend WO Jabar','Jumlah WO per bulan',WO,'#8b7cf6','#5b4bd6',fw,'',.25)+ch('tr','Trend %RR Jabar','Retention rate per bulan',RR,'#2bb5a0','#12806f',fr,'%',.3)+'</div>';
+ $('cptr').innerHTML='<h2 style="margin:0 0 4px">📈 Trend Jabar 2026</h2><div style="font-size:12px;color:#9a93a8;margin-bottom:10px">Jan–Nov 2026 · level Jabar (sumber: sheet Performansi JABAR) · Okt = data s.d. 31 Okt · Nov* = data 1–8 Nov · MoM Nov* dibanding Okt 1–8 · Avg = rata-rata bulanan Jan–Okt</div><div style="display:flex;gap:14px;flex-wrap:wrap">'+ch('tw','Trend WO Jabar','Jumlah WO per bulan',WO,'#8b7cf6','#5b4bd6',fw,'',.25,PW||null)+ch('tr','Trend %RR Jabar','Retention rate per bulan',RR,'#2bb5a0','#12806f',fr,'%',.3,PR)+'</div>';
 }
 function renderCP(){cptrend();
  const g=cpscope(),m=cpm(g),hp=cphp(),o=cpagg(g.filter(cpP)),a=cpagg(g.filter(cpC));
  cpkpi('ck1','📋 Total WO',a.n,o.n);cpkpi('ck2','🔁 Total MO',a.m,o.m);cpkpi('ck3','📉 Total CAPS',a.d,o.d);cpkpi('ck4','🎯 %RR',a.rr,o.rr,true);
- cptab('cp6',CP.r.filter(r=>cpGra(r)&&cpUF(r)),r=>r[3],k=>CP.br[k],{lab:'Branch',tgt:k=>st.u=='ALL'?CP.tb[CP.br[k]]:null,click:k=>{const b=CP.br[+k];st.b=st.b==b?'ALL':b;sync();render()},sel:st.b=='ALL'?null:String(CP.br.indexOf(st.b))});
+ cptab('cp6',CP.r.filter(r=>cpGra(r)&&cpUF(r)),r=>r[3],k=>CP.br[k],{lab:'Branch',tgt:k=>st.u=='ALL'?(st.cm==2?CP.tbn:CP.tb)[CP.br[k]]:null,click:k=>{const b=CP.br[+k];st.b=st.b==b?'ALL':b;sync();render()},sel:st.b=='ALL'?null:String(CP.br.indexOf(st.b))});
  const bk=f=>g=>CP.br[cpmode(g.map(f))];
- cptab('cp5',g,r=>r[4],k=>CP.u[k],{lab:'GraPARI',tgt:k=>CP.t[CP.u[k]],br:bk(r=>r[3]),click:k=>{const u=CP.u[+k];st.u=st.u==u?'ALL':u;sync();render()},sel:st.u=='ALL'?null:String(CP.u.indexOf(st.u))});
+ cptab('cp5',g,r=>r[4],k=>CP.u[k],{lab:'GraPARI',tgt:k=>(st.cm==2?CP.tn:CP.t)[CP.u[k]],br:bk(r=>r[3]),click:k=>{const u=CP.u[+k];st.u=st.u==u?'ALL':u;sync();render()},sel:st.u=='ALL'?null:String(CP.u.indexOf(st.u))});
  cpbars('cp7',g.filter(r=>r[1]==1),6,'Paket Retensi',CP.pk,0);
  cpbars('cp8',g.filter(r=>r[1]==0),7,'Reason CAPS',CP.rs,1);
  const q=$('cq').value.trim().toLowerCase(),mn=+$('cmin').value||1;
@@ -947,7 +960,7 @@ $('fu').onchange=e=>{st.u=e.target.value;render()};$('fs').onchange=e=>{st.s=e.t
 $('rs').onclick=()=>{st.vm=3;st.vs='all';st.vk='aktif';st.vd='br';st.vsel.clear();$('vq').value='';$('vmin').value=1;$('vcf').value='ALL';st.m=2;st.wm=3;st.hm=3;st.im=3;st.om=3;st.cm=1;st.ff=1;st.km=1;st.b='ALL';st.u='ALL';st.s='cs';$('fs').value='cs';$('fs').dataset.v='cs';sync();render()};
 $('fm').innerHTML=[['0','Agustus'],['1','September'],['2','Oktober'],['3','November (1–'+(D.mn[3].match(/–(\d+)/)||[,'?'])[1]+' Nov, parsial)'],['all','All Month']].map(x=>`<option value="${x[0]}">${x[1]}</option>`).join('');
 $('fm').onchange=e=>{const v=e.target.value;st.m=v=='all'?v:+v;render()};
-$('wm').innerHTML=['Juli','Agustus','September','Oktober','November'+(VPART?` (1–${vlast()} Nov, parsial)`:'')].map((m,i)=>`<option value="${i}">${m}</option>`).join('')+'<option value="all">All Month</option>';$('cm').innerHTML=[['0','September'],['1','Oktober'],['all','All Month']].map(x=>`<option value="${x[0]}">${x[1]}</option>`).join('');$('cm').onchange=e=>{const v=e.target.value;st.cm=v=='all'?v:+v;renderCP()};['cq','cmin'].forEach(i=>$(i).oninput=renderCP);
+$('wm').innerHTML=['Juli','Agustus','September','Oktober','November'+(VPART?` (1–${vlast()} Nov, parsial)`:'')].map((m,i)=>`<option value="${i}">${m}</option>`).join('')+'<option value="all">All Month</option>';$('cm').innerHTML=[['0','September'],['1','Oktober'],['2','November (1–8 Nov, parsial)'],['all','All Month']].map(x=>`<option value="${x[0]}">${x[1]}</option>`).join('');$('cm').onchange=e=>{const v=e.target.value;st.cm=v=='all'?v:+v;renderCP()};['cq','cmin'].forEach(i=>$(i).oninput=renderCP);
 $('hm').innerHTML=['Juli','Agustus','September','Oktober','All Month'].map((m,i)=>`<option value="${i==4?'all':i}">${m}</option>`).join('');$('hm').onchange=e=>{const v=e.target.value;st.hm=v=='all'?v:+v;renderH()};
 $('im').innerHTML=['Juli','Agustus','September','Oktober','All Month'].map((m,i)=>`<option value="${i==4?'all':i}">${m}</option>`).join('');$('im').onchange=e=>{const v=e.target.value;st.im=v=='all'?v:+v;renderI()};
 $('om').innerHTML=['Juli','Agustus','September','Oktober','All Month'].map((m,i)=>`<option value="${i==4?'all':i}">${m}</option>`).join('');$('om').onchange=e=>{const v=e.target.value;st.om=v=='all'?v:+v;renderO()};
@@ -958,6 +971,7 @@ function showTab(p){st.p=+p;{const tb=document.querySelector('#tabs .tab[data-p=
 document.querySelectorAll('#tabs .tab').forEach(b=>b.onclick=()=>showTab(b.dataset.p));document.querySelectorAll('#grp .gb').forEach(b=>b.onclick=()=>showTab(b.dataset.g=='kpi'?7:LASTT[b.dataset.g]));
 $('xl').onclick=()=>st.p==11?exportTF():st.p==10?exportOrbit():st.p==9?exportIndi():st.p==8?exportHalo():st.p==7?exportKPI():st.p==6?exportFixed():st.p==5?exportCaps():st.p==4?exportWait():st.p==3?exportVisit():st.p==2?exportTiket():exportXlsx();
 /* ===== tNPS Fixed module ===== */
+/* data TF dimuat dari data/TF.json oleh loader.js */
 st.fm=2;st.fb='ALL';st.fu='ALL';st.fn='ALL';st.fj='ALL';
 Object.assign(st.sort,{tf6:['nps',-1],tf1:['ord',1],tf2:['n',-1],tf3:['n',-1],tf4:['n',-1],tf5:['n',-1]});
 const TFCUT=TF.m.map((x,i)=>{const d=Math.max(0,...TF.rows.filter(r=>r[4]==i).map(r=>r[10]));return i==TF.m.length-1&&d<ML[i]?d:99});
@@ -968,8 +982,9 @@ function tfmet(rs){const a=ag(rs.filter(tfC)),o=ag(rs.filter(tfP));
  return{...a,ps:o.nps,po:o.n,mom:dv(a.nps,o.nps),html:`<td>${a.n}</td><td>${a.p}</td><td>${a.a}</td><td>${a.d}</td><td>${nb(a.nps)}<b class="${a.nps>=0?'pos':'neg'}">${f1(a.nps)}</b></td><td>${f1(o.nps)}</td><td>${dl(dv(a.nps,o.nps))}</td>`}}
 const TFC=[['Total','n'],['Promotor','p'],['Passive','a'],['Detractor','d'],['tNPS','nps'],['tNPS bln lalu','ps'],['MoM','mom']];
 const tfpm=()=>{if(st.fm<=0)return'';const c=TFCUT[st.fm],b=TF.m[st.fm-1].replace(/\s*\(.*\)/,'');return c<ML[st.fm-1]?b+' (1–'+c+')':TF.m[st.fm-1]};
-function tfTbl(id,skip,keyf,label,sel,onc,extra){
- const rs=tfBase(skip).filter(r=>keyf(r)!=null);
+const isPF=r=>r[1]==TFIG&&/customer service/i.test(TF.rs[r[6]]);
+function tfTbl(id,skip,keyf,label,sel,onc,extra,flt){
+ const rs=tfBase(skip).filter(r=>keyf(r)!=null&&(!flt||flt(r)));
  const big=label=='Unit Type';const rows=[...group(rs,keyf)].map(([k,g])=>{const m=tfmet(g);return{key:k,name:k,...m,br:extra?extra(g):'',html:(big&&k=='GraPARI'?`<td style="font-size:1.3em;font-weight:800;color:#EC0000">${k}</td>`:`<td>${k}</td>`)+(extra?`<td style="text-align:left">${extra(g)}</td>`:'')+m.html}}).filter(x=>x.n>0);
  table(id,rows,[[label,'name'],...(extra?[['Branch','br']]:[]),...TFC],onc,sel);
 }
@@ -1061,6 +1076,7 @@ function renderTF(){
  const gb=b.filter(r=>r[1]==TFIG),GA=ag(gb.filter(tfC)),GO=ag(gb.filter(tfP));
  const kc=(el,t,a,o,sub)=>$(el).innerHTML=`<div class="t">${t} · ${per}</div><div class="v ${a.nps>=0?'pos':'neg'}">${f1(a.nps)} <span style="font-size:15px">${hp?dl(dv(a.nps,o.nps))+' MoM':''}</span></div><div class="stack"><i style="width:${a.n?a.p/a.n*100:0}%;background:var(--g)"></i><i style="width:${a.n?a.a/a.n*100:0}%;background:var(--y)"></i><i style="width:${a.n?a.d/a.n*100:0}%;background:var(--r)"></i></div><div class="lg"><span><span class="dot" style="background:var(--g)"></span>Promotor <b>${a.p}</b></span><span><span class="dot" style="background:var(--y)"></span>Passive <b>${a.a}</b></span><span><span class="dot" style="background:var(--r)"></span>Detractor <b>${a.d}</b></span><span>Total <b>${a.n}</b></span></div><div class="note">${hp?`<b>${pl}:</b> tNPS ${f1(o.nps)} (${o.n} respon)`:'MoM tidak tersedia untuk bulan pertama'}${sub||''}</div>`;
  kc('tfk1','📞 tNPS Fixed – Jabar',A,O,'');kc('tfk2','🏬 tNPS Fixed – unit GraPARI',GA,GO,` · ${f1(A.n?GA.n/A.n*100:0)}% dari total respon`);
+ {const pb=b.filter(isPF),PA=ag(pb.filter(tfC)),PO=ag(pb.filter(tfP));kc('tfk3','🎧 tNPS People – unit GraPARI',PA,PO,` · respon GraPARI dengan kategori Q6 Customer Service`);}
  $('tfm').value=String(st.fm);$('tfmeta').style.display='none';
  /* 1 total Jabar per bulan */
  const mrows=TF.m.map((m,i)=>{const a=ag(b.filter(r=>r[4]==i)),o=i>0?ag(b.filter(r=>r[4]==i-1&&r[10]<=TFCUT[i])):null,pp=a.n?a.p/a.n*100:null,dd=a.n?a.d/a.n*100:null;
@@ -1069,6 +1085,7 @@ function renderTF(){
  tfTbl('tf2','ut',r=>TF.ut[r[1]],'Unit Type',st.fu,k=>tfSet('fu',k));
  tfTbl('tf3','br',r=>TF.br[r[0]],'Branch',st.fb,k=>tfSet('fb',k));
  tfTbl('tf4','un',r=>r[2]>=0?TF.un[r[2]]:null,'unit_name (GraPARI)',st.fn,k=>tfSet('fn',k),g=>TF.br[g[0][0]]);tfCap('tf4',10);
+ tfTbl('tf4p','un',r=>r[2]>=0?TF.un[r[2]]:null,'GraPARI',st.fn,k=>tfSet('fn',k),g=>TF.br[g[0][0]],isPF);if(!$('tf4p').querySelector('tbody tr'))$('tf4p').innerHTML='<p class="note">Belum ada respon People di unit GraPARI untuk bulan ini.</p>';
  tfTbl('tf5','jr',r=>TF.jr[r[5]],'Journey',st.fj,k=>tfSet('fj',k));
  tfBars('tfc1',cur,0);tfBars('tfc2',cur,2);tfCSR(cur);
  tfww('tfnw','p');tfww('tfnx','d');tfDV();
@@ -1081,7 +1098,7 @@ async function exportTF(){
  const rd=v=>v==null?'':typeof v=='number'?Math.round(v*100)/100:v;
  const wb=XLSX.utils.book_new(),add=(n,aoa)=>XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(aoa),n);
  add('Ringkasan',[['Laporan tNPS Fixed Jabar'],['Bulan',TF.m[st.fm]],['Branch',st.fb],['Unit type 2',st.fu],['unit_name',st.fn],['Journey',st.fj],['Rumus','%tNPS = (Promotor 9–10 − Detractor 0–6) ÷ total respon × 100']]);
- [['tf1','Total Jabar per bulan'],['tf2','Unit Type'],['tf3','Branch'],['tf4','unit_name'],['tf5','Journey'],['tfc1','Top Kategori Promotor'],['tfc2','Top Kategori Detractor'],['tf6','Top tNPS per CSR'],['tfnw','Tema Promotor GraPARI'],['tfnx','Tema Detractor GraPARI']].forEach(([id,n])=>{const e=EX[id];if(e)add(n,[e.cols.map(c=>c[0]),...e.rows.map(r=>e.cols.map(c=>rd(r[c[1]])))])});
+ [['tf1','Total Jabar per bulan'],['tf2','Unit Type'],['tf3','Branch'],['tf4','unit_name'],['tf4p','People per GraPARI'],['tf5','Journey'],['tfc1','Top Kategori Promotor'],['tfc2','Top Kategori Detractor'],['tf6','Top tNPS per CSR'],['tfnw','Tema Promotor GraPARI'],['tfnx','Tema Detractor GraPARI']].forEach(([id,n])=>{const e=EX[id];if(e)add(n,[e.cols.map(c=>c[0]),...e.rows.map(r=>e.cols.map(c=>rd(r[c[1]])))])});
  const kom=TF.rows.filter(r=>r[1]==TFIG&&r[4]==st.fm&&r[8]).map(r=>[TF.m[r[4]],TF.br[r[0]],TF.un[r[2]],TF.jr[r[5]],r[3],cls(r[3])==0?'Promotor':'Detractor',TF.rs[r[6]],(cls(r[3])==0?TFPT:TFDT)[r[7]]?.[0]||'',r[8]]);
  add('Komentar GraPARI',[['Bulan','Branch','GraPARI','Journey','Skor','Kelas','Kategori Q6','Tema','Komentar'],...kom]);
  if(!TF._x&&TF.x){TF.rows.forEach((r,i)=>r.x=TF.x[i]);TF._x=1}
@@ -1091,27 +1108,29 @@ async function exportTF(){
 
 
 /* ===== FU tNPS module ===== */
-st.fum=0;st.fub='ALL';
+/* data FU dimuat dari data/FU.json oleh loader.js */
+st.fum=0;st.fub='ALL';st.fuu='ALL';
 function fua(rs){const n=rs.length,sb=rs.filter(r=>r.fus=='Submitted').length,ap=rs.filter(r=>r.aps=='Closed').length,nr=rs.filter(r=>r.aps=='Need Review').length,bl=rs.filter(r=>r.aps=='Belum diproses').length,
  i=rs.filter(r=>r.sla=='In SLA').length,o=rs.filter(r=>r.sla=='Out SLA').length,av=k=>{const v=rs.map(r=>r[k]).filter(x=>x!=null);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null},sc=n?rs.reduce((a,r)=>a+r.sc,0)/n:null;
  return{n,sb,dr:n-sb,ap,nr,bl,pa:n?ap/n*100:null,i,o,ps:i+o?i/(i+o)*100:null,hs:av('hs'),ha:av('ha'),ht:av('ht'),sc}}
 const fuh=h=>h==null?'–':h<48?h.toFixed(1)+' jam':(h/24).toFixed(1)+' hari';
 const fup=v=>v==null?'–':v.toFixed(1)+'%';
 const fuesc=t=>String(t||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
-function fubase(){return FU.rows.filter(r=>st.fub=='ALL'||r.br==st.fub)}
+function fubase(noU){return FU.rows.filter(r=>(st.fub=='ALL'||r.br==st.fub)&&(noU||st.fuu=='ALL'||r.u==st.fuu))}
 function fucur(){return fubase().filter(r=>st.fum=='all'||r.m==st.fum)}
 function renderFU(){
- const cur=fucur(),prv=st.fum!='all'&&st.fum>0?fubase().filter(r=>r.m==st.fum-1):null,a=fua(cur),o=prv?fua(prv):null,per=st.fum=='all'?'Okt–'+FU.m[FU.m.length-1]:FU.m[st.fum],pm=o?FU.m[st.fum-1]:'';
- $('fumeta').textContent=`Sumber: tNPS_Approval.xlsx · survey s.d. ${FU.upd} · ${cur.length} FU pada ${per}`+(st.fub!='ALL'?` · Branch ${st.fub}`:'');
+ const fuct=(st.fum!='all'&&/–(\d+)/.test(FU.m[st.fum]))?+FU.m[st.fum].match(/–(\d+)/)[1]:99;const cur=fucur(),prv=st.fum!='all'&&st.fum>0?fubase().filter(r=>r.m==st.fum-1&&+r.sd.slice(8,10)<=fuct):null,a=fua(cur),o=prv?fua(prv):null,per=st.fum=='all'?'Okt–'+FU.m[FU.m.length-1]:FU.m[st.fum],pm=o?FU.m[st.fum-1]+(fuct<99?' (1–'+fuct+')':''):'';
+ $('fumeta').textContent=`Sumber: tNPS_Approval.xlsx · survey s.d. ${FU.upd} · ${cur.length} FU pada ${per}`+(st.fub!='ALL'?` · Branch ${st.fub}`:'')+(st.fuu!='ALL'?` · ${st.fuu}`:'');
+ if(typeof fuSel=='function')fuSel();
  const kc=(t,v,sub,c)=>`<div class="card kpi" style="border-left-color:${c}"><div class="t">${t} · ${per}</div><div class="v">${v}</div><div class="note">${sub}</div></div>`;
  $('fuk').innerHTML=kc('📞 Jumlah FU',a.n,`Submitted ${a.sb} · Draft ${a.dr}`+(o?` · ${pm}: ${o.n}`:''),'var(--k1)')
   +kc('✅ %Approval',fup(a.pa),`Approved (Closed) ${a.ap} · Need Review ${a.nr} · Belum diproses ${a.bl}`+(o?` · ${pm}: ${fup(o.pa)}`:''),'var(--k2)')
   +kc('⏱️ SLA Approval',fup(a.ps),`In SLA ${a.i} · Out SLA ${a.o} · belum dinilai ${a.n-a.i-a.o}`+(o?` · ${pm}: ${fup(o.ps)}`:''),'var(--k3)')
   +kc('⏳ Lead time rata-rata',fuh(a.ht),`Survey → submit FU ${fuh(a.hs)} · submit → approval ${fuh(a.ha)}`,'var(--k4)');
  // per GraPARI
- const g=[...group(cur,r=>r.u)].map(([k,rs])=>{const x=fua(rs);return{key:k,name:k,br:rs[0].br,...x,html:`<td>${k}</td><td style="text-align:left">${rs[0].br}</td><td><b>${x.n}</b></td><td>${x.sb}</td><td>${x.ap}</td><td><b>${fup(x.pa)}</b></td><td>${x.i}</td><td>${x.o}</td><td>${fup(x.ps)}</td><td>${x.sc.toFixed(1)}</td><td>${fuh(x.ht)}</td>`}});
+ const curG=fubase(true).filter(r=>st.fum=='all'||r.m==st.fum);const g=[...group(curG,r=>r.u)].map(([k,rs])=>{const x=fua(rs);return{key:k,name:k,br:rs[0].br,...x,html:`<td>${k}</td><td style="text-align:left">${rs[0].br}</td><td><b>${x.n}</b></td><td>${x.sb}</td><td>${x.ap}</td><td><b>${fup(x.pa)}</b></td><td>${x.i}</td><td>${x.o}</td><td>${fup(x.ps)}</td><td>${x.sc.toFixed(1)}</td><td>${fuh(x.ht)}</td>`}});
  st.sort.fu1=st.sort.fu1||['n',-1];
- table('fu1',g,[['GraPARI','name'],['Branch','br'],['Jumlah FU','n'],['Submitted','sb'],['Approved','ap'],['%Approval','pa'],['In SLA','i'],['Out SLA','o'],['%SLA','ps'],['Rata-rata skor','sc'],['Lead time','ht']],null,null);
+ table('fu1',g,[['GraPARI','name'],['Branch','br'],['Jumlah FU','n'],['Submitted','sb'],['Approved','ap'],['%Approval','pa'],['In SLA','i'],['Out SLA','o'],['%SLA','ps'],['Rata-rata skor','sc'],['Lead time','ht']],k=>{st.fuu=st.fuu==k?'ALL':k;renderFU()},st.fuu);
  // SLA per branch
  const bb=[...group(cur,r=>r.br)].map(([k,rs])=>{const x=fua(rs);return{key:k,name:k,...x}});bb.push({key:'Jabar',name:'Jabar',...a,tot:1});
  $('fu2').innerHTML='<table><tr><th>Branch</th><th>Jumlah FU</th><th>Approved</th><th>%Approval</th><th>In SLA</th><th>Out SLA</th><th>Belum dinilai</th><th>%SLA</th><th>Survey → submit</th><th>Submit → approval</th><th>Survey → approval</th></tr>'+
@@ -1121,7 +1140,7 @@ function renderFU(){
  $('fu3').innerHTML=!cur.length?'<p class="note">Tidak ada FU pada periode ini.</p>':`<div style="display:flex;flex-direction:column;gap:8px;max-width:980px">`+k2.map(([k,rs],i)=>{const pc=rs.length/cur.length*100;return`<div style="display:grid;grid-template-columns:230px 1fr 120px;align-items:center;gap:12px" title="${k}: ${rs.length} dari ${cur.length} FU">
   <div style="font-size:13.5px;text-align:right;color:var(--tx,#1F2340)">${k}</div>
   <div style="background:#F0F0F7;border-radius:7px;height:24px;overflow:hidden"><div style="width:${(pc/mx2*100).toFixed(1)}%;height:100%;background:${PAL[Math.min(i,PAL.length-1)]};border-radius:7px"></div></div>
-  <div style="font-size:13.5px"><b>${pc.toFixed(1)}%</b> <span style="color:var(--mu)">(${rs.length} FU)</span></div></div>`}).join('')+`<div class="note" style="margin-top:2px">Total ${cur.length} FU${st.fub!='ALL'?' · Branch '+st.fub:' Jabar'}</div></div>`;
+  <div style="font-size:13.5px"><b>${pc.toFixed(1)}%</b> <span style="color:var(--mu)">(${rs.length} FU)</span></div></div>`}).join('')+`<div class="note" style="margin-top:2px">Total ${cur.length} FU${st.fuu!='ALL'?' · '+st.fuu:st.fub!='ALL'?' · Branch '+st.fub:' Jabar'}</div></div>`;
  // themes
  const th=(k,title)=>{const t=[...group(cur,r=>r[k])].sort((x,y)=>y[1].length-x[1].length);return`<table><tr><th>${title}</th><th>Jumlah</th><th>%</th><th>GraPARI</th></tr>`+t.map(([n,rs])=>`<tr><td>${n}</td><td><b>${rs.length}</b></td><td>${fup(rs.length/cur.length*100)}</td><td style="text-align:left;font-size:12px">${[...new Set(rs.map(r=>r.u.replace('GraPARI ','')))].join(', ')}</td></tr>`).join('')+'</table>'};
  $('fu4').innerHTML=th('tf','Tema Customer Feedback');$('fu5').innerHTML=th('tc','Hasil Callback / Follow Up');
@@ -1131,8 +1150,8 @@ function renderFU(){
 }
 $('fum').innerHTML=FU.m.map((m,i)=>`<option value="${i}">${m.replace(/^Okt$/,'Oktober').replace(/^Nov \((1–\d+)\)$/,'November ($1 Nov, parsial)')}</option>`).join('')+'<option value="all">All Month</option>';$('fum').value='0';
 $('fum').onchange=e=>{const v=e.target.value;st.fum=v=='all'?'all':+v;renderFU()};
-$('fub').innerHTML=['ALL','Bandung','Cirebon','Soreang','Tasikmalaya'].map(b=>`<option value="${b}">${b=='ALL'?'Semua branch':b}</option>`).join('');
-$('fub').onchange=e=>{st.fub=e.target.value;renderFU()};
+function fuSel(){const e=$('fub');e.innerHTML=(st.fuu!='ALL'?`<option value="__U">${st.fuu}</option>`:'')+['ALL','Bandung','Cirebon','Soreang','Tasikmalaya'].map(b=>`<option value="${b}">${b=='ALL'?'Semua branch':b}</option>`).join('')+((st.fub!='ALL'||st.fuu!='ALL')?'<option value="__R">↺ Reset filter</option>':'');e.value=st.fuu!='ALL'?'__U':st.fub}fuSel();
+$('fub').onchange=e=>{const v=e.target.value;if(v=='__U')return;if(v=='__R'){st.fub='ALL';st.fuu='ALL'}else{st.fub=v;st.fuu='ALL'}renderFU()};
 async function exportFU(){const wb=XLSX.utils.book_new(),cur=fucur();
  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['Tgl survey','Bulan','Branch','GraPARI','NIK CSR','Skor','Kategori 1','Kategori 2','Service','KIP','Customer Feedback','Callback Notes','Follow Up Notes','Follow Up Status','Approval Status','Approval Notes','SLA','Survey→Submit (jam)','Submit→Approval (jam)','Tema Feedback','Tema Callback'],
   ...cur.map(r=>[r.sd,FU.m[r.m],r.br,r.u,r.nik,r.sc,r.k1,r.k2,r.svc,r.kip,r.fb,r.cb,r.fun,r.fus,r.aps,r.apn,r.sla,r.hs,r.ha,r.tf,r.tc])]),'Detail FU');
@@ -1140,6 +1159,7 @@ async function exportFU(){const wb=XLSX.utils.book_new(),cur=fucur();
 
 
 /* ===== ORDER module ===== */
+/* data ORD dimuat dari data/ORD.json oleh loader.js */
 st.ot='all';st.ob='ALL';st.ou='ALL';
 const OGN=['Completed (PS)','Fallout','Cancel','In progress'],OGC=['#6C63D9','#E8912D','#C0392B','#7FB6D9'];
 function oa(rs){const n=rs.length,g=[0,0,0,0];let i=0,o=0,h=0,hn=0,ov=0,op=0,fo=0,pv3=0,fv3=0;
@@ -1172,7 +1192,7 @@ function renderOR(){
  orSub();const cur=ocur(),a=oa(cur),tl=st.ot=='all'?'Semua Order Type':'Order Type '+ORD.ty[st.ot];
  $('orttl').textContent=tl+(st.ou!='ALL'?' · '+st.ou:st.ob!='ALL'?' · '+st.ob:'');
  $('orfl').innerHTML=st.ou!='ALL'?`<div class="note" style="margin:0 0 10px;padding:8px 12px;border-radius:8px;background:#FDF0E3;color:#7A4A12">Filter GraPARI aktif: <b>${st.ou}</b> – semua angka, chart dan tabel di bawah hanya untuk GraPARI ini. <a href="#" onclick="st.ou='ALL';renderOR();return false" style="color:#B5541C;font-weight:700">Tampilkan semua GraPARI</a></div>`:'';
- $('ormeta').textContent=`Sumber: Order.xlsx · order ${ORD.d0}–${ORD.d1} Nov 2026 · data per ${ORD.cut} · ${a.n} order`;
+ $('ormeta').textContent=`Sumber: Order.xlsx (sheet Nov Utoip) · order ${ORD.d0}–${ORD.d1} Nov 2026 · data per ${ORD.cut} · ${a.n} order`;
  const per=`Nov (${ORD.d0}–${ORD.d1})`,kc=(t,v,sub,c)=>`<div class="card kpi" style="border-left-color:${c}"><div class="t">${t} · ${per}</div><div class="v">${v}</div><div class="note">${sub}</div></div>`;
  $('ork').innerHTML=kc('🧾 Total Order',fi(a.n),`MOMO ${fi(cur.filter(r=>r[10]==0).length)} · TOMO ${fi(cur.filter(r=>r[10]==1).length)}`,'var(--k1)')
   +kc('✅ RE to PS',ofp(a.rp),`Completed ${fi(a.c)} dari ${fi(a.n)} order`,'var(--k2)')
@@ -1227,6 +1247,7 @@ async function exportOrder(){const wb=XLSX.utils.book_new(),cur=ocur();
 
 
 /* ===== Kawalan Admin CC module ===== */
+/* data ACC dimuat dari data/ACC.json oleh loader.js */
 st.as='ao';st.am=2;st.ab='ALL';
 const ACM=['Agustus','September','Oktober','November'],ACS=['Agu','Sep','Okt','Nov'],ACL=[31,30,31,30];
 const ACT={ao:['AO','ao'],mo:['Modoroso','mo'],tk:['create tiket','tk'],nm:['Order Non Modoroso','nm'],on:['ONTRUST','on']};
@@ -1325,12 +1346,49 @@ async function exportAC(){const k=st.as,o=ACC[k],cur=acCur(k),wb=XLSX.utils.book
   const par=data[0].parentElement;data.concat(tots).forEach(r=>par.appendChild(r))});
 })();
 
+
+/* ===== Roleplay module ===== */
+const RPU={"vio_dago_p1.mp4": "/_blob/2177d83aaba4d1217b5fbb50ba970d58", "vio_dago_p2.mp4": "/_blob/43addcdaf7b74e21148bbc37a2c0f4a0", "vio_dago_p3.mp4": "/_blob/a4706430713b6f1fed6fe6355570661b", "alvin_miko_p1.mp4": "/_blob/14b8de965c91fdbcf89ffb215e2d126d", "alvin_miko_p2.mp4": "/_blob/723cdaeee0b7f2a24ee8033d2bf9b97f", "andra_cirebon_p1.mp4": "/_blob/eaad0b60dbcb9233bb78bfad48c4c214", "andra_cirebon_p2.mp4": "/_blob/57eb8095e8a1f0948fb8657c52d9a92c", "yani_kuningan_p1.mp4": "/_blob/4f1b09cc7977d7fc4b4ba72784e2b2a0", "yani_kuningan_p2.mp4": "/_blob/813f2fabd2e89a19e0cd6046bd43061c", "vio_dago.jpg": "/_blob/3a5dc37a43bf68e76c6f778f3204e892", "alvin_miko.jpg": "/_blob/7584e71cd0313d4e79f23c3890d9fd9d", "andra_cirebon.jpg": "/_blob/1940d35dc3f43cfb8149f93d24ab89d2", "yani_kuningan.jpg": "/_blob/e84190fa82ec10aad70dbe061e884cb7"};
+const RP=[{"id": "vio_dago", "nm": "Violenta Poetri Galingging", "gp": "GraPARI Dago", "br": "Bandung", "nik": "", "parts": [540, 540, 533.9]}, {"id": "alvin_miko", "nm": "Alvin Pratama", "gp": "GraPARI Miko Mall Bandung", "br": "Bandung", "nik": "", "parts": [540, 324.2]}, {"id": "andra_cirebon", "nm": "Andra Ramadhan", "gp": "GraPARI Cirebon", "br": "Cirebon", "nik": "", "parts": [540, 407.2]}, {"id": "yani_kuningan", "nm": "Yani Maryani", "gp": "GraPARI Kuningan", "br": "Cirebon", "nik": "24272262", "parts": [540, 260.7]}];st.rpb='ALL';
+const rpt=s=>{s=Math.round(s);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
+const RPD={vio_dago:'13X-cCqcKb0WEQPOGQkLvbbOCGOkyNmtE',alvin_miko:'1Gwkw3Y5dIoAkoCvd1WSqrnhNItNeWG2l',andra_cirebon:'14WPbJJfuoUXQ-Lzl8oeXlvDyMdC7Wksy',yani_kuningan:'1z5k_HA8gx6-CMXG0OiPhtuAAeqvWamhw'};
+function renderRP(){
+ const L=RP.filter(v=>st.rpb=='ALL'||v.br==st.rpb),tot=L.reduce((a,v)=>a+v.parts.reduce((x,y)=>x+y,0),0);
+ $('rpmeta').textContent=`${L.length} video · total durasi ${rpt(tot)} · video diputar dari Google Drive; jika tidak tampil, klik "Buka di Google Drive"`;
+ $('rpg').innerHTML=L.map(v=>{const d=v.parts.reduce((x,y)=>x+y,0),g=RPD[v.id];
+  return`<div class="card" style="padding:14px;margin:0"><div style="position:relative;width:100%;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#111"><iframe src="https://drive.google.com/file/d/${g}/preview" loading="lazy" allow="autoplay; fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe></div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-top:10px"><div><div style="font-weight:800;font-size:16px">${v.nm}</div><div class="note" style="margin:2px 0 0">${v.gp} · Branch ${v.br}${v.nik?' · NIK '+v.nik:''}</div></div><div class="note" style="white-space:nowrap;margin:0">⏱️ ${rpt(d)}</div></div>
+  <div style="margin-top:8px"><a class="chip" href="https://drive.google.com/file/d/${g}/view" target="_blank" rel="noopener" style="font-size:12px;padding:4px 10px;text-decoration:none;display:inline-block">▶ Buka di Google Drive</a></div></div>`}).join('')||'<p class="note">Tidak ada video untuk branch ini.</p>';
+}
+const RPC={};
+let RPA=null;
+function rpAssets(){if(RPA)return RPA;return RPA=(async()=>{const m={};try{const c=window.claude;if(!c||!c.use)return m;const as=await c.use('assets');if(!as)return m;const r=await as.list();(r.assets||[]).forEach(x=>{if(x&&x.id&&x.url)m[x.id]=x.url})}catch(e){}return m})()}
+async function rpDirect(name){const m=await rpAssets(),id=(RPU[name]||'').split('/').pop(),u=m[id];return u&&u!==RPU[name]?u:null}
+function rpLoad(name){
+ if(RPC[name])return RPC[name];
+ const cands=[RPU[name],'roleplay/'+name].filter(Boolean);
+ return RPC[name]=(async()=>{const err=[];
+  const d=await rpDirect(name);if(d)return d;
+  for(const u of cands){try{const r=await fetch(u);if(!r.ok){err.push(u.slice(0,12)+':'+r.status);continue}
+   const b=await r.blob();if(!b.size){err.push(u.slice(0,12)+':kosong');continue}
+   return URL.createObjectURL(b.type?b:new Blob([b],{type:name.endsWith('.jpg')?'image/jpeg':'video/mp4'}))}catch(e){err.push(u.slice(0,12)+':'+(e.message||'gagal'))}}
+  delete RPC[name];throw new Error(err.join(' | ')+' | origin:'+(location.origin||location.protocol))})();
+}
+async function rpGo(id,i,play){const el=$('rv_'+id),ov=$('ro_'+id);if(!el)return;el.dataset.i=i;
+ $('rpg').querySelectorAll(`button[data-v="${id}"]`).forEach(b=>b.classList.toggle('on',+b.dataset.i==i));
+ const name=id+"_p"+(i+1)+".mp4";
+ if(ov){ov.style.display='flex';ov.querySelector('.rps').textContent='Memuat video bagian '+(i+1)+'…'}
+ try{const u=await rpLoad(name);if(+el.dataset.i!==i)return;el.src=u;if(ov)ov.style.display='none';
+  if(play)el.play().catch(e=>{if(ov){ov.style.display='flex';ov.querySelector('.rps').textContent='Klik untuk memutar'}})}
+ catch(e){if(ov){ov.style.display='flex';ov.querySelector('.rps').textContent='Video gagal dimuat ('+e.message+'). Klik untuk coba lagi'}}}
+$('rpb').innerHTML=['ALL',...new Set(RP.map(v=>v.br))].map(b=>`<option value="${b}">${b=='ALL'?'Semua branch':b}</option>`).join('');$('rpb').onchange=e=>{st.rpb=e.target.value;renderRP()};
+
 /* ===== menu gabungan tNPS & Tiket ===== */
 (function(){
  const MAP={tn:{m:1,f:11,u:12,l:'tNPS',b:'mtn'},tk:{m:2,f:6,l:'Tiket',b:'mtk'}},LS={tn:1,tk:2};
  const orig=showTab;
  const grpOf=p=>p==1||p==11||p==12?'tn':p==2||p==6?'tk':null;
- showTab=function(p){p=+p;$('pg13').style.display='none';$('osub').style.display='none';$('orw').style.display='none';$('pg14').style.display='none';$('asub').style.display='none';$('acw').style.display='none';if(p==14){orig(14);$('pg14').style.display='';$('asub').style.display='';$('acw').style.display='';document.querySelector('.bar').style.display='none';$('xl').textContent='⬇ Unduh Excel Admin CC';renderAC()}else if(p==13){orig(13);$('pg13').style.display='';$('osub').style.display='';$('orw').style.display='';document.querySelector('.bar').style.display='none';$('xl').textContent='⬇ Unduh Excel Order';renderOR()}else if(p==12){orig(1);st.p=12;$('pg1').style.display='none';$('pg12').style.display='';document.querySelector('.bar').style.display='none';$('fm').parentElement.style.display='none';$('xl').textContent='⬇ Unduh Excel FU tNPS';renderFU()}else if(p!=13&&p!=14){orig(p);$('pg12').style.display='none'}const g=grpOf(p);$('tfw').style.display=p==11?'':'none';$('fuw').style.display=p==12?'':'none';$('sbu').style.display=g=='tn'?'':'none';
+ showTab=function(p){p=+p;$('pg15').style.display='none';$('xl').style.display='';document.querySelectorAll('#pg15 video').forEach(v=>v.pause());if(p==15){orig(15);$('pg15').style.display='';$('pg13').style.display='none';$('pg14').style.display='none';$('osub').style.display='none';$('asub').style.display='none';$('orw').style.display='none';$('acw').style.display='none';document.querySelector('.bar').style.display='none';$('xl').style.display='none';renderRP();const sb=$('subtabs');if(sb)sb.style.display='none';dmSync();return}$('pg13').style.display='none';$('osub').style.display='none';$('orw').style.display='none';$('pg14').style.display='none';$('asub').style.display='none';$('acw').style.display='none';if(p==14){orig(14);$('pg14').style.display='';$('asub').style.display='';$('acw').style.display='';document.querySelector('.bar').style.display='none';$('xl').textContent='⬇ Unduh Excel Admin CC';renderAC()}else if(p==13){orig(13);$('pg13').style.display='';$('osub').style.display='';$('orw').style.display='';document.querySelector('.bar').style.display='none';$('xl').textContent='⬇ Unduh Excel Order';renderOR()}else if(p==12){orig(1);st.p=12;$('pg1').style.display='none';$('pg12').style.display='';document.querySelector('.bar').style.display='none';$('fm').parentElement.style.display='none';$('xl').textContent='⬇ Unduh Excel FU tNPS';renderFU()}else if(p!=13&&p!=14){orig(p);$('pg12').style.display='none'}const g=grpOf(p);$('tfw').style.display=p==11?'':'none';$('fuw').style.display=p==12?'':'none';$('sbu').style.display=g=='tn'?'':'none';
   ['tn','tk'].forEach(k=>{const b=$(MAP[k].b);if(b)b.classList.toggle('on',g==k)});
   const sb=$('subtabs');
   if(g){LS[g]=p;sb.style.display='';$('sl').textContent=MAP[g].l+' ·';sb.querySelectorAll('.sb').forEach(b=>b.classList.toggle('on',MAP[g][b.dataset.s]==p))}
