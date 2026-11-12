@@ -1,5 +1,4 @@
 
-/* data D dimuat dari data/D.json oleh loader.js */
 // rows: [branch,unit,nik,score,catClass,catIdx,month] month:0=bulan lalu,1=bulan ini
 const R=D.rows,S=D.siad,CATS=D.cats,MN=D.mn;const ML=[31,30,31,30],DCUT=MN.map((m,i)=>{const d=Math.max(0,...R.filter(r=>r[6]==i).map(r=>r[9]));return d<ML[i]?d:99});
 const EX={};
@@ -78,7 +77,6 @@ async function exportXlsx(){
  const out=XLSX.write(wb,{bookType:'xlsx',type:'array'});
  await saveFile('tNPS_Jabar_'+tag+'.xlsx',new Blob([out],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
 }
-/* data T dimuat dari data/T.json oleh loader.js */
 Object.assign(st.sort,{tt1:['n',-1],tt2:['n',-1],tt3:['n',-1],tt4:['n',-1]});st.tm=2;st.tl=6;
 const TCUT=T.m.map((m,i)=>{const d=Math.max(0,...T.rows.filter(r=>r[2]==i).map(r=>r[9]));return d<ML[i]?d:99});const tpl=m=>{const c=TCUT[m+1],b=T.m[m];return c<ML[m]?b+' (1–'+c+')':b};
 const isTC=r=>st.tm=='all'||r[2]==st.tm,isTP=r=>st.tm!='all'&&st.tm>0&&r[2]==st.tm-1&&r[9]<=TCUT[st.tm];
@@ -308,7 +306,6 @@ async function exportTiket(){
  const out=XLSX.write(wb,{bookType:'xlsx',type:'array'});
  await saveFile('Tiket_Jabar_'+per+'.xlsx',new Blob([out],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
 }
-/* data F dimuat dari data/F.json oleh loader.js */
 st.ff=2;Object.assign(st.sort,{ft2:['n',-1],ft3:['n',-1],ft4:['n',-1]});
 const FC=r=>st.ff=='all'||r[2]==st.ff,FCUT=F.m.map((m,i)=>{const d=Math.max(0,...F.rows.filter(r=>r[2]==i).map(r=>r[9]));return d<ML[i]?d:99}),FP=r=>st.ff!='all'&&st.ff>0&&r[2]==st.ff-1&&r[9]<=FCUT[st.ff],fpl=k=>{const c=FCUT[k+1];return c<ML[k]?F.m[k]+' (1–'+c+')':F.m[k]},fhp=()=>st.ff!='all'&&st.ff>0;
 const flab=i=>F.m[i]+(i==2?' (1–31)':i==3?' (1–'+FCUT[3]+')':'');
@@ -373,7 +370,6 @@ async function exportFixed(){
  await saveFile('Tiket_Fixed_Jabar_'+per+'.xlsx',new Blob([XLSX.write(wb,{bookType:'xlsx',type:'array'})],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
 }
 
-/* data K dimuat dari data/K.json oleh loader.js */
 st.km=1;
 const KGC=['#5B47C0','#3F86D4','#8A6FDB','#E0654F','#4DA58C','#C7557F'];
 const kpct=v=>v==null||v===''?'–':(v*100).toFixed(2)+'%';
@@ -411,7 +407,6 @@ async function exportKPI(){
 }
 
 // ===== VISIT JABAR =====
-/* data V dimuat dari data/V.json oleh loader.js */
 V.mo=[];for(let d=0;d<=V.last;d++)V.mo.push(V.ms.filter(x=>d>=x).length-1);const VLM=V.m.length-1,VML=[31,31,30,31,30,31],VCUT=V.last-V.ms[VLM],VPART=VCUT<VML[VLM]-1;const vcutok=d=>!(VPART&&st.vm==VLM)||d-V.ms[VLM-1]<=VCUT;
 const UBR=new Map();R.forEach(r=>UBR.set(r[1],r[0]));T.rows.forEach(r=>{if(!UBR.has(T.un[r[1]]))UBR.set(T.un[r[1]],T.br[r[0]])});V.u.forEach((u,i)=>UBR.set(u,V.br[V.ub[i]]));
 const dd=d=>new Date(Date.UTC(2026,6,1+d)),dw=d=>dd(d).getUTCDay(),dnum=d=>dd(d).getUTCDate(),dmon=d=>dd(d).getUTCMonth()+1;
@@ -565,7 +560,6 @@ async function exportVisit(){
  await saveFile('Visit_Jabar_'+(st.vm=='all'?V.m[0]+'-'+V.m[VLM]:V.m[st.vm])+'.xlsx',xlsxBlob(wb));
 }
 /* ===== Waiting Time module ===== */
-/* data W dimuat dari data/W.json oleh loader.js */
 const WBR=['Bandung','Cirebon','Soreang','Tasikmalaya'],WMD=['MOMO','TOMO'],WTP=['Lite','Small','Medium'],WSTD=['≤ 5 menit','≤ 10 menit','≤ 20 menit'],WCOL=['#4FB08C','#9AD07A','#F0C75E','#F2A05E','#EC5A4F','#B3262B'];
 W.u.forEach(x=>{if(!UBR.has(x[0]))UBR.set(x[0],WBR[x[1]])});
 st.wm=3;Object.assign(st.sort,{ww1:['name',1],ww2:['kpi',-1],ww3:['name',1],ww4:['kpi',1],ww5:['ord',1]});
@@ -627,7 +621,6 @@ async function exportWait(){
 
 
 /* ===== Sales Halo module ===== */
-/* data H dimuat dari data/H.json oleh loader.js */
 H.uc=H.u.map(u=>VCS[u]||0);
 H.u.forEach((u,i)=>{if(!UBR.has(u))UBR.set(u,H.br[H.ub[i]])});
 st.hm=3;Object.assign(st.sort,{ht0:['sales',-1],ht1:['sales',-1],ht2:['sales',-1]});
@@ -695,7 +688,6 @@ async function exportHalo(){
 
 
 /* ===== Sales IndiHome module ===== */
-/* data IH dimuat dari data/IH.json oleh loader.js */
 IH.uc=IH.u.map(u=>VCS[u]||0);
 IH.u.forEach((u,i)=>{if(!UBR.has(u))UBR.set(u,IH.br[IH.ub[i]])});
 st.im=3;Object.assign(st.sort,{it0:['sales',-1],it1:['sales',-1],it2:['sales',-1]});
@@ -792,7 +784,6 @@ async function exportIndi(){
 
 
 /* ===== Sales ORBIT module ===== */
-/* data OH dimuat dari data/OH.json oleh loader.js */
 OH.uc=OH.u.map(u=>VCS[u]||0);
 OH.u.forEach((u,i)=>{if(!UBR.has(u))UBR.set(u,OH.br[OH.ub[i]])});
 st.om=3;Object.assign(st.sort,{ot0:['sales',-1],ot1:['sales',-1],ot2:['sales',-1]});
@@ -854,7 +845,6 @@ async function exportOrbit(){
 }
 
 /* ===== CAPS module ===== */
-/* data CP dimuat dari data/CP.json oleh loader.js */
 CP.u.forEach(u=>{if(!UBR.has(u)&&CP.r.some(r=>CP.u[r[4]]==u&&r[3]>=0))UBR.set(u,CP.br[(CP.r.find(r=>CP.u[r[4]]==u&&r[3]>=0))[3]])});
 CP.t={"GraPARI Bandung Elektronik Center":17.837134,"GraPARI Banjar":18.69813,"GraPARI Bantarkalong":0.849915,"GraPARI Ciamis":2.549745,"GraPARI Cianjur":6.795099,"GraPARI Ciledug Cirebon":4.250025,"GraPARI Cimahi":60.306502,"GraPARI Cirebon":49.300286,"GraPARI Cirebon Super Blok":43.350251,"GraPARI Dago":5.945711,"GraPARI Bojongsoang":3.480799,"GraPARI Ekstensi Cipanas":1.698775,"GraPARI Garut":32.29677,"GraPARI Indramayu":7.650044,"GraPARI Jatibarang":1.0,"GraPARI Kuningan":5.10003,"GraPARI Lembang":1.0,"GraPARI Lembong":49.264467,"GraPARI Majalaya":4.350999,"GraPARI Majalengka":8.701999,"GraPARI Metro Trade Center Bandung":5.096324,"GraPARI Miko Mall Bandung":35.674269,"GraPARI Padalarang":34.824882,"GraPARI Pamanukan":4.250025,"GraPARI Pangandaran":8.49915,"GraPARI Rancaekek":26.976196,"GraPARI Singaparna":1.0,"GraPARI Soreang":6.091399,"GraPARI Subang":0.850005,"GraPARI Sumber":3.40002,"GraPARI Sumedang":3.480799,"GraPARI Supratman":43.318755,"GraPARI Tasikmalaya":53.544646,"GraPARI Trans Studio Mall Bandung":17.837134,"GraPARI Ujung Berung":43.318755,"GraPARI Sukanagara":1.0,"GraPARI Pamengpeuk":1.0};CP.tb={"Bandung": 323.917808, "Cirebon": 119.150685, "Soreang": 53.082192, "Tasikmalaya": 118.438356};
 CP.tn={"GraPARI Bandung Elektronik Center": 19.0, "GraPARI Banjar": 12.0, "GraPARI Bantarkalong": 1.0, "GraPARI Ciamis": 4.0, "GraPARI Cianjur": 6.0, "GraPARI Ciledug Cirebon": 7.0, "GraPARI Cimahi": 60.0, "GraPARI Cirebon": 42.0, "GraPARI Cirebon Super Blok": 16.0, "GraPARI Dago": 15.0, "GraPARI Bojongsoang": 6.0, "GraPARI Ekstensi Cipanas": 3.0, "GraPARI Garut": 31.0, "GraPARI Indramayu": 6.0, "GraPARI Jatibarang": 1.0, "GraPARI Kuningan": 6.0, "GraPARI Lembang": 1.0, "GraPARI Lembong": 88.0, "GraPARI Majalaya": 5.0, "GraPARI Majalengka": 13.0, "GraPARI Metro Trade Center Bandung": 6.0, "GraPARI Miko Mall Bandung": 44.0, "GraPARI Padalarang": 22.0, "GraPARI Pamanukan": 1.0, "GraPARI Pangandaran": 2.0, "GraPARI Rancaekek": 34.0, "GraPARI Singaparna": 1.0, "GraPARI Soreang": 8.0, "GraPARI Subang": 2.0, "GraPARI Sumber": 5.0, "GraPARI Sumedang": 9.0, "GraPARI Supratman": 37.0, "GraPARI Tasikmalaya": 52.0, "GraPARI Trans Studio Mall Bandung": 28.0, "GraPARI Ujung Berung": 71.0, "GraPARI Sukanagara": 1.0, "GraPARI Pamengpeuk": 1.0};CP.tbn={"Bandung": 401.0, "Cirebon": 86.0, "Soreang": 75.0, "Tasikmalaya": 104.0};CP.pr=8/30;
@@ -971,7 +961,6 @@ function showTab(p){st.p=+p;{const tb=document.querySelector('#tabs .tab[data-p=
 document.querySelectorAll('#tabs .tab').forEach(b=>b.onclick=()=>showTab(b.dataset.p));document.querySelectorAll('#grp .gb').forEach(b=>b.onclick=()=>showTab(b.dataset.g=='kpi'?7:LASTT[b.dataset.g]));
 $('xl').onclick=()=>st.p==11?exportTF():st.p==10?exportOrbit():st.p==9?exportIndi():st.p==8?exportHalo():st.p==7?exportKPI():st.p==6?exportFixed():st.p==5?exportCaps():st.p==4?exportWait():st.p==3?exportVisit():st.p==2?exportTiket():exportXlsx();
 /* ===== tNPS Fixed module ===== */
-/* data TF dimuat dari data/TF.json oleh loader.js */
 st.fm=2;st.fb='ALL';st.fu='ALL';st.fn='ALL';st.fj='ALL';
 Object.assign(st.sort,{tf6:['nps',-1],tf1:['ord',1],tf2:['n',-1],tf3:['n',-1],tf4:['n',-1],tf5:['n',-1]});
 const TFCUT=TF.m.map((x,i)=>{const d=Math.max(0,...TF.rows.filter(r=>r[4]==i).map(r=>r[10]));return i==TF.m.length-1&&d<ML[i]?d:99});
@@ -1108,7 +1097,6 @@ async function exportTF(){
 
 
 /* ===== FU tNPS module ===== */
-/* data FU dimuat dari data/FU.json oleh loader.js */
 st.fum=0;st.fub='ALL';st.fuu='ALL';
 function fua(rs){const n=rs.length,sb=rs.filter(r=>r.fus=='Submitted').length,ap=rs.filter(r=>r.aps=='Closed').length,nr=rs.filter(r=>r.aps=='Need Review').length,bl=rs.filter(r=>r.aps=='Belum diproses').length,
  i=rs.filter(r=>r.sla=='In SLA').length,o=rs.filter(r=>r.sla=='Out SLA').length,av=k=>{const v=rs.map(r=>r[k]).filter(x=>x!=null);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null},sc=n?rs.reduce((a,r)=>a+r.sc,0)/n:null;
@@ -1159,7 +1147,6 @@ async function exportFU(){const wb=XLSX.utils.book_new(),cur=fucur();
 
 
 /* ===== ORDER module ===== */
-/* data ORD dimuat dari data/ORD.json oleh loader.js */
 st.ot='all';st.ob='ALL';st.ou='ALL';
 const OGN=['Completed (PS)','Fallout','Cancel','In progress'],OGC=['#6C63D9','#E8912D','#C0392B','#7FB6D9'];
 function oa(rs){const n=rs.length,g=[0,0,0,0];let i=0,o=0,h=0,hn=0,ov=0,op=0,fo=0,pv3=0,fv3=0;
@@ -1247,7 +1234,6 @@ async function exportOrder(){const wb=XLSX.utils.book_new(),cur=ocur();
 
 
 /* ===== Kawalan Admin CC module ===== */
-/* data ACC dimuat dari data/ACC.json oleh loader.js */
 st.as='ao';st.am=2;st.ab='ALL';
 const ACM=['Agustus','September','Oktober','November'],ACS=['Agu','Sep','Okt','Nov'],ACL=[31,30,31,30];
 const ACT={ao:['AO','ao'],mo:['Modoroso','mo'],tk:['create tiket','tk'],nm:['Order Non Modoroso','nm'],on:['ONTRUST','on']};
