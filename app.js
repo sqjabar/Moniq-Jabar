@@ -49,7 +49,7 @@ function render(){
  const bb=R.filter(r=>(isCur(r)||isPrv(r))&&(st.b=='ALL'||r[0]==st.b));
  rows=[...group(bb,r=>r[1])].map(([k,rs])=>{const m=met(rs);return{key:k,name:k,br:rs[0][0],...m,html:`<td>${k}</td><td style="text-align:left">${rs[0][0]}</td>`+(m.html.match(/<td[^>]*>.*?<\/td>/gs)||[]).slice(0,7).join('')}});
  table('t2',rows,[['unit_name','name'],['Branch','br'],...HC.slice(0,7)],k=>{st.u=st.u==k?'ALL':k;sync();render()},st.u);
- {const bc=b1;renderCat(bc);narr('nw',bc,'p');narr('nx',bc,'d');tanal('nw','p',b);tanal('nx','d',b)}
+ {const bc=b1;renderCat(bc);narr('nw',bc,'p');narr('nx',bc,'d');narr('ny',bc,'a');tanal('nw','p',b);tanal('nx','d',b)}
  $('t4h').textContent=st.s=='all'?'CSR All Respon':'CSR Respon People';
  const cmode=(arr=>{const c=new Map();arr.forEach(v=>c.set(v,(c.get(v)||0)+1));return[...c].sort((a,b)=>b[1]-a[1])[0][0]});
  const cg=[...group(bs.filter(inCS),r=>r[2])].map(([k,rs])=>{const m=met(rs),x=S[k],cr=rs.filter(isCur),un=cmode(rs.map(r=>r[1])),br=cmode(rs.map(r=>r[0]));return{key:k,name:(x?x[0]:(k=='NA'?'(tanpa NIK)':k)),unit:un,br,...m,html:`<td>${(x?x[0]:(k=='NA'?'(tanpa NIK)':k))}</td><td style="text-align:left">${un}</td>`+(m.html.match(/<td>.*?<\/td>/g)||[]).slice(0,7).join('')}}).filter(r=>r.n>0&&S[r.key]&&!/^T0/i.test(r.key)&&!/^T0/i.test(r.name));
@@ -70,7 +70,7 @@ async function exportXlsx(){
  const sum=[['Laporan tNPS Mobile Jabar'],['Periode',lbl()],['Branch Jabar',st.b=='ALL'?'Semua':st.b],['unit_name',st.u=='ALL'?'Semua':st.u],['Respon Kategori',CSL()],['Rumus','(Promotor - Detractor) / total respon x 100'],[],['Metrik','Respon','Promotor','Passive','Detractor','tNPS'],k('tNPS Mobile Jabar - '+lbl(),b1),k('tNPS People - '+lbl(),b1.filter(inCS))];
  if(mhp()){sum.push(k('tNPS Mobile Jabar - '+pml(),b0),k('tNPS '+CSL()+' - '+pml(),b0.filter(inCS)),['MoM tNPS Mobile','','','','',rd(dv(ag(b1).nps,ag(b0).nps))],['MoM tNPS People','','','','',rd(dv(ag(b1.filter(inCS)).nps,ag(b0.filter(inCS)).nps))])}
  add('Ringkasan',sum);
- [['t1','Per Jabar'],['t2','Per unit_name'],['cc0','%Category All'],['cc1','%Category Promotor'],['cc2','%Category Detractor'],['cc3','%Category Passive'],['nw','What Went Well'],['nx','What Went Wrong'],['t4','Per CSR respon People']].forEach(([id,n])=>{const e=EX[id];if(e)add(n,[e.cols.map(c=>c[0]),...e.rows.map(r=>e.cols.map(c=>rd(r[c[1]])))])});
+ [['t1','Per Jabar'],['t2','Per unit_name'],['cc0','%Category All'],['cc1','%Category Promotor'],['cc2','%Category Detractor'],['cc3','%Category Passive'],['nw','What Went Well'],['nx','What Went Wrong'],['ny','Masukan Passive'],['t4','Per CSR respon People']].forEach(([id,n])=>{const e=EX[id];if(e)add(n,[e.cols.map(c=>c[0]),...e.rows.map(r=>e.cols.map(c=>rd(r[c[1]])))])});
  if(!D._x&&D.x){D.rows.forEach((r,i)=>r.x=D.x[i]);D._x=1}
  add('Data respon',[['Bulan','Tanggal survey','MSISDN','id_trx','Jabar (branch)','unit_name','NIK','Nama CSR','Job Function','Skor q5','Kategori tNPS','Respon People','q6_part1','Komentar pelanggan'],...sc.map(r=>{const s=S[r[2]],x=r.x||['','','',''];return[MN[r[6]],x[2],x[0],x[1],r[0],r[1],r[2],s?s[0]:'',s?s[1]:'',r[3],['Promotor','Passive','Detractor'][cls(r[3])],r[4]==0?'Ya':'Tidak',CATS[r[5]],x[3]]})]);
  const tag=st.m=='all'?'Agu-Okt':MN[st.m].split(' ')[0];
@@ -231,18 +231,20 @@ function tanal(id,kind,b){
 const nq=(g,i,st0)=>{const seen=new Set(),o=[];g.filter(r=>r[7]==i&&r[8]).sort((a,b)=>b[8].length-a[8].length).forEach(r=>{const k=r[8].slice(0,30).toLowerCase();if(!seen.has(k)&&o.length<2){seen.add(k);o.push(r)}});
  return o.length?o.map(r=>`<div class="nrq">"${r[8].replace(/</g,'&lt;')}" <b style="font-style:normal;color:var(--tx)">— ${r[1]}</b></div>`).join(''):`<div class="nrq">${st0}</div>`};
 function narr(id,b1,kind){
- const T=kind=='p'?PTH:DTH,cl=kind=='p'?0:2,g=b1.filter(r=>cls(r[3])==cl),n=g.length;
+ const T=kind=='p'?PTH:DTH,cl=kind=='p'?0:kind=='a'?1:2,g=b1.filter(r=>cls(r[3])==cl),n=g.length;
  const c=new Array(T.length).fill(0);let nc=0;g.forEach(r=>{if(r[7]>=0)c[r[7]]++;else nc++});
  const tot=c.reduce((a,b)=>a+b,0),idx=c.map((v,i)=>i).filter(i=>c[i]>0).sort((a,b)=>c[b]-c[a]);
- const nm=kind=='p'?'Promotor':'Detractor';
+ const nm=kind=='p'?'Promotor':kind=='a'?'Passive':'Detractor';
+ const lq=(()=>{const q=g.filter(r=>r[8]&&r[7]==idx[0]).sort((a,b)=>b[9]-a[9]||b[8].length-a[8].length)[0];return q?` Contoh komentar terbaru: <i>"${q[8].replace(/</g,'&lt;')}"</i> — ${q[1]}.`:''})();
  let sum;
  if(!n)sum='Tidak ada respon '+nm+' pada filter ini.';
- else if(kind=='p')sum=`Dari <b>${fi(n)}</b> respon Promotor, <b>${fi(tot)}</b> (${f1(tot/n*100)}%) menuliskan komentar yang bermakna; ${fi(nc)} tanpa komentar atau hanya label. Tema yang paling banyak disebut: <b>${idx.slice(0,3).map(i=>T[i][0]).join(', ')||'–'}</b>. Pelanggan terutama menghargai petugas yang ramah dan membantu, termasuk saat aktivasi ulang nomor hangus/hilang dan penggantian kartu.`;
- else sum=`Dari <b>${fi(n)}</b> respon Detractor, <b>${fi(c.reduce((a,b)=>a+b,0))}</b> dikelompokkan ke tema berikut (komentar bebas atau, bila kosong, kategori kolom P). Tema yang paling banyak: <b>${idx.slice(0,3).map(i=>T[i][0]).join(', ')||'–'}</b>.`;
+ else if(kind=='p')sum=`Dari <b>${fi(n)}</b> respon Promotor, <b>${fi(tot)}</b> (${f1(tot/n*100)}%) menuliskan komentar yang bermakna; ${fi(nc)} tanpa komentar atau hanya label. Tema yang paling banyak disebut: <b>${idx.slice(0,3).map(i=>T[i][0]).join(', ')||'–'}</b>. ${idx.length?T[idx[0]][1]:''}${lq}`;
+ else if(kind=='a')sum=`Dari <b>${fi(n)}</b> respon Passive (skor 7–8), <b>${fi(tot)}</b> dikelompokkan ke tema berikut (komentar bebas atau, bila kosong, kategori kolom P). Tema yang paling banyak: <b>${idx.slice(0,3).map(i=>T[i][0]).join(', ')||'–'}</b>; inilah hal yang menahan pelanggan memberi nilai 9–10.${lq}`;
+ else sum=`Dari <b>${fi(n)}</b> respon Detractor, <b>${fi(c.reduce((a,b)=>a+b,0))}</b> dikelompokkan ke tema berikut (komentar bebas atau, bila kosong, kategori kolom P). Tema yang paling banyak: <b>${idx.slice(0,3).map(i=>T[i][0]).join(', ')||'–'}</b>.${lq}`;
  const rows=idx.map(i=>`<tr><td><b>${T[i][0]}</b></td><td class="c">${fi(c[i])}</td><td class="c">${f1(c[i]/(kind=='p'?tot:n)*100)}%</td><td>${T[i][1]}${nq(g,i,T[i][2])}</td><td>${T[i][3]}</td></tr>`).join('');
  const tt=kind=='p'?['Yang sudah baik','Pertahankan']:['Temuan','Yang perlu diperbaiki'];
- const cn=kind=='p'?'% dari promotor berkomentar':'% dari detractor';
- $(id).innerHTML=(idx.length?`<div class="tw" style="max-height:none"><table class="nr ${kind=='p'?'gd':'rd'}"><thead><tr><th style="text-align:left">Tema</th><th>Jumlah</th><th>${cn}</th><th style="text-align:left">${tt[0]} &amp; contoh suara pelanggan</th><th style="text-align:left">${tt[1]}</th></tr></thead><tbody>${rows}</tbody></table></div>`:'')+`<p class="note">Sumber: komentar bebas pelanggan (kolom S, q6) pada respon ${nm}; tema dikelompokkan otomatis berdasarkan kata kunci dan mengikuti filter bulan, branch dan unit (semua respon, tidak dibatasi pilihan Respon Kategori).</p>`;
+ const cn=kind=='p'?'% dari promotor berkomentar':kind=='a'?'% dari passive':'% dari detractor';
+ $(id).innerHTML=`<p style="margin:0 0 10px;line-height:1.55">${sum}</p>`+(idx.length?`<div class="tw" style="max-height:none"><table class="nr ${kind=='p'?'gd':'rd'}"><thead><tr><th style="text-align:left">Tema</th><th>Jumlah</th><th>${cn}</th><th style="text-align:left">${tt[0]} &amp; contoh suara pelanggan</th><th style="text-align:left">${tt[1]}</th></tr></thead><tbody>${rows}</tbody></table></div>`:'')+`<p class="note">Sumber: komentar bebas pelanggan (kolom S, q6) pada respon ${nm}; tema dikelompokkan otomatis berdasarkan kata kunci dan mengikuti filter bulan, branch dan unit (semua respon, tidak dibatasi pilihan Respon Kategori).</p>`;
  EX[id]={rows:idx.map(i=>({t:T[i][0],n:c[i],sh:c[i]/(kind=='p'?tot:n)*100,i:T[i][1],a:T[i][3]})),cols:[['Tema','t'],['Jumlah','n'],[cn,'sh'],[tt[0],'i'],[tt[1],'a']]};
 }
 const TBC=[['#8DB8EA','#CBE0F6'],['#A38BE0','#D3C9F2'],['#F2A58A','#F9D5C7'],['#B5A5EE','#DDD7F8'],['#9FB7C6','#D2DEE6'],['#7FB6D9','#C5DFEE'],['#D7A3D2','#EFD6EC'],['#8FCDB0','#CDEADB'],['#F0C27B','#F8E2BB'],['#6A55C8','#B9AEE8']];
@@ -1357,15 +1359,15 @@ async function exportAC(){const k=st.as,o=ACC[k],cur=acCur(k),wb=XLSX.utils.book
 
 /* ===== Roleplay module ===== */
 const RPU={"vio_dago_p1.mp4": "/_blob/2177d83aaba4d1217b5fbb50ba970d58", "vio_dago_p2.mp4": "/_blob/43addcdaf7b74e21148bbc37a2c0f4a0", "vio_dago_p3.mp4": "/_blob/a4706430713b6f1fed6fe6355570661b", "alvin_miko_p1.mp4": "/_blob/14b8de965c91fdbcf89ffb215e2d126d", "alvin_miko_p2.mp4": "/_blob/723cdaeee0b7f2a24ee8033d2bf9b97f", "andra_cirebon_p1.mp4": "/_blob/eaad0b60dbcb9233bb78bfad48c4c214", "andra_cirebon_p2.mp4": "/_blob/57eb8095e8a1f0948fb8657c52d9a92c", "yani_kuningan_p1.mp4": "/_blob/4f1b09cc7977d7fc4b4ba72784e2b2a0", "yani_kuningan_p2.mp4": "/_blob/813f2fabd2e89a19e0cd6046bd43061c", "vio_dago.jpg": "/_blob/3a5dc37a43bf68e76c6f778f3204e892", "alvin_miko.jpg": "/_blob/7584e71cd0313d4e79f23c3890d9fd9d", "andra_cirebon.jpg": "/_blob/1940d35dc3f43cfb8149f93d24ab89d2", "yani_kuningan.jpg": "/_blob/e84190fa82ec10aad70dbe061e884cb7"};
-const RP=[{"id": "vio_dago", "nm": "Violenta Poetri Galingging", "gp": "GraPARI Dago", "br": "Bandung", "nik": "", "parts": [540, 540, 533.9]}, {"id": "alvin_miko", "nm": "Alvin Pratama", "gp": "GraPARI Miko Mall Bandung", "br": "Bandung", "nik": "", "parts": [540, 324.2]}, {"id": "andra_cirebon", "nm": "Andra Ramadhan", "gp": "GraPARI Cirebon", "br": "Cirebon", "nik": "", "parts": [540, 407.2]}, {"id": "yani_kuningan", "nm": "Yani Maryani", "gp": "GraPARI Kuningan", "br": "Cirebon", "nik": "24272262", "parts": [540, 260.7]}];st.rpb='ALL';
+const RP=[{"id": "vio_dago", "nm": "Violenta Poetri Galingging", "gp": "GraPARI Dago", "br": "Bandung", "nik": "", "parts": [540, 540, 533.9]}, {"id": "alvin_miko", "nm": "Alvin Pratama", "gp": "GraPARI Miko Mall Bandung", "br": "Bandung", "nik": "", "parts": [540, 324.2]}, {"id": "andra_cirebon", "nm": "Andra Ramadhan", "gp": "GraPARI Cirebon", "br": "Cirebon", "nik": "", "parts": [540, 407.2]}, {"id": "yani_kuningan", "nm": "Yani Maryani", "gp": "GraPARI Kuningan", "br": "Cirebon", "nik": "24272262", "parts": [540, 260.7]}, {"id": "tsatsa_sumedang", "nm": "Tsa Tsa Assalima", "gp": "GraPARI Sumedang", "br": "Soreang", "nik": "26289222", "parts": []}];st.rpb='ALL';
 const rpt=s=>{s=Math.round(s);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
-const RPD={vio_dago:'13X-cCqcKb0WEQPOGQkLvbbOCGOkyNmtE',alvin_miko:'1Gwkw3Y5dIoAkoCvd1WSqrnhNItNeWG2l',andra_cirebon:'14WPbJJfuoUXQ-Lzl8oeXlvDyMdC7Wksy',yani_kuningan:'1z5k_HA8gx6-CMXG0OiPhtuAAeqvWamhw'};
+const RPD={vio_dago:'13X-cCqcKb0WEQPOGQkLvbbOCGOkyNmtE',alvin_miko:'1Gwkw3Y5dIoAkoCvd1WSqrnhNItNeWG2l',andra_cirebon:'14WPbJJfuoUXQ-Lzl8oeXlvDyMdC7Wksy',yani_kuningan:'1z5k_HA8gx6-CMXG0OiPhtuAAeqvWamhw',tsatsa_sumedang:'1rM_O-kOAWgP0FWITPo-GvxiJY2XU-ZPA'};
 function renderRP(){
  const L=RP.filter(v=>st.rpb=='ALL'||v.br==st.rpb),tot=L.reduce((a,v)=>a+v.parts.reduce((x,y)=>x+y,0),0);
  $('rpmeta').textContent=`${L.length} video · total durasi ${rpt(tot)} · video diputar dari Google Drive; jika tidak tampil, klik "Buka di Google Drive"`;
  $('rpg').innerHTML=L.map(v=>{const d=v.parts.reduce((x,y)=>x+y,0),g=RPD[v.id];
   return`<div class="card" style="padding:14px;margin:0"><div style="position:relative;width:100%;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#111"><iframe src="https://drive.google.com/file/d/${g}/preview" loading="lazy" allow="autoplay; fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe></div>
-  <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-top:10px"><div><div style="font-weight:800;font-size:16px">${v.nm}</div><div class="note" style="margin:2px 0 0">${v.gp} · Branch ${v.br}${v.nik?' · NIK '+v.nik:''}</div></div><div class="note" style="white-space:nowrap;margin:0">⏱️ ${rpt(d)}</div></div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-top:10px"><div><div style="font-weight:800;font-size:16px">${v.nm}</div><div class="note" style="margin:2px 0 0">${v.gp} · Branch ${v.br}${v.nik?' · NIK '+v.nik:''}</div></div>${d?`<div class="note" style="white-space:nowrap;margin:0">⏱️ ${rpt(d)}</div>`:''}</div>
   <div style="margin-top:8px"><a class="chip" href="https://drive.google.com/file/d/${g}/view" target="_blank" rel="noopener" style="font-size:12px;padding:4px 10px;text-decoration:none;display:inline-block">▶ Buka di Google Drive</a></div></div>`}).join('')||'<p class="note">Tidak ada video untuk branch ini.</p>';
 }
 const RPC={};
