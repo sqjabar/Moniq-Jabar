@@ -849,7 +849,7 @@ async function exportOrbit(){
 /* ===== CAPS module ===== */
 CP.u.forEach(u=>{if(!UBR.has(u)&&CP.r.some(r=>CP.u[r[4]]==u&&r[3]>=0))UBR.set(u,CP.br[(CP.r.find(r=>CP.u[r[4]]==u&&r[3]>=0))[3]])});
 CP.t={"GraPARI Bandung Elektronik Center":17.837134,"GraPARI Banjar":18.69813,"GraPARI Bantarkalong":0.849915,"GraPARI Ciamis":2.549745,"GraPARI Cianjur":6.795099,"GraPARI Ciledug Cirebon":4.250025,"GraPARI Cimahi":60.306502,"GraPARI Cirebon":49.300286,"GraPARI Cirebon Super Blok":43.350251,"GraPARI Dago":5.945711,"GraPARI Bojongsoang":3.480799,"GraPARI Ekstensi Cipanas":1.698775,"GraPARI Garut":32.29677,"GraPARI Indramayu":7.650044,"GraPARI Jatibarang":1.0,"GraPARI Kuningan":5.10003,"GraPARI Lembang":1.0,"GraPARI Lembong":49.264467,"GraPARI Majalaya":4.350999,"GraPARI Majalengka":8.701999,"GraPARI Metro Trade Center Bandung":5.096324,"GraPARI Miko Mall Bandung":35.674269,"GraPARI Padalarang":34.824882,"GraPARI Pamanukan":4.250025,"GraPARI Pangandaran":8.49915,"GraPARI Rancaekek":26.976196,"GraPARI Singaparna":1.0,"GraPARI Soreang":6.091399,"GraPARI Subang":0.850005,"GraPARI Sumber":3.40002,"GraPARI Sumedang":3.480799,"GraPARI Supratman":43.318755,"GraPARI Tasikmalaya":53.544646,"GraPARI Trans Studio Mall Bandung":17.837134,"GraPARI Ujung Berung":43.318755,"GraPARI Sukanagara":1.0,"GraPARI Pamengpeuk":1.0};CP.tb={"Bandung": 323.917808, "Cirebon": 119.150685, "Soreang": 53.082192, "Tasikmalaya": 118.438356};
-CP.tn={"GraPARI Bandung Elektronik Center": 19.0, "GraPARI Banjar": 12.0, "GraPARI Bantarkalong": 1.0, "GraPARI Ciamis": 4.0, "GraPARI Cianjur": 6.0, "GraPARI Ciledug Cirebon": 7.0, "GraPARI Cimahi": 60.0, "GraPARI Cirebon": 42.0, "GraPARI Cirebon Super Blok": 16.0, "GraPARI Dago": 15.0, "GraPARI Bojongsoang": 6.0, "GraPARI Ekstensi Cipanas": 3.0, "GraPARI Garut": 31.0, "GraPARI Indramayu": 6.0, "GraPARI Jatibarang": 1.0, "GraPARI Kuningan": 6.0, "GraPARI Lembang": 1.0, "GraPARI Lembong": 88.0, "GraPARI Majalaya": 5.0, "GraPARI Majalengka": 13.0, "GraPARI Metro Trade Center Bandung": 6.0, "GraPARI Miko Mall Bandung": 44.0, "GraPARI Padalarang": 22.0, "GraPARI Pamanukan": 1.0, "GraPARI Pangandaran": 2.0, "GraPARI Rancaekek": 34.0, "GraPARI Singaparna": 1.0, "GraPARI Soreang": 8.0, "GraPARI Subang": 2.0, "GraPARI Sumber": 5.0, "GraPARI Sumedang": 9.0, "GraPARI Supratman": 37.0, "GraPARI Tasikmalaya": 52.0, "GraPARI Trans Studio Mall Bandung": 28.0, "GraPARI Ujung Berung": 71.0, "GraPARI Sukanagara": 1.0, "GraPARI Pamengpeuk": 1.0};CP.tbn={"Bandung": 401.0, "Cirebon": 86.0, "Soreang": 75.0, "Tasikmalaya": 104.0};CP.pr=16/30;
+CP.tn={"GraPARI Bandung Elektronik Center": 19.0, "GraPARI Banjar": 12.0, "GraPARI Bantarkalong": 1.0, "GraPARI Ciamis": 4.0, "GraPARI Cianjur": 6.0, "GraPARI Ciledug Cirebon": 7.0, "GraPARI Cimahi": 60.0, "GraPARI Cirebon": 42.0, "GraPARI Cirebon Super Blok": 16.0, "GraPARI Dago": 15.0, "GraPARI Bojongsoang": 6.0, "GraPARI Ekstensi Cipanas": 3.0, "GraPARI Garut": 31.0, "GraPARI Indramayu": 6.0, "GraPARI Jatibarang": 1.0, "GraPARI Kuningan": 6.0, "GraPARI Lembang": 1.0, "GraPARI Lembong": 88.0, "GraPARI Majalaya": 5.0, "GraPARI Majalengka": 13.0, "GraPARI Metro Trade Center Bandung": 6.0, "GraPARI Miko Mall Bandung": 44.0, "GraPARI Padalarang": 22.0, "GraPARI Pamanukan": 1.0, "GraPARI Pangandaran": 2.0, "GraPARI Rancaekek": 34.0, "GraPARI Singaparna": 1.0, "GraPARI Soreang": 8.0, "GraPARI Subang": 2.0, "GraPARI Sumber": 5.0, "GraPARI Sumedang": 9.0, "GraPARI Supratman": 37.0, "GraPARI Tasikmalaya": 52.0, "GraPARI Trans Studio Mall Bandung": 28.0, "GraPARI Ujung Berung": 71.0, "GraPARI Sukanagara": 1.0, "GraPARI Pamengpeuk": 1.0};CP.tbn={"Bandung": 401.0, "Cirebon": 86.0, "Soreang": 75.0, "Tasikmalaya": 104.0};CP.pr=19/30;
 const cpT=v=>(st.cm==3||st.cm==4)&&v!=null?(st.cm==4?v*CP.pr:v):null;
 st.cm=4;Object.assign(st.sort,{cp1:['n',-1],cp2:['n',-1],cp3:['n',-1],cp4:['n',-1],cp5:['n',-1],cp6:['n',-1],cp7:['n',-1],cp8:['n',-1],cp9:['n',-1]});
 const cpC=r=>st.cm=='all'?r[0]<5:r[0]==st.cm,cpP=r=>st.cm==4?r[0]==5:(st.cm!='all'&&st.cm>0&&r[0]==st.cm-1),cphp=()=>st.cm!='all'&&st.cm>0,cpPL=()=>CP.ms[st.cm==4?5:st.cm-1];
@@ -869,7 +869,7 @@ const CPCOLS=[['Total WO','n'],['Total MO','mo'],['Total CAPS','do'],['%RR','rr'
 function cpmode(a){const m=new Map();a.forEach(x=>m.set(x,(m.get(x)||0)+1));let b=null,c=-1;m.forEach((v,k)=>{if(v>c){c=v;b=k}});return b}
 function cptab(id,rs,keyf,namef,o){o=o||{};
  const rows=[...group(rs,keyf)].map(([k,g])=>{const m=o.tgt?cpm(g,o.tgt(k)):cpm(g);const br=o.br?o.br(g):null;return{key:String(k),name:namef(k),br,...m,html:`<td>${namef(k)}</td>`+(o.br?`<td style="text-align:left">${br}</td>`:'')+m.html}}).filter(r=>r.do+r.mo>0||(o.keep));
- table(id,rows,[[o.lab,'name'],...(o.br?[['Branch','br']]:[]),...(o.tgt?[...CPCOLS.slice(0,3),...(st.cm==4?[['Target (pro-rata 16/30)','t'],['Gap to Target','gap']]:CPTCOLS),...CPCOLS.slice(3)]:CPCOLS)],o.click,o.sel);
+ table(id,rows,[[o.lab,'name'],...(o.br?[['Branch','br']]:[]),...(o.tgt?[...CPCOLS.slice(0,3),...(st.cm==4?[['Target (pro-rata '+Math.round(CP.pr*30)+'/30)','t'],['Gap to Target','gap']]:CPTCOLS),...CPCOLS.slice(3)]:CPCOLS)],o.click,o.sel);
  if(o.tot!==false){const tt=o.tgt?rows.reduce((x,r)=>x+(r.t||0),0):0,m=o.tgt?cpm(rs,rows.some(r=>r.t!=null)?(st.cm==4?tt/CP.pr:tt):null):cpm(rs),t={key:'Total',name:'Total',br:'',...m};EX[id].rows.push(t);const tb=$(id).querySelector('tbody');if(tb)tb.insertAdjacentHTML('beforeend',`<tr style="font-weight:700;border-top:2px solid var(--bd)"><td>Total</td>${o.br?'<td></td>':''}${m.html}</tr>`)}
  return rows}
 
@@ -919,27 +919,34 @@ function cpProf(){const g=cpscope().filter(r=>r[1]==0&&cpC(r)),L=cpBrList(),hasJ
   table(id,rows,[['Kategori','name'],...L.map(b=>[(st.u!='ALL'?st.u.replace('GraPARI ',''):CP.br[b])+' ('+fi(tot[L.indexOf(b)])+')','b'+b]),...(hasJ?[['Jabar ('+fi(tj)+')','j']]:[])])})}
 function cpscope(){return CP.r.filter(r=>cpGra(r)&&cpUF(r)&&cpBG(r))}
 
+function cpMomSvg(G,fmt,shared,hp){
+ const W=560,H=270,L=10,R=10,BASE=H-40,gw=(W-L-R)/G.length,bw=Math.min(46,gw*.32),GR='#C8C8C8',RD='#C00000';
+ const vals=G.flatMap(g=>[g.a,g.b]).filter(v=>v!=null),lo=Math.min(...vals),hi=Math.max(...vals),sp=(hi-lo)||1;
+ const hh=(v,m)=>v==null?0:shared?60+(v-lo)/sp*95:Math.max(55,60+95*(v-0.7*m)/(0.3*m||1));
+ let s=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;font-family:inherit">`;
+ G.forEach((g,i)=>{const cx=L+gw*i+gw/2,m=Math.max(g.a||0,g.b||0),xg=cx-bw-2,xr=hp?cx+2:cx-bw/2,hg=hh(g.a,m),hr=hh(g.b,m),yg=BASE-hg,yr=BASE-hr,sel=g.sel?'font-weight:700':'';
+  if(hp){s+=`<rect x="${xg}" y="${yg}" width="${bw}" height="${hg}" fill="${GR}"><title>${g.name} · ${g.pl}: ${fmt(g.a)}</title></rect><text x="${xg+bw/2}" y="${yg-6}" text-anchor="middle" font-size="12" fill="#2B2D42">${fmt(g.a)}</text>`}
+  s+=`<rect x="${xr}" y="${yr}" width="${bw}" height="${hr}" fill="${RD}"><title>${g.name} · ${g.cl}: ${fmt(g.b)}</title></rect><text x="${xr+bw/2}" y="${yr-6}" text-anchor="middle" font-size="12" fill="#2B2D42">${fmt(g.b)}</text>`;
+  const x1=(hp?xg:xr)-8,x2=xr+bw+8,by=BASE-18;
+  s+=`<g transform="rotate(-9 ${cx} ${by})"><line x1="${x1}" x2="${x2}" y1="${by}" y2="${by}" stroke="#fff" stroke-width="8"/><line x1="${x1}" x2="${x2}" y1="${by-5}" y2="${by-5}" stroke="#000" stroke-width="1.2"/><line x1="${x1}" x2="${x2}" y1="${by+5}" y2="${by+5}" stroke="#000" stroke-width="1.2"/></g>`;
+  if(hp&&g.mom!=null){const top=Math.min(yg,yr)-24,yb=Math.max(22,top-22),lg=xg+bw/2,lr=xr+bw/2,neg=g.mom<0,t=(g.mom>=0?'+':'−')+Math.abs(g.mom).toFixed(1).replace('.',',')+'%';
+   s+=`<path d="M${lg} ${yg-22} V${yb} H${lr} V${yr-24}" fill="none" stroke="#000" stroke-width="1.3"/><path d="M${lr-5} ${yr-30} L${lr+5} ${yr-30} L${lr} ${yr-21} Z" fill="#000"/><ellipse cx="${cx}" cy="${yb}" rx="34" ry="12" fill="#fff" stroke="#000" stroke-width="1.2"/><text x="${cx}" y="${yb+4.5}" text-anchor="middle" font-size="12.5" font-weight="700" fill="${neg?RD:'#000'}">${t}</text>`}
+  s+=`<text x="${cx}" y="${BASE+20}" text-anchor="middle" font-size="12.5" fill="#2B2D42" style="${sel}">${g.name}</text>`});
+ return s+`<line x1="${L}" x2="${W-R}" y1="${BASE}" y2="${BASE}" stroke="#595959" stroke-width="1.5"/></svg>`}
 function cptrend(){
- const sc=st.u!='ALL'?'u':st.b!='ALL'?'b':'j';let M,WO,RR,LB;
- if(sc=='u'){const rr=CP.r.filter(r=>cpGra(r)&&CP.u[r[4]]==st.u);M=['Jul','Agu','Sep','Okt','Nov*'];WO=[0,1,2,3,4].map(m=>rr.filter(r=>r[0]==m).length);RR=[0,1,2,3,4].map(m=>{const x=rr.filter(r=>r[0]==m);return x.length?x.filter(r=>r[1]).length/x.length*100:0});LB=st.u}
- else{const T=CP.tr[sc=='b'?st.b:'Jabar'];M=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov*'];WO=T.wo;RR=T.rr;LB=sc=='b'?'Branch '+st.b:'Jabar'}
- const pr=CP.r.filter(r=>r[0]==5&&cpGra(r)&&cpUF(r)&&cpBG(r)),PW=pr.length,PR=PW?pr.reduce((a,r)=>a+r[1],0)/PW*100:null;
- function ch(id,title,sub,V,c1,c2,fmt,unit,pad,pv){
-  const W=560,H=250,L=44,R=18,T=34,B=34,mn=Math.min(...V),mx=Math.max(...V),lo=mn-(mx-mn)*pad,hi=mx+(mx-mn)*pad*.9;
-  const X=i=>L+i*(W-L-R)/(V.length-1),Y=v=>T+(hi-v)/(hi-lo)*(H-T-B);
-  const pts=V.map((v,i)=>X(i).toFixed(1)+','+Y(v).toFixed(1)),line='M'+pts.join(' L'),area=line+' L'+X(V.length-1).toFixed(1)+','+(H-B)+' L'+X(0).toFixed(1)+','+(H-B)+' Z';
-  let g='';for(let k=0;k<4;k++){const v=lo+(hi-lo)*k/3,y=Y(v);g+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="#e8e4ee" stroke-dasharray="3 4"/><text x="${L-6}" y="${y+3}" text-anchor="end" font-size="10" fill="#9a93a8">${fmt(v,1)}</text>`}
-  const li=V.length-1,mi=V.indexOf(Math.max(...V)),ni=V.indexOf(mn);
-  let d='';V.forEach((v,i)=>{const x=X(i),y=Y(v),last=i==li,ex=(i==mi||i==ni);
-   d+=`<circle cx="${x}" cy="${y}" r="${last?6:4}" fill="#fff" stroke="${last?c2:c1}" stroke-width="${last?3:2}"/>`;
-   d+=`<text x="${x}" y="${y-(last?12:10)}" text-anchor="middle" font-size="${last?12:10}" font-weight="${last||ex?700:500}" fill="${last?c2:'#5b5470'}">${fmt(v)}</text>`;
-   d+=`<text x="${x}" y="${H-12}" text-anchor="middle" font-size="10.5" fill="${last?c2:'#9a93a8'}" font-weight="${last?700:400}">${M[i]}</text>`});
-  const base=pv!=null?pv:V[li-1],dl=V[li]-base,pc=unit=='%'?dl:dl/base*100,up=dl>=0,avg=V.slice(0,li).reduce((a,b)=>a+b,0)/li;
-  const chip=`<span style="background:${up?'#e3f6ec':'#fde8ea'};color:${up?'#1d8a55':'#c0392b'};padding:2px 9px;border-radius:12px;font-size:12px;font-weight:700">${up?'▲':'▼'} ${Math.abs(pc).toFixed(1)+'%'} MoM</span>`;
-  const side=`<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">${chip}<span style="background:#f1eff6;color:#3b3550;padding:2px 9px;border-radius:12px;font-size:12px;font-weight:700">Avg ${M[0]}–${M[li-1]}: ${unit=='%'?avg.toFixed(1)+'%':fmt(avg)}</span></div>`;
-  return `<div style="flex:1 1 380px;min-width:300px;background:linear-gradient(160deg,${c1}14,#fff 60%);border:1px solid ${c1}33;border-radius:14px;padding:12px 14px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><div><div style="font-weight:700;font-size:15px;color:#3b3550">${title}</div><div style="font-size:11.5px;color:#9a93a8">${sub}</div></div>${side}</div><svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c1}" stop-opacity=".35"/><stop offset="1" stop-color="${c1}" stop-opacity="0"/></linearGradient><linearGradient id="${id}l" x1="0" x2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs>${g}<path d="${area}" fill="url(#${id})"/><path d="${line}" fill="none" stroke="url(#${id}l)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${d}</svg></div>`}
- const fw=(v,k)=>Math.round(v).toLocaleString('id-ID'),fr=(v,k)=>v.toFixed(k?0:1)+'%';
- const CT=CP.ms[4].match(/–(\d+)/)[1];$('cptr').innerHTML=`<h2 style="margin:0 0 4px">📈 Trend ${LB} 2026</h2><div style="font-size:12px;color:#9a93a8;margin-bottom:10px">${sc=='u'?'Jul–Nov 2026 · level GraPARI (sumber: raw data CAPS; data per GraPARI tersedia mulai Jul)':'Jan–Nov 2026 · '+(sc=='b'?'level branch':'level Jabar')+' (sumber: sheet Performansi)'} · Nov* = data 1–${CT} Nov · MoM Nov* dibanding Okt 1–${CT} · Avg = rata-rata bulanan ${M[0]}–Okt</div><div style="display:flex;gap:14px;flex-wrap:wrap">`+ch('tw','Trend WO '+LB,'Jumlah WO per bulan',WO,'#8b7cf6','#5b4bd6',fw,'',.25,PW||null)+ch('tr','Trend %RR '+LB,'Retention rate per bulan',RR,'#2bb5a0','#12806f',fr,'%',.3,PR)+'</div>';
+ const hp=cphp(),base=CP.r.filter(cpGra),pl=hp?cpPL():'',cl=st.cm=='all'?'Total '+CP.ms[0].split(' ')[0]+'–'+CP.ms[4]:cpl();
+ const ag=rs=>{const c=cpagg(rs.filter(cpC)),p=cpagg(rs.filter(cpP));return{c,p}};
+ let grp=[],LB;
+ if(st.u!='ALL'){const ur=base.filter(r=>CP.u[r[4]]==st.u),bi=cpmode(ur.map(r=>r[3]));grp=[[st.u.replace('GraPARI ',''),ur,1],[CP.br[bi],base.filter(r=>r[3]==bi),0],['Jabar',base,0]];LB=st.u}
+ else if(st.b!='ALL'){const bi=CP.br.indexOf(st.b),br=base.filter(r=>r[3]==bi),us=[...group(br.filter(cpC),r=>r[4])].sort((x,y)=>y[1].length-x[1].length).slice(0,6).map(x=>x[0]);grp=[...us.map(u=>[CP.u[u].replace('GraPARI ',''),br.filter(r=>r[4]==u),0]),['Br. '+st.b,br,1]];LB='Branch '+st.b}
+ else{grp=[...CP.br.map((b,i)=>[b,base.filter(r=>r[3]==i),0]),['Jabar',base,1]];LB='Jabar'}
+ const A=grp.map(([n,rs,sel])=>({n,sel,...ag(rs)}));
+ const GW=A.map(x=>({name:x.n,sel:x.sel,a:hp?x.p.n:null,b:x.c.n,mom:hp&&x.p.n?(x.c.n-x.p.n)/x.p.n*100:null,pl,cl}));
+ const GR=A.map(x=>({name:x.n,sel:x.sel,a:hp?x.p.rr:null,b:x.c.rr,mom:hp&&x.p.rr!=null&&x.c.rr!=null?x.c.rr-x.p.rr:null,pl,cl}));
+ const leg=`<span style="display:inline-flex;gap:14px;font-size:12px;color:#6B7089">${hp?`<span><span style="display:inline-block;width:12px;height:12px;background:#C8C8C8;vertical-align:-1px"></span> ${pl}</span>`:''}<span><span style="display:inline-block;width:12px;height:12px;background:#C00000;vertical-align:-1px"></span> ${cl}</span></span>`;
+ const card=(t,sv)=>`<div style="flex:1 1 420px;min-width:320px;background:#fff;border:1px solid #E3E5EE;border-radius:14px;padding:12px 14px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><div style="font-weight:700;font-size:15px;color:#2B2D42">${t}</div>${leg}</div>${sv}</div>`;
+ const fw=v=>v==null?'–':fi(Math.round(v)),fr=v=>v==null?'–':f1(v)+'%';
+ $('cptr').innerHTML=`<h2 style="margin:0 0 4px">📊 MoM WO & %RR – ${LB}</h2><div style="font-size:12px;color:#9a93a8;margin-bottom:10px">${hp?`${cl} dibanding ${pl} (tanggal yang sama)`:'Pilih satu bulan untuk melihat MoM'} · MoM WO = % perubahan jumlah WO · MoM %RR = selisih %RR · sumbu dipotong (tinggi batang bukan skala penuh)</div><div style="display:flex;gap:14px;flex-wrap:wrap">`+card('MoM WO per '+(st.u!='ALL'?'GraPARI':st.b!='ALL'?'GraPARI':'Branch'),cpMomSvg(GW,fw,false,hp))+card('MoM %RR per '+(st.u!='ALL'?'GraPARI':st.b!='ALL'?'GraPARI':'Branch'),cpMomSvg(GR,fr,true,hp))+'</div>';
 }
 function renderCP(){cptrend();
  const g=cpscope(),m=cpm(g),hp=cphp(),o=cpagg(g.filter(cpP)),a=cpagg(g.filter(cpC));
@@ -947,6 +954,7 @@ function renderCP(){cptrend();
  cptab('cp6',CP.r.filter(r=>cpGra(r)&&cpUF(r)),r=>r[3],k=>CP.br[k],{lab:'Branch',tgt:k=>st.u=='ALL'?(st.cm==4?CP.tbn:CP.tb)[CP.br[k]]:null,click:k=>{const b=CP.br[+k];st.b=st.b==b?'ALL':b;sync();render()},sel:st.b=='ALL'?null:String(CP.br.indexOf(st.b))});
  const bk=f=>g=>CP.br[cpmode(g.map(f))];
  cptab('cp5',g,r=>r[4],k=>CP.u[k],{lab:'GraPARI',tgt:k=>(st.cm==4?CP.tn:CP.t)[CP.u[k]],br:bk(r=>r[3]),click:k=>{const u=CP.u[+k];st.u=st.u==u?'ALL':u;sync();render()},sel:st.u=='ALL'?null:String(CP.u.indexOf(st.u))});
+ {const g=cpscope();$('cpjh').textContent='Top 3 Paket Retensi & Top 3 Reason CAPS – '+(st.u!='ALL'?st.u:st.b!='ALL'?'Branch '+st.b:'Jabar');cpbars('cpj1',g.filter(r=>r[1]==1),6,'Paket Retensi',CP.pk,0,3);cpbars('cpj2',g.filter(r=>r[1]==0),13,'Reason CAPS',CP.rg,1,3)}
  cpGrid('cp8','rg');cpGrid('cp7','pk');cpPrep();cpProf();
  const q=$('cq').value.trim().toLowerCase(),mn=+$('cmin').value||1;
  const rows=[...group(g.filter(r=>r[5]>=0),r=>r[5])].map(([k,x])=>{const mm=cpm(x),c=CP.cs[k];return{key:String(k),name:c[0],nik:c[2],unit:c[1],...mm,html:`<td>${c[0]}</td><td style="text-align:left">${c[2]}</td><td style="text-align:left">${c[1]}</td>`+mm.html}}).filter(r=>S[r.nik]&&!/^T0/i.test(r.nik)&&(r.do+r.mo)>=mn&&(!q||(r.name+r.nik+r.unit).toLowerCase().includes(q)));
@@ -974,7 +982,7 @@ $('fu').onchange=e=>{st.u=e.target.value;render()};$('fs').onchange=e=>{st.s=e.t
 $('rs').onclick=()=>{st.vm=3;st.vs='all';st.vk='aktif';st.vd='br';st.vsel.clear();$('vq').value='';$('vmin').value=1;$('vcf').value='ALL';st.m=2;st.wm=3;st.hm=3;st.im=3;st.om=3;st.cm=4;st.ff=1;st.km=1;st.b='ALL';st.u='ALL';st.s='cs';$('fs').value='cs';$('fs').dataset.v='cs';sync();render();mqLatest()};
 $('fm').innerHTML=[['0','Agustus'],['1','September'],['2','Oktober'],['3','November (1–'+(D.mn[3].match(/–(\d+)/)||[,'?'])[1]+' Nov, parsial)'],['all','All Month']].map(x=>`<option value="${x[0]}">${x[1]}</option>`).join('');
 $('fm').onchange=e=>{const v=e.target.value;st.m=v=='all'?v:+v;render()};
-$('wm').innerHTML=['Juli','Agustus','September','Oktober','November'+(VPART?` (1–${vlast()} Nov, parsial)`:'')].map((m,i)=>`<option value="${i}">${m}</option>`).join('')+'<option value="all">All Month</option>';$('cm').innerHTML=[['0','Juli'],['1','Agustus'],['2','September'],['3','Oktober'],['4','November (1–16 Nov, parsial)'],['all','All Month']].map(x=>`<option value="${x[0]}">${x[1]}</option>`).join('');$('cm').onchange=e=>{const v=e.target.value;st.cm=v=='all'?v:+v;renderCP()};['cq','cmin'].forEach(i=>$(i).oninput=renderCP);
+$('wm').innerHTML=['Juli','Agustus','September','Oktober','November'+(VPART?` (1–${vlast()} Nov, parsial)`:'')].map((m,i)=>`<option value="${i}">${m}</option>`).join('')+'<option value="all">All Month</option>';$('cm').innerHTML=[['0','Juli'],['1','Agustus'],['2','September'],['3','Oktober'],['4','November (1–19 Nov, parsial)'],['all','All Month']].map(x=>`<option value="${x[0]}">${x[1]}</option>`).join('');$('cm').onchange=e=>{const v=e.target.value;st.cm=v=='all'?v:+v;renderCP()};['cq','cmin'].forEach(i=>$(i).oninput=renderCP);
 $('hm').innerHTML=['Juli','Agustus','September','Oktober','All Month'].map((m,i)=>`<option value="${i==4?'all':i}">${m}</option>`).join('');$('hm').onchange=e=>{const v=e.target.value;st.hm=v=='all'?v:+v;renderH()};
 $('im').innerHTML=['Juli','Agustus','September','Oktober','All Month'].map((m,i)=>`<option value="${i==4?'all':i}">${m}</option>`).join('');$('im').onchange=e=>{const v=e.target.value;st.im=v=='all'?v:+v;renderI()};
 $('om').innerHTML=['Juli','Agustus','September','Oktober','All Month'].map((m,i)=>`<option value="${i==4?'all':i}">${m}</option>`).join('');$('om').onchange=e=>{const v=e.target.value;st.om=v=='all'?v:+v;renderO()};
@@ -986,7 +994,7 @@ document.querySelectorAll('#tabs .tab').forEach(b=>b.onclick=()=>showTab(b.datas
 $('xl').onclick=()=>st.p==11?exportTF():st.p==10?exportOrbit():st.p==9?exportIndi():st.p==8?exportHalo():st.p==7?exportKPI():st.p==6?exportFixed():st.p==5?exportCaps():st.p==4?exportWait():st.p==3?exportVisit():st.p==2?exportTiket():exportXlsx();
 /* ===== tNPS Fixed module ===== */
 st.fm=2;st.fb='ALL';st.fu='ALL';st.fn='ALL';st.fj='ALL';
-Object.assign(st.sort,{tf6:['nps',-1],tf1:['ord',1],tf2:['n',-1],tf3:['n',-1],tf4:['n',-1],tf5:['n',-1]});
+Object.assign(st.sort,{tf6:['nps',-1],tf1:['ord',1],tf2:['n',-1],tf3:['n',-1],tf4:['nps',-1],tf5:['n',-1]});
 const TFCUT=TF.m.map((x,i)=>{const d=Math.max(0,...TF.rows.filter(r=>r[4]==i).map(r=>r[10]));return i==TF.m.length-1&&d<ML[i]?d:99});
 const tfC=r=>r[4]==st.fm,tfP=r=>st.fm>0&&r[4]==st.fm-1&&r[10]<=TFCUT[st.fm];
 const TFIG=TF.ut.indexOf('GraPARI');
@@ -1002,6 +1010,7 @@ function tfTbl(id,skip,keyf,label,sel,onc,extra,flt){
  table(id,rows,[[label,'name'],...(extra?[['Branch','br']]:[]),...TFC],onc,sel);
 }
 const tfCap=(id,n)=>{const e=$(id);e.style.maxHeight='none';e.style.overflowY='auto';const rs=e.querySelectorAll('tbody tr');if(rs.length>n)e.style.maxHeight=Math.ceil(rs[n-1].getBoundingClientRect().bottom-e.getBoundingClientRect().top+2)+'px'};
+const tfTot=(id,skip,f)=>{const tb=$(id).querySelector('tbody');if(!tb||!tb.children.length)return;const m=tfmet(tfBase(skip).filter(f));if(EX[id])EX[id].rows.push({name:'Total Jabar',...m});tb.insertAdjacentHTML('beforeend',`<tr style="font-weight:700;background:var(--sf);border-top:2px solid var(--bd)"><td>Total Jabar</td>${m.html}</tr>`)};
 const tfSet=(k,v)=>{st[k]=st[k]==v?'ALL':v;renderTF()};
 /* tema freetext GraPARI */
 const TFPT=[['Registrasi / pemasangan cepat & mudah','Proses daftar, pasang dan persyaratan dinilai cepat, mudah dan tidak berbelit.','Pertahankan alur registrasi dan pemasangan yang ringkas serta persyaratan yang sederhana.'],
@@ -1028,7 +1037,7 @@ function tfww(id,kind){
  if(!A.n){$(id).innerHTML='<p class="note">Tidak ada respon GraPARI pada filter ini.</p>';return}
  const rsn=tfTop(sel,r=>TF.rs[r[6]],4).map(([k,v])=>`${B(k)} (${v}, ${f1(pp(v,ns))}%)`).join('; ');
  const jr=tfTop(sel,r=>TF.jr[r[5]],3).map(([k,v])=>`${B(k)} (${v}, ${f1(pp(v,ns))}%)`).join('; ');
- const brs=[...group(c,r=>TF.br[r[0]])].map(([k,g])=>({k,...ag(g),mom:hp?(ag(g).nps-ag(G.filter(tfP).filter(r=>TF.br[r[0]]==k)).nps):null}));
+ const brs=[...group(c.filter(r=>r[0]>=0),r=>TF.br[r[0]])].map(([k,g])=>({k,...ag(g),mom:hp?(ag(g).nps-ag(G.filter(tfP).filter(r=>TF.br[r[0]]==k)).nps):null}));
  const u=tfUn(G,15),u2=tfUn(G,10).filter(x=>x.mom!=null);
  if(kind=='p'){
   L.push(`tNPS GraPARI ${B(f1(A.nps))}${hp?` (${sg(A.nps-O.nps)} dari ${pl}: ${f1(O.nps)})`:''} dari ${fi(A.n)} respon; Promotor ${B(fi(A.p))} (${f1(pp(A.p,A.n))}%)${hp?`, ${pl}: ${f1(pp(O.p,O.n))}%`:''}.`);
@@ -1057,12 +1066,12 @@ function tfww(id,kind){
  EX[id]={rows:idx.map(i=>({t:TH[i][0],n:cnt[i],sh:pp(cnt[i],cm.length)})),cols:[['Tema','t'],['Jumlah','n'],[cn,'sh']]};
 }
 function tfBars(id,rs,cl){
- const g0=rs.filter(r=>cl==null||cls(r[3])==cl),k0=TF.rs.indexOf('(tanpa alasan)'),g=g0.filter(r=>r[6]!=k0),m=new Map();g.forEach(r=>{const k=TF.rs[r[6]];m.set(k,(m.get(k)||0)+1)});
+ const g0=rs.filter(r=>cl==null||cls(r[3])==cl),k0=TF.rs.indexOf('(tanpa alasan)'),g=g0,nt=g0.filter(r=>r[6]==k0).length,m=new Map();g.forEach(r=>{const k=r[6]==k0?'Tanpa alasan':TF.rs[r[6]];m.set(k,(m.get(k)||0)+1)});
  const rows=[...m].map(([name,n])=>({name,n,sh:n/g.length*100})).sort((a,b)=>b.n-a.n).slice(0,10);
  EX[id]={rows:rows.map((r,i)=>({no:i+1,name:r.name,n:r.n,sh:r.sh})),cols:[['No','no'],['Kategori (Q6 ans)','name'],['Jumlah','n'],['% of total','sh']]};addXb(id);
  if(!rows.length){$(id).innerHTML='<p class="note">Tidak ada data.</p>';return}
  const mx=Math.max(1,...rows.map(r=>r.sh));
- $(id).innerHTML=rows.map((r,i)=>{const c=TBC[i%TBC.length];return`<div class="cr"><div class="cl" style="cursor:default"><span class="cn">${i+1}</span>${r.name}</div><div class="ct"><div class="cb" style="width:${(r.sh/mx*100).toFixed(1)}%;background:linear-gradient(90deg,${c[1]},${c[0]})"></div></div><div class="cv"><b>${f1(r.sh)}%</b> <span class="cj">${fi(r.n)}</span></div></div>`}).join('')+`<p class="note" style="margin-top:6px">% dari ${fi(g.length)} respon yang mengisi alasan; ${fi(g0.length-g.length)} respon tanpa alasan tidak dihitung.</p>`}
+ $(id).innerHTML=rows.map((r,i)=>{const c=TBC[i%TBC.length];return`<div class="cr"><div class="cl" style="cursor:default"><span class="cn">${i+1}</span>${r.name}</div><div class="ct"><div class="cb" style="width:${(r.sh/mx*100).toFixed(1)}%;background:linear-gradient(90deg,${c[1]},${c[0]})"></div></div><div class="cv"><b>${f1(r.sh)}%</b> <span class="cj">${fi(r.n)}</span></div></div>`}).join('')+`<p class="note" style="margin-top:6px">% dari seluruh ${fi(g.length)} respon${nt?` (termasuk ${fi(nt)} respon tanpa alasan)`:''}.</p>`}
 
 /* Top tNPS per CSR (GraPARI) */
 const TFCSN=nik=>{const x=(D.siad||{})[nik];return x?x[0]:nik};
@@ -1078,16 +1087,17 @@ function tfCSR(){
 function tfDV(){
  if(!TF._x&&TF.x){TF.rows.forEach((r,i)=>r.x=TF.x[i]);TF._x=1}
  const esc=t=>String(t||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
- const rs=tfBase().filter(r=>r[4]==st.fm&&r[1]==TFIG&&r[3]<=6).map(r=>{const t=(r.x&&r.x[3])||r[8]||'';return{r,t:t.trim()}}).filter(o=>o.t.length>=3&&!/^(nan|-|\.)$/i.test(o.t)).sort((a,b)=>a.r[3]-b.r[3]||((b.r.x||[])[2]||'').localeCompare((a.r.x||[])[2]||''));
- const all=tfBase().filter(r=>r[4]==st.fm&&r[1]==TFIG&&r[3]<=6).length,wc=rs.filter(o=>o.r[9]>=0).length;
- $('tfdvn').innerHTML=`${rs.length} dari ${all} detractor unit GraPARI (skor 0–6) pada ${TF.m[st.fm]} menuliskan komentar · ${wc} di antaranya tercatat nama CSR-nya. Diurutkan dari skor terendah.`;
- if(!rs.length){$('tfdv').innerHTML='<p class="note">Tidak ada detractor GraPARI dengan freetext pada pilihan ini.</p>';return}
- $('tfdv').innerHTML='<table><tr><th>Tgl survey</th><th>GraPARI</th><th>Branch</th><th>Nama CSR</th><th>Journey</th><th>Skor</th><th>Kategori Q6</th><th style="min-width:340px">Freetext pelanggan</th></tr>'+rs.map(({r,t})=>{const nk=r[9]>=0?TF.cs[r[9]]:'',sv=nk&&D.siad[nk],d=(r.x&&r.x[2])||'';
-  return`<tr><td style="white-space:nowrap">${d?d.slice(8,10)+'/'+d.slice(5,7):r[10]+' '+TF.m[r[4]].slice(0,3)}</td><td style="text-align:left;font-weight:700">${r[2]>=0?TF.un[r[2]]:'(unit tidak terpetakan)'}</td><td>${TF.br[r[0]]}</td><td style="text-align:left">${sv?esc(sv[0]):nk?nk:'<span style="color:var(--mu)">–</span>'}</td><td style="text-align:left">${esc(TF.jr[r[5]])}</td><td><b style="color:#C0392B">${r[3]}</b></td><td style="text-align:left">${esc(TF.rs[r[6]])}</td><td style="text-align:left;white-space:normal">${esc(t)}</td></tr>`}).join('')+'</table>';}
+ const KL=['Promotor','Passiver','Detractor'],KC=['#2E7D32','#B7791F','#C0392B'];
+ const rs=tfBase().filter(r=>r[4]==st.fm&&r[1]==TFIG).map(r=>{const t=(r.x&&r.x[3])||r[8]||'';return{r,t:t.trim()}}).filter(o=>o.t.length>=3&&!/^(nan|-|\.|null)$/i.test(o.t)).sort((a,b)=>cls(b.r[3])-cls(a.r[3])||a.r[3]-b.r[3]||((b.r.x||[])[2]||'').localeCompare((a.r.x||[])[2]||''));
+ const all=tfBase().filter(r=>r[4]==st.fm&&r[1]==TFIG).length,wc=rs.filter(o=>o.r[9]>=0).length,kn=[2,1,0].map(k=>`${KL[k]} ${rs.filter(o=>cls(o.r[3])==k).length}`).join(' · ');
+ $('tfdvn').innerHTML=`${rs.length} dari ${all} respon unit GraPARI pada ${TF.m[st.fm]} menuliskan catatan tambahan di q6_ans (${kn}) · ${wc} di antaranya tercatat nama CSR-nya. Urutan: Detractor, Passiver, lalu Promotor.`;
+ if(!rs.length){$('tfdv').innerHTML='<p class="note">Tidak ada respon GraPARI dengan freetext pada pilihan ini.</p>';return}
+ $('tfdv').innerHTML='<table><tr><th>Tgl survey</th><th>GraPARI</th><th>Branch</th><th>Nama CSR</th><th>Journey</th><th>Skor</th><th>Kelas</th><th>Kategori Q6</th><th style="min-width:340px">Freetext pelanggan</th></tr>'+rs.map(({r,t})=>{const nk=r[9]>=0?TF.cs[r[9]]:'',sv=nk&&D.siad[nk],d=(r.x&&r.x[2])||'';
+  return`<tr><td style="white-space:nowrap">${d?d.slice(8,10)+'/'+d.slice(5,7):r[10]+' '+TF.m[r[4]].slice(0,3)}</td><td style="text-align:left;font-weight:700">${r[2]>=0?TF.un[r[2]]:'(unit tidak terpetakan)'}</td><td>${TF.br[r[0]]||'–'}</td><td style="text-align:left">${sv?esc(sv[0]):nk?nk:'<span style="color:var(--mu)">–</span>'}</td><td style="text-align:left">${esc(TF.jr[r[5]])}</td><td><b style="color:${KC[cls(r[3])]}">${r[3]}</b></td><td style="color:${KC[cls(r[3])]};font-weight:700">${KL[cls(r[3])]}</td><td style="text-align:left">${esc(TF.rs[r[6]])}</td><td style="text-align:left;white-space:normal">${esc(t)}</td></tr>`}).join('')+'</table>';}
 function renderTF(){
  const hp=st.fm>0,pl=tfpm(),per=TF.m[st.fm],b=tfBase(),cur=b.filter(tfC),A=ag(cur),O=ag(b.filter(tfP));
  const gb=b.filter(r=>r[1]==TFIG),GA=ag(gb.filter(tfC)),GO=ag(gb.filter(tfP));
- const kc=(el,t,a,o,sub)=>$(el).innerHTML=`<div class="t">${t} · ${per}</div><div class="v ${a.nps>=0?'pos':'neg'}">${f1(a.nps)} <span style="font-size:15px">${hp?dl(dv(a.nps,o.nps))+' MoM':''}</span></div><div class="stack"><i style="width:${a.n?a.p/a.n*100:0}%;background:var(--g)"></i><i style="width:${a.n?a.a/a.n*100:0}%;background:var(--y)"></i><i style="width:${a.n?a.d/a.n*100:0}%;background:var(--r)"></i></div><div class="lg"><span><span class="dot" style="background:var(--g)"></span>Promotor <b>${a.p}</b></span><span><span class="dot" style="background:var(--y)"></span>Passive <b>${a.a}</b></span><span><span class="dot" style="background:var(--r)"></span>Detractor <b>${a.d}</b></span><span>Total <b>${a.n}</b></span></div><div class="note">${hp?`<b>${pl}:</b> tNPS ${f1(o.nps)} (${o.n} respon)`:'MoM tidak tersedia untuk bulan pertama'}${sub||''}</div>`;
+ const kc=(el,t,a,o,sub)=>$(el).innerHTML=`<div class="t">${t} · ${per}</div><div class="v ${a.nps>=0?'pos':'neg'}">${f1(a.nps)} <span style="font-size:15px">${hp?dl(dv(a.nps,o.nps))+' MoM':''}</span></div><div class="stack"><i style="width:${a.n?a.p/a.n*100:0}%;background:var(--g)"></i><i style="width:${a.n?a.a/a.n*100:0}%;background:var(--y)"></i><i style="width:${a.n?a.d/a.n*100:0}%;background:var(--r)"></i></div><div class="lg"><span><span class="dot" style="background:var(--g)"></span>Promotor <b>${a.p}</b></span><span><span class="dot" style="background:var(--y)"></span>Passive <b>${a.a}</b></span><span><span class="dot" style="background:var(--r)"></span>Detractor <b>${a.d}</b></span><span>Total <b>${a.n}</b></span></div>`;
  kc('tfk1','📞 tNPS Fixed – Jabar',A,O,'');kc('tfk2','🏬 tNPS Fixed – unit GraPARI',GA,GO,` · ${f1(A.n?GA.n/A.n*100:0)}% dari total respon`);
  {const pb=b.filter(isPF),PA=ag(pb.filter(tfC)),PO=ag(pb.filter(tfP));kc('tfk3','🎧 tNPS People – unit GraPARI',PA,PO,` · respon GraPARI dengan kategori Q6 Customer Service`);}
  $('tfm').value=String(st.fm);$('tfmeta').style.display='none';
@@ -1096,11 +1106,11 @@ function renderTF(){
   return{key:m,name:m,ord:i,n:a.n,p:a.p,a:a.a,d:a.d,pp,dd,nps:a.nps,mom:o?dv(a.nps,o.nps):null,html:`<td>${m}</td><td>${a.n}</td><td>${a.p}</td><td>${a.a}</td><td>${a.d}</td><td>${f1(pp)}%</td><td>${f1(dd)}%</td><td>${nb(a.nps)}<b class="${a.nps>=0?'pos':'neg'}">${f1(a.nps)}</b></td><td>${o?dl(dv(a.nps,o.nps)):'–'}</td>`}}).filter(x=>x.n>0);
  table('tf1',mrows,[['Bulan','name'],['Total','n'],['Promotor','p'],['Passive','a'],['Detractor','d'],['% Promotor','pp'],['% Detractor','dd'],['%tNPS','nps'],['MoM','mom']],k=>{st.fm=TF.m.indexOf(k);renderTF()},per);
  tfTbl('tf2','ut',r=>TF.ut[r[1]],'Unit Type',st.fu,k=>tfSet('fu',k));
- tfTbl('tf3','br',r=>TF.br[r[0]],'Branch',st.fb,k=>tfSet('fb',k));
- tfTbl('tf4','un',r=>r[2]>=0?TF.un[r[2]]:null,'unit_name (GraPARI)',st.fn,k=>tfSet('fn',k),g=>TF.br[g[0][0]]);tfCap('tf4',10);
- tfTbl('tf4p','un',r=>r[2]>=0?TF.un[r[2]]:null,'GraPARI',st.fn,k=>tfSet('fn',k),g=>TF.br[g[0][0]],isPF);if(!$('tf4p').querySelector('tbody tr'))$('tf4p').innerHTML='<p class="note">Belum ada respon People di unit GraPARI untuk bulan ini.</p>';
+ tfTbl('tf3b','br',r=>r[11]>=0?TF.br[r[11]]:null,'Branch',null,null);tfTot('tf3b','br',r=>r[11]>=0);tfTbl('tf3','br',r=>r[0]>=0?TF.br[r[0]]:null,'Branch',st.fb,k=>tfSet('fb',k));tfTot('tf3','br',r=>r[0]>=0);
+ st.sort.tf4=st.sort.tf4||['nps',-1];tfTbl('tf4','un',r=>r[2]>=0?TF.un[r[2]]:null,'GraPARI',st.fn,k=>tfSet('fn',k),g=>TF.br[g[0][0]]||'–');tfCap('tf4',10);
+ tfTbl('tf4p','un',r=>r[2]>=0?TF.un[r[2]]:null,'GraPARI',st.fn,k=>tfSet('fn',k),g=>TF.br[g[0][0]]||'–',isPF);if(!$('tf4p').querySelector('tbody tr'))$('tf4p').innerHTML='<p class="note">Belum ada respon People di unit GraPARI untuk bulan ini.</p>';
  tfTbl('tf5','jr',r=>TF.jr[r[5]],'Journey',st.fj,k=>tfSet('fj',k));
- tfBars('tfc1',cur,0);tfBars('tfc2',cur,2);tfCSR(cur);
+ tfBars('tfc1',cur,0);tfBars('tfc2',cur,2);tfBars('tfc3',cur,1);tfCSR(cur);
  tfww('tfnw','p');tfww('tfnx','d');tfDV();
 }
 $('tfm').innerHTML=TF.m.map((m,i)=>`<option value="${i}">${['Agustus','September','Oktober','November'][i]}${/\(/.test(m)?' ('+m.replace(/.*\((.*)\)/,'$1')+' '+m.slice(0,3)+', parsial)':''}</option>`).join('');
@@ -1111,7 +1121,7 @@ async function exportTF(){
  const rd=v=>v==null?'':typeof v=='number'?Math.round(v*100)/100:v;
  const wb=XLSX.utils.book_new(),add=(n,aoa)=>XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(aoa),n);
  add('Ringkasan',[['Laporan tNPS Fixed Jabar'],['Bulan',TF.m[st.fm]],['Branch',st.fb],['Unit type 2',st.fu],['unit_name',st.fn],['Journey',st.fj],['Rumus','%tNPS = (Promotor 9–10 − Detractor 0–6) ÷ total respon × 100']]);
- [['tf1','Total Jabar per bulan'],['tf2','Unit Type'],['tf3','Branch'],['tf4','unit_name'],['tf4p','People per GraPARI'],['tf5','Journey'],['tfc1','Top Kategori Promotor'],['tfc2','Top Kategori Detractor'],['tf6','Top tNPS per CSR'],['tfnw','Tema Promotor GraPARI'],['tfnx','Tema Detractor GraPARI']].forEach(([id,n])=>{const e=EX[id];if(e)add(n,[e.cols.map(c=>c[0]),...e.rows.map(r=>e.cols.map(c=>rd(r[c[1]])))])});
+ [['tf1','Total Jabar per bulan'],['tf2','Unit Type'],['tf3b','Branch (kolom branch)'],['tf3','Branch GraPARI Jabar'],['tf4','unit_name'],['tf4p','People per GraPARI'],['tf5','Journey'],['tfc1','Top Kategori Promotor'],['tfc2','Top Kategori Detractor'],['tfc3','Top Kategori Passiver'],['tf6','Top tNPS per CSR'],['tfnw','Tema Promotor GraPARI'],['tfnx','Tema Detractor GraPARI']].forEach(([id,n])=>{const e=EX[id];if(e)add(n,[e.cols.map(c=>c[0]),...e.rows.map(r=>e.cols.map(c=>rd(r[c[1]])))])});
  const kom=TF.rows.filter(r=>r[1]==TFIG&&r[4]==st.fm&&r[8]).map(r=>[TF.m[r[4]],TF.br[r[0]],TF.un[r[2]],TF.jr[r[5]],r[3],cls(r[3])==0?'Promotor':'Detractor',TF.rs[r[6]],(cls(r[3])==0?TFPT:TFDT)[r[7]]?.[0]||'',r[8]]);
  add('Komentar GraPARI',[['Bulan','Branch','GraPARI','Journey','Skor','Kelas','Kategori Q6','Tema','Komentar'],...kom]);
  if(!TF._x&&TF.x){TF.rows.forEach((r,i)=>r.x=TF.x[i]);TF._x=1}
@@ -1393,12 +1403,51 @@ async function rpGo(id,i,play){const el=$('rv_'+id),ov=$('ro_'+id);if(!el)return
  catch(e){if(ov){ov.style.display='flex';ov.querySelector('.rps').textContent='Video gagal dimuat ('+e.message+'). Klik untuk coba lagi'}}}
 $('rpb').innerHTML=['ALL',...new Set(RP.map(v=>v.br))].map(b=>`<option value="${b}">${b=='ALL'?'Semua branch':b}</option>`).join('');$('rpb').onchange=e=>{st.rpb=e.target.value;renderRP()};
 
+
+/* ===== FU tNPS Fixed ===== */
+st.ffb='ALL';st.ffm='all';st.ffs=null;
+function ffBase(){return FF.rows.filter(r=>st.ffb=='ALL'||FF.br[r[0]]==st.ffb)}
+function renderFF(){
+ const B=ffBase(),M=st.ffm=='all'?FF.m.map((_,i)=>i):[+st.ffm],cur=B.filter(r=>M.includes(r[1]));
+ const n=cur.length,f=cur.filter(r=>r[2]).length,pf=n?f/n*100:null;
+ $('ffmeta').textContent=`Sumber: ${FF.src} · survey s.d. ${FF.upd} · ${st.ffm=='all'?'Jul–'+FF.m[FF.m.length-1]:FF.m[+st.ffm]}`;
+ const kc=(t,v,s,c)=>`<div class="card kpi"><div class="t">${t}</div><div class="v" style="color:${c||'inherit'}">${v}</div><div class="note">${s}</div></div>`;
+ $('ffk').innerHTML=kc('📨 Jumlah Respon',fi(n),'Respon tNPS Fixed GraPARI yang wajib di-FU')+kc('📞 Jumlah FU',fi(f),'Status Follow Up sudah terisi')+kc('✅ %FU',pf==null?'–':f1(pf)+'%',`${fi(f)} dari ${fi(n)} respon`,pf!=null&&pf>=100?'#2E7D32':'#C0392B')+kc('🎯 Belum FU',fi(n-f),'Target FU yang masih harus dilakukan',n-f?'#C0392B':'#2E7D32');
+ // matrix
+ const pc=(a,b)=>b?a/b*100:null,cl=v=>v==null?'':v>=100?'#2E7D32':v>=80?'#B7791F':'#C0392B';
+ const us=[...new Set(B.map(r=>r[0]))];
+ const mk=(k,name,br,rs)=>{const o={key:k,name,br};let h=`<td style="text-align:left;font-weight:600">${name}</td><td style="text-align:left">${br}</td>`;
+  M.forEach(m=>{const g=rs.filter(r=>r[1]==m),a=g.length,b=g.filter(r=>r[2]).length,v=pc(b,a);o['n'+m]=a;o['f'+m]=b;o['p'+m]=v;h+=`<td><b style="color:${cl(v)}">${v==null?'–':f1(v)+'%'}</b></td>`});
+  const g=rs.filter(r=>M.includes(r[1])),a=g.length,b=g.filter(r=>r[2]).length,v=pc(b,a);o.n=a;o.f=b;o.p=v;o.bl=a-b;
+  if(M.length>1)h+=`<td><b style="color:${cl(v)}">${v==null?'–':f1(v)+'%'}</b></td>`;o.html=h;return o};
+ const rows=us.map(u=>mk(String(u),FF.u[u],FF.br[u],B.filter(r=>r[0]==u))).filter(o=>o.n>0);
+ const cols=[['GraPARI','name'],['Branch','br']];M.forEach(m=>{const l=FF.m[m].replace(/ \(.*\)/,'');cols.push([l+' %FU','p'+m])});if(M.length>1)cols.push(['Total %FU','p']);
+ st.sort.ff1=st.sort.ff1||['p',1];table('ff1',rows,cols,null,null);
+ const tb=$('ff1').querySelector('tbody');if(tb&&rows.length){const t=mk('Total','Total '+(st.ffb=='ALL'?'Jabar':st.ffb),'',B);EX.ff1.rows.push(t);tb.insertAdjacentHTML('beforeend',`<tr style="font-weight:700;background:var(--sf);border-top:2px solid var(--bd)">${t.html}</tr>`)}
+ // belum FU
+ const nf=cur.filter(r=>!r[2]),gm=new Map();nf.forEach(r=>{const k=r[0]+'|'+r[1];gm.set(k,(gm.get(k)||[]).concat([r]))});
+ const r2=[...gm].map(([k,g])=>{const [u,m]=k.split('|').map(Number),tot=B.filter(r=>r[0]==u&&r[1]==m).length;return{key:k,name:FF.u[u],br:FF.br[u],bl:FF.m[m],mo:m,n:g.length,t:tot,p:pc(tot-g.length,tot),html:`<td style="text-align:left;font-weight:600">${FF.u[u]}</td><td style="text-align:left">${FF.br[u]}</td><td>${FF.m[m]}</td><td><b style="color:#C0392B">${g.length}</b></td><td>${tot}</td><td><b style="color:${cl(pc(tot-g.length,tot))}">${f1(pc(tot-g.length,tot))}%</b></td>`}});
+ st.sort.ff2=st.sort.ff2||['n',-1];
+ if(!r2.length){$('ff2').innerHTML='<p class="note">Semua respon pada pilihan ini sudah di-FU. 👍</p>'}else{table('ff2',r2,[['GraPARI','name'],['Branch','br'],['Bulan','bl'],['Belum FU','n'],['Total Respon','t'],['%FU','p']],k=>{st.ffs=st.ffs==k?null:k;renderFF()},st.ffs);
+  const tb2=$('ff2').querySelector('tbody');if(tb2){const T=r2.reduce((a,x)=>a+x.n,0),TT=r2.reduce((a,x)=>a+x.t,0);tb2.insertAdjacentHTML('beforeend',`<tr style="font-weight:700;background:var(--sf);border-top:2px solid var(--bd)"><td>Total</td><td></td><td></td><td style="color:#C0392B">${T}</td><td>${TT}</td><td></td></tr>`)}}
+ // detail
+ if(st.ffs&&!gm.has(st.ffs))st.ffs=null;
+ const det=(st.ffs?gm.get(st.ffs):nf).slice().sort((a,b)=>a[1]-b[1]||a[3]-b[3]);
+ $('ff3h').textContent=st.ffs?`· ${FF.u[+st.ffs.split('|')[0]]} · ${FF.m[+st.ffs.split('|')[1]]} (klik lagi barisnya untuk melihat semua)`:`· semua GraPARI (${det.length} respon)`;
+ const esc=t=>String(t||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+ const dr=det.map((r,i)=>({key:String(i),tg:r[4],u:FF.u[r[0]],br:FF.br[r[0]],bl:FF.m[r[1]],id:r[5],ms:r[6],sk:r[3],jr:r[9],q6:r[7],stt:r[8]||'(kosong)',html:`<td style="white-space:nowrap">${r[4]}</td><td style="text-align:left;font-weight:600">${FF.u[r[0]]}</td><td>${FF.m[r[1]]}</td><td>${esc(r[5])}</td><td style="white-space:nowrap">${esc(r[6])}</td><td><b style="color:${r[3]<=6?'#C0392B':'#B7791F'}">${r[3]}</b></td><td style="text-align:left">${esc(r[9])}</td><td style="text-align:left;white-space:normal;min-width:260px">${esc(r[7])}</td><td style="text-align:left">${esc(r[8]||'(kosong)')}</td>`}));
+ if(!dr.length){$('ff3').innerHTML='<p class="note">Tidak ada respon yang belum di-FU.</p>'}else table('ff3',dr,[['Tgl survey','tg'],['GraPARI','u'],['Bulan','bl'],['ID TRX','id'],['MSISDN','ms'],['Skor','sk'],['Journey','jr'],['q6_ans','q6'],['Status FU','stt']],null,null);
+}
+$('ffb').innerHTML=['ALL','Bandung','Cirebon','Soreang','Tasikmalaya'].map(b=>`<option value="${b}">${b=='ALL'?'Semua branch':b}</option>`).join('');
+$('ffb').onchange=e=>{st.ffb=e.target.value;st.ffs=null;renderFF()};
+$('ffm').innerHTML=['all',...FF.m.map((_,i)=>i)].map(v=>`<option value="${v}">${v=='all'?'Semua bulan':FF.m[v]}</option>`).join('');
+$('ffm').onchange=e=>{st.ffm=e.target.value;st.ffs=null;renderFF()};
 /* ===== menu gabungan tNPS & Tiket ===== */
 (function(){
- const MAP={tn:{m:1,f:11,u:12,l:'tNPS',b:'mtn'},tk:{m:2,f:6,l:'Tiket',b:'mtk'}},LS={tn:1,tk:2};
+ const MAP={tn:{m:1,f:11,u:12,v:16,l:'tNPS',b:'mtn'},tk:{m:2,f:6,l:'Tiket',b:'mtk'}},LS={tn:1,tk:2};
  const orig=showTab;
- const grpOf=p=>p==1||p==11||p==12?'tn':p==2||p==6?'tk':null;
- showTab=function(p){p=+p;$('pg15').style.display='none';$('xl').style.display='';document.querySelectorAll('#pg15 video').forEach(v=>v.pause());if(p==15){orig(15);$('pg15').style.display='';$('pg13').style.display='none';$('pg14').style.display='none';$('osub').style.display='none';$('asub').style.display='none';$('orw').style.display='none';$('acw').style.display='none';document.querySelector('.bar').style.display='none';$('xl').style.display='none';renderRP();const sb=$('subtabs');if(sb)sb.style.display='none';dmSync();return}$('pg13').style.display='none';$('osub').style.display='none';$('orw').style.display='none';$('pg14').style.display='none';$('asub').style.display='none';$('acw').style.display='none';if(p==14){orig(14);$('pg14').style.display='';$('asub').style.display='';$('acw').style.display='';document.querySelector('.bar').style.display='none';$('xl').textContent='⬇ Unduh Excel Admin CC';renderAC()}else if(p==13){orig(13);$('pg13').style.display='';$('osub').style.display='';$('orw').style.display='';document.querySelector('.bar').style.display='none';$('xl').textContent='⬇ Unduh Excel Order';renderOR()}else if(p==12){orig(1);st.p=12;$('pg1').style.display='none';$('pg12').style.display='';document.querySelector('.bar').style.display='none';$('fm').parentElement.style.display='none';$('xl').textContent='⬇ Unduh Excel FU tNPS';renderFU()}else if(p!=13&&p!=14){orig(p);$('pg12').style.display='none'}const g=grpOf(p);$('tfw').style.display=p==11?'':'none';$('fuw').style.display=p==12?'':'none';$('sbu').style.display=g=='tn'?'':'none';
+ const grpOf=p=>p==1||p==11||p==12||p==16?'tn':p==2||p==6?'tk':null;
+ showTab=function(p){p=+p;$('pg15').style.display='none';$('pg16').style.display='none';$('xl').style.display='';document.querySelectorAll('#pg15 video').forEach(v=>v.pause());if(p==15){orig(15);$('pg15').style.display='';$('pg13').style.display='none';$('pg14').style.display='none';$('osub').style.display='none';$('asub').style.display='none';$('orw').style.display='none';$('acw').style.display='none';document.querySelector('.bar').style.display='none';$('xl').style.display='none';renderRP();const sb=$('subtabs');if(sb)sb.style.display='none';dmSync();return}$('pg13').style.display='none';$('osub').style.display='none';$('orw').style.display='none';$('pg14').style.display='none';$('asub').style.display='none';$('acw').style.display='none';if(p==14){orig(14);$('pg14').style.display='';$('asub').style.display='';$('acw').style.display='';document.querySelector('.bar').style.display='none';$('xl').textContent='⬇ Unduh Excel Admin CC';renderAC()}else if(p==13){orig(13);$('pg13').style.display='';$('osub').style.display='';$('orw').style.display='';document.querySelector('.bar').style.display='none';$('xl').textContent='⬇ Unduh Excel Order';renderOR()}else if(p==16){orig(11);st.p=16;$('pg11').style.display='none';$('pg12').style.display='none';$('pg16').style.display='';document.querySelector('.bar').style.display='none';$('xl').style.display='none';renderFF()}else if(p==12){orig(1);st.p=12;$('pg1').style.display='none';$('pg12').style.display='';document.querySelector('.bar').style.display='none';$('fm').parentElement.style.display='none';$('xl').textContent='⬇ Unduh Excel FU tNPS';renderFU()}else if(p!=13&&p!=14){orig(p);$('pg12').style.display='none'}const g=grpOf(p);$('tfw').style.display=p==11?'':'none';$('fuw').style.display=p==12?'':'none';$('sbu').style.display=g=='tn'?'':'none';$('sbv').style.display=g=='tn'?'':'none';$('tfw').style.display=p==11?'':'none';
   ['tn','tk'].forEach(k=>{const b=$(MAP[k].b);if(b)b.classList.toggle('on',g==k)});
   const sb=$('subtabs');
   if(g){LS[g]=p;sb.style.display='';$('sl').textContent=MAP[g].l+' ·';sb.querySelectorAll('.sb').forEach(b=>b.classList.toggle('on',MAP[g][b.dataset.s]==p))}
