@@ -19,7 +19,7 @@
   .then(function(arr){
     names.forEach(function(n,i){window[n]=arr[i]});
     var s=document.createElement('script');s.src='app.js?v='+v;
-    s.onload=function(){box.remove();badge()};
+    s.onload=function(){var p=document.createElement('script');p.src='post.js?v='+v;p.onload=function(){box.remove();badge()};p.onerror=function(){box.remove();badge()};document.body.appendChild(p)};
     s.onerror=function(){box.textContent='Gagal memuat app.js'};
     document.body.appendChild(s);
   }).catch(function(e){

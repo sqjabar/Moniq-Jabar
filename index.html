@@ -160,17 +160,17 @@ select#om{font-weight:700;font-size:15px;color:#B00010;background:#FFF0F0;border
 <div class="two" style="margin-top:12px"><div><h2><span class="ic">🏆</span>Top 10 Tiket</h2><div class="tw" id="tt3"></div></div><div><h2><span class="ic">🚨</span>Top 10 Tiket OSL</h2><div class="tw" id="tt4"></div></div></div></div></div>
 <div id="pg16" style="display:none"><div class="card"><div class="hd" style="margin-bottom:10px"><div><h2 style="margin:0"><span class="ic">📞</span>Report FU tNPS Fixed – GraPARI Jabar</h2><div class="sub" id="ffmeta"></div></div>
 <div style="display:flex;gap:10px;align-items:flex-end;margin-left:auto;flex-wrap:wrap"><label style="font-size:12px;color:var(--mu)">Branch<select id="ffb"></select></label><label style="font-size:12px;color:var(--mu)">Bulan<select id="ffm"></select></label></div></div>
-<div class="grid" id="ffk"></div>
+<div class="grid" id="ffk" style="display:none"></div>
 <h2 style="margin-top:8px"><span class="ic">🏬</span>%FU / GraPARI per Bulan</h2><div class="tw" style="max-height:470px" id="ff1"></div>
-<p class="note">FU = respon yang Status Follow Up-nya sudah terisi (RNA, Connected, Rejected, Invalid, dll). Belum FU = Status Follow Up kosong atau "tidak melakukan call". %FU = Jumlah FU ÷ Jumlah Respon.</p>
+<p class="note">%FU = respon dengan Status Akhir FU “Done FU” ÷ jumlah respon GraPARI pada bulan tsb.</p>
 <div id="ff2" style="display:none"></div>
-<h2 style="margin-top:16px"><span class="ic">📋</span>Daftar Respon Belum FU <span id="ff3h" style="font-size:12px;font-weight:400;color:var(--mu)"></span></h2><div class="tw" style="max-height:470px" id="ff3"></div>
+<div style="display:none"><span id="ff3h"></span><div class="tw" id="ff3"></div></div>
 </div></div>
 <div id="pg12" style="display:none"><div class="card"><div class="hd" style="margin-bottom:10px"><div><h2 style="margin:0"><span class="ic">📞</span>Report Follow Up (FU) Detractor tNPS – Jabar</h2><div class="sub" id="fumeta"></div></div>
 <div style="display:flex;gap:10px;align-items:flex-end;margin-left:auto;flex-wrap:wrap"><label style="font-size:12px;color:var(--mu)">Branch<select id="fub"></select></label></div></div>
 <div class="grid" id="fuk"></div>
 <h2 style="margin-top:8px"><span class="ic">🏬</span>Jumlah FU &amp; %Approval per GraPARI</h2><div class="tw" style="max-height:380px" id="fu1"></div><p class="note">Klik nama GraPARI untuk melihat hasil FU GraPARI tersebut saja (KPI, SLA, kategori, tema dan detail FU ikut terfilter). Klik lagi atau pilih ↺ Reset filter di menu Branch untuk kembali ke semua GraPARI.</p>
-<h2 style="margin-top:16px"><span class="ic">⏱️</span>SLA Approval per Branch</h2><p class="note" style="margin:0 0 8px">%SLA = FU dengan status In SLA ÷ FU yang sudah dinilai SLA (In + Out). Lead time dihitung dari tanggal survey → submit FU → approval.</p><div class="tw" id="fu2"></div>
+<div style="display:none"><div class="tw" id="fu2"></div></div>
 <h2 style="margin-top:16px"><span class="ic">🧩</span>% Kategori 2 dari Total FU Jabar</h2><div class="tw" id="fu3"></div>
 <h2 style="margin-top:16px"><span class="ic">💬</span>Resume Customer Feedback &amp; Hasil Callback</h2><p class="note" style="margin:0 0 8px">Tema dikelompokkan otomatis dari kata kunci di kolom Customer Feedback dan Callback Notes / Follow Up Notes.</p>
 <div class="two"><div><div class="tw" id="fu4"></div></div><div><div class="tw" id="fu5"></div></div></div>
@@ -186,7 +186,7 @@ select#om{font-weight:700;font-size:15px;color:#B00010;background:#FFF0F0;border
 <h2 style="margin-top:16px"><span class="ic">✅</span>Status Order, RE to PS &amp; %SLA per Order Type</h2><p class="note" style="margin:0 0 8px">%RE to PS = order COMPLETED ÷ total order. %SLA = order COMPLETED dengan durasi RE Ts → Provi Ts ≤ target Kategori Durasi (3 atau 7 hari) ÷ order COMPLETED. Order yang belum selesai ditandai “lewat SLA” jika sejak RE Ts sudah melewati target per data terakhir.</p><div class="tw" id="or4"></div>
 <div class="two" style="margin-top:12px"><div><h2><span class="ic">🔎</span>Detail Process State</h2><div class="tw" style="max-height:360px" id="or5"></div></div><div><h2><span class="ic">⏱️</span>Durasi RE → Provi (order COMPLETED)</h2><div class="tw" id="or6"></div></div></div>
 <h2 style="margin-top:16px"><span class="ic">⚠️</span>Resume Fallout Category</h2><p class="note" style="margin:0 0 8px">Order yang memiliki Fallout Category (pernah fallout), termasuk yang akhirnya COMPLETED. Kolom “Masih fallout” = Process State saat ini FALLOUT.</p><div class="tw" id="or7"></div>
-<h2 style="margin-top:16px"><span class="ic">🧰</span>Top Fallout Reason</h2><div class="tw" style="max-height:420px" id="or8"></div>
+<div style="display:none"><div class="tw" id="or8"></div></div>
 </div></div>
 <div id="pg14" style="display:none"><div class="card"><div class="hd" style="margin-bottom:10px"><div><h2 style="margin:0"><span class="ic">🧑‍💻</span>Kawalan Admin CC – <span id="acttl"></span></h2><div class="sub" id="acmeta"></div></div>
 <div style="display:flex;gap:10px;align-items:flex-end;margin-left:auto;flex-wrap:wrap"><select id="acb"></select></div></div>
@@ -283,4 +283,28 @@ select#om{font-weight:700;font-size:15px;color:#B00010;background:#FFF0F0;border
 <label>Tampilkan<select id="vcf"><option value="ALL">Semua NIK</option><option value="CSR">Grup CSR saja (SIAD)</option></select></label></div>
 <div class="tw" style="max-height:318px;overflow-y:auto" id="vt3"></div><p class="note" id="vnote"></p></div>
 </div></div>
-<script src="loader.js"></script></body></html>
+<script src="loader.js"></script><style>
+#tabs,#subtabs,#osub,#asub,#grp{display:none!important}
+body{padding-left:248px}
+#snav{position:fixed;left:0;top:0;bottom:0;width:236px;background:var(--card);border-right:1px solid var(--bd);overflow-y:auto;z-index:50;padding:14px 10px 24px;box-sizing:border-box}
+#snav .lg{display:flex;align-items:center;gap:8px;padding:4px 8px 14px;border-bottom:1px solid var(--bd);margin-bottom:10px}
+#snav .lg b{font-size:22px}#snav .lg small{display:block;font-size:11px;color:var(--mu);font-weight:600}
+#snav .it,#snav .gh{display:flex;align-items:center;gap:10px;width:100%;border:0;background:transparent;color:var(--tx);font:inherit;font-size:15px;font-weight:600;text-align:left;padding:10px 12px;border-radius:10px;cursor:pointer}
+#snav .it:hover,#snav .gh:hover{background:var(--th)}
+#snav .it .e,#snav .gh .e{width:22px;text-align:center;flex:none}
+#snav .gh .ar{margin-left:auto;font-size:11px;color:var(--mu);transition:transform .2s}
+#snav .g.op>.gh .ar{transform:rotate(180deg)}
+#snav .g.act>.gh{color:#7B5CD6}
+#snav .sub{display:none;margin:2px 0 6px 22px;border-left:2px solid var(--bd);padding-left:6px}
+#snav .g.op>.sub{display:block}
+#snav .sub .it{font-size:14px;font-weight:500;padding:8px 10px}
+#snav .sub .it .c{margin-left:auto;font-size:11px;color:var(--mu);font-weight:600}
+#snav .it.on{background:var(--th);color:#7B5CD6;font-weight:700;box-shadow:inset 3px 0 0 #EC0000}
+#snav .sec{font-size:11px;font-weight:700;color:var(--mu);letter-spacing:.08em;padding:10px 12px 4px}
+#snb{display:none;position:fixed;left:10px;top:10px;z-index:60;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;font-size:18px;padding:6px 11px;cursor:pointer}
+@media(max-width:900px){body{padding-left:0}#snav{transform:translateX(-100%);transition:transform .2s;box-shadow:0 10px 30px rgba(0,0,0,.25)}body.sno #snav{transform:none}#snb{display:block}body.sno #snb{left:246px}.w>.hd{padding-left:46px}}
+</style>
+<button id="snb" title="Menu">☰</button>
+<nav id="snav"></nav>
+
+</body></html>
