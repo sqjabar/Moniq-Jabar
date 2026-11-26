@@ -87,9 +87,9 @@ function tops(rs,k){const L=st.tl,m=new Map();for(const r of rs)m.set(r[L],(m.ge
 function tmet(rs){const cur=rs.filter(isTC),prv=rs.filter(isTP),a=tg(cur),o=tg(prv);
  const t1=tops(cur,3),t2=tops(cur.filter(r=>r[4]==1),3);
  return{...a,ps:o.sla,mom:dv(a.sla,o.sla),top1:t1.join('; '),top2:t2.join('; '),
- html:`<td>${a.n}</td><td>${a.cl}</td><td>${f0(a.pc)}</td><td>${a.isl}</td><td>${a.osl}</td><td><b>${f0(a.sla)}</b></td><td>${f0(o.sla)}</td><td>${dl(dv(a.sla,o.sla))}</td>`,
+ html:`<td>${a.n}</td><td>${a.cl}</td><td><b style="color:${a.op?'var(--r)':'inherit'}">${a.op}</b></td><td>${f0(a.pc)}</td><td>${a.isl}</td><td>${a.osl}</td><td><b>${f0(a.sla)}</b></td><td>${f0(o.sla)}</td><td>${dl(dv(a.sla,o.sla))}</td>`,
  topH:`<td style="white-space:normal;text-align:left;min-width:220px">${t1.join('<br>')||'–'}</td><td style="white-space:normal;text-align:left;min-width:220px">${t2.join('<br>')||'–'}</td>`}}
-const TC=[['Tiket','n'],['Closing','cl'],['% Closing','pc'],['ISL','isl'],['OSL','osl'],['% in SLA','sla'],['% in SLA bln lalu','ps'],['MoM','mom']];
+const TC=[['Tiket','n'],['Closing','cl'],['Open','op'],['% Closing','pc'],['ISL','isl'],['OSL','osl'],['% in SLA','sla'],['% in SLA bln lalu','ps'],['MoM','mom']];
 
 function renderLP(){
  const mi=(st.tm=='all'||st.tm<1)?2:st.tm,mm=T.m[mi],all=T.rows.filter(r=>r[2]==mi),L=all.filter(r=>r[8]==1);
@@ -248,6 +248,20 @@ function narr(id,b1,kind){
  EX[id]={rows:idx.map(i=>({t:T[i][0],n:c[i],sh:c[i]/(kind=='p'?tot:n)*100,i:T[i][1],a:T[i][3]})),cols:[['Tema','t'],['Jumlah','n'],[cn,'sh'],[tt[0],'i'],[tt[1],'a']]};
 }
 const TBC=[['#8DB8EA','#CBE0F6'],['#A38BE0','#D3C9F2'],['#F2A58A','#F9D5C7'],['#B5A5EE','#DDD7F8'],['#9FB7C6','#D2DEE6'],['#7FB6D9','#C5DFEE'],['#D7A3D2','#EFD6EC'],['#8FCDB0','#CDEADB'],['#F0C27B','#F8E2BB'],['#6A55C8','#B9AEE8']];
+function rankList(id,items,lg,ex,note){
+ EX[id]={rows:items.map((r,i)=>({no:i+1,...r.x})),cols:ex};addXb(id);
+ if(!items.length){$(id).innerHTML='<p class="note">Tidak ada data.</p>';return}
+ const mx=Math.max(1,...items.map(r=>r.a+r.b)),C1='#6A55C8',C2='#D9D3FC';
+ $(id).innerHTML=(note?`<div class="rkn">${note}</div>`:'')+items.map((r,i)=>`<div class="rk"><span class="rn${i<3?' t':''}">${i+1}</span><div class="rt"><b>${r.name}</b><small>${r.sub||''}</small></div><div class="rb" title="${lg[0]}: ${r.a} · ${lg[1]}: ${r.b}"><span style="width:${(r.a/mx*100).toFixed(1)}%;background:${C1}"></span><span style="width:${(r.b/mx*100).toFixed(1)}%;background:${C2}"></span></div><div class="rv">${r.lbl}</div></div>`).join('')+`<div class="rkl"><span><i style="background:${C1}"></i>${lg[0]}</span><span><i style="background:${C2}"></i>${lg[1]}</span></div>`}
+function fRank(cur){
+ const cs=s=>{const k=s.indexOf(' - ');return k>0?[s.slice(k+3),s.slice(0,k)]:[s,'']};
+ const tot=cur.length,g1=[...group(cur,r=>F.l3[r[7]])].sort((x,y)=>y[1].length-x[1].length).slice(0,10);
+ rankList('ft5',g1.map(([k,x])=>{const o=x.filter(r=>r[4]==1).length,[n,c]=cs(k),sh=tot?x.length/tot*100:0;return{name:n,sub:`${c} · ${f1(sh)}% dari total tiket`,a:o,b:x.length-o,lbl:`<b>${fi(x.length)}</b> tiket`,x:{name:k,n:x.length,sh,osl:o}}}),['Out SLA','In SLA'],[['No','no'],['Tiket','name'],['Jumlah','n'],['% of total','sh'],['OSL','osl']]);
+ const os=cur.filter(r=>r[4]==1),g2=[...group(os,r=>F.l3[r[7]])].sort((x,y)=>y[1].length-x[1].length).slice(0,10);
+ rankList('ft6',g2.map(([k,x])=>{const o=x.filter(r=>r[3]==0).length,[n,c]=cs(k),sh=os.length?x.length/os.length*100:0;return{name:n,sub:`${c} · ${f1(sh)}% dari total OSL`,a:o,b:x.length-o,lbl:`<b>${fi(x.length)}</b> OSL`,x:{name:k,n:x.length,sh,open:o}}}),['Open (In Progress)','Sudah Close'],[['No','no'],['Tiket OSL','name'],['Jumlah','n'],['% of total OSL','sh'],['Masih open','open']]);
+ const op=cur.filter(r=>r[3]==0),oo=op.filter(r=>r[4]==1).length,g3=[...group(op,r=>F.un[r[1]])].map(([k,x])=>[k,x,x.filter(r=>r[4]==1).length]).sort((x,y)=>y[2]-x[2]||y[1].length-x[1].length).slice(0,10);
+ const s10=g3.reduce((a,x)=>a+x[2],0);
+ rankList('ft8',g3.map(([k,x,o])=>({name:k.replace('GraPARI ',''),sub:F.br[x[0][0]],a:o,b:x.length-o,lbl:`<b>${fi(o)}</b> / ${fi(x.length)} open`,x:{name:k,br:F.br[x[0][0]],osl:o,n:x.length}})),['Open Out SLA','Open In SLA'],[['No','no'],['GraPARI','name'],['Branch','br'],['Open OSL','osl'],['Total open','n']],oo?`Top 10 menyumbang ±${Math.round(s10/oo*100)}% dari ${fi(oo)} tiket open Out SLA`:'')}
 function tbars(id,rows,lab,osl){
  EX[id]={rows:rows.map((r,i)=>({no:i+1,name:r.name,n:r.n,sh:r.sh})),cols:[['No','no'],[lab,'name'],['Jumlah','n'],['% of total','sh']]};addXb(id);
  if(!rows.length){$(id).innerHTML='<p class="note">Tidak ada data.</p>';return}
@@ -328,8 +342,8 @@ function fbranch(){
   body+=`<text x="${cx}" y="${H-pb+20}" text-anchor="middle" font-size="12.5" font-weight="700" style="fill:var(--tx)">${d.name}</text><text x="${cx}" y="${H-pb+38}" text-anchor="middle" font-size="12" style="fill:var(--mu)">${mt(d.mom,'%')}</text>`});
  $('ftb').innerHTML=(st.u!='ALL'?`<div class="note" style="margin:0 0 6px;padding:6px 10px;border-radius:8px;background:#FDF0E3;color:#7A4A12">Filter GraPARI aktif: <b>${st.u}</b> – grafik hanya menampilkan tiket GraPARI ini. <a href="#" onclick="st.u='ALL';sync();render();return false" style="color:#B5541C;font-weight:700">Tampilkan semua GraPARI</a></div>`:'')+`<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:720px;display:block;margin:0 auto">${defs}${g}${body}</svg>`}
 function ftab(id,rs,onlyKey){
- const g=[...group(rs,r=>F.un[r[1]])].map(([k,x])=>{const a=fg(x),br=F.br[x[0][0]];return{key:k,name:k,br,n:a.n,pc:a.pc,sla:a.sla,html:`<td>${k}</td><td style="text-align:left">${br}</td><td>${a.n}</td><td>${f0(a.pc)}</td><td>${f0(a.sla)}</td>`}});
- table(id,g,[['GraPARI','name'],['Branch','br'],['Jumlah Tiket','n'],['% Closing','pc'],['% in SLA','sla']],k=>{st.u=st.u==k?'ALL':k;sync();render()},st.u)}
+ const g=[...group(rs,r=>F.un[r[1]])].map(([k,x])=>{const a=fg(x),br=F.br[x[0][0]],op=a.n-a.cl,os=x.filter(r=>r[3]==0&&r[4]==1),t2=[...group(os,r=>F.l3[r[7]])].sort((p,q)=>q[1].length-p[1].length).slice(0,2).map(([c,v])=>`${c} (${v.length})`);return{key:k,name:k,br,n:a.n,op,pc:a.pc,osl:os.length,sla:a.sla,top2:t2.join('; '),html:`<td>${k}</td><td style="text-align:left">${br}</td><td>${a.n}</td><td><b style="color:${op?'var(--r)':'inherit'}">${op}</b></td><td>${f0(a.pc)}</td><td><b style="color:${os.length?'var(--r)':'inherit'}">${os.length}</b></td><td>${f0(a.sla)}</td><td style="white-space:normal;text-align:left;min-width:240px;font-size:12px">${t2.join('<br>')||'–'}</td>`}});
+ table(id,g,[['GraPARI','name'],['Branch','br'],['Jumlah Tiket','n'],['Open','op'],['% Closing','pc'],['Open OSL','osl'],['% in SLA','sla'],['Top Tiket Open OSL','top2']],k=>{st.u=st.u==k?'ALL':k;sync();render()},st.u)}
 function lgtab(id,rs){
  const g=[...group(rs,r=>F.un[r[1]])].map(([k,x])=>{const a=fg(x),br=F.br[x[0][0]],lp=x.filter(r=>r[11]&1).length,ga=x.filter(r=>r[11]&2).length;return{key:k,name:k,br,lp,ga,n:a.n,pc:a.pc,sla:a.sla,html:`<td>${k}</td><td style="text-align:left">${br}</td><td><b>${lp}</b></td><td><b>${ga}</b></td><td>${a.n}</td><td>${f0(a.pc)}</td><td>${f0(a.sla)}</td>`}});
  st.sort[id]=st.sort[id]||['n',-1];
@@ -349,6 +363,7 @@ function renderF(){
   +kc('✅ Closing',`${fi(a.cl)} <span style="font-size:15px">${f0(a.pc)}</span>`,`Open: ${fi(a.n-a.cl)}`+(hp?` · ${pm}: ${f0(o.pc)} · MoM ${pdx(a.pc,o.pc)}`:''))
   +kc('⏱️ % in SLA',f0(a.sla),`In SLA ${fi(a.n-a.osl)} · OSL ${fi(a.osl)}`+(hp?` · ${pm}: ${f0(o.sla)} · MoM ${pdx(a.sla,o.sla)}`:''))
   +kc('🚨 Tiket OSL',fi(a.osl),`${a.n?(a.osl/a.n*100).toFixed(1):0}% dari total tiket`+(hp?` · ${pm}: ${fi(o.osl)} · MoM ${pcx(a.osl,o.osl)}`:''))
+   +(()=>{const oc=cur.filter(r=>r[3]==0),oo=oc.filter(r=>r[4]==1).length,po=prv.filter(r=>r[3]==0&&r[4]==1).length;return kc('⏰ Tiket Open OSL',`<span style="color:var(--r)">${fi(oo)}</span>`,`Status In Progress & OSL · ${oc.length?(oo/oc.length*100).toFixed(1):0}% dari ${fi(oc.length)} tiket open`+(hp?` · ${pm}: ${fi(po)}`:''))})()
   +(nk?kc('🛰️ Tiket Insera',fi(ia.n),`${(ia.n/nk*100).toFixed(1)}% dari ${nk<a.n?fi(nk)+' tiket ber-data':'total tiket'}`+(hp&&kp?` · ${pm}: ${fi(io.n)} · MoM ${pcx(ia.n,io.n)}`:'')):'')
   +kc('🌐 Tiket GAMAS',fi(ga.n),`${a.n?(ga.n/a.n*100).toFixed(1):0}% dari total tiket · hashtag #GAMAS: ${fi(cur.filter(r=>r[10]==1).length)}`+(hp?` · ${pm}: ${fi(go.n)} · MoM ${pcx(ga.n,go.n)}`:''))
   +(()=>{const one=(bit,t,d)=>{const c=cur.filter(r=>r[11]&bit).length,p=prv.filter(r=>r[11]&bit).length;return kc(t,fi(c),`${d} · ${a.n?(c/a.n*100).toFixed(1):0}% dari total tiket`+(hp?` · ${pm}: ${fi(p)} · MoM ${pcx(c,p)}`:''))};return one(1,'🔁 Tiket LAPUL','Lapor ulang')+one(2,'⚡ Tiket GAUL','Gangguan ulang')})();
@@ -357,8 +372,7 @@ function renderF(){
  const bb=F.rows.filter(r=>FC(r)&&(st.b=='ALL'||F.br[r[0]]==st.b));
  ftab('ft2',bb);ftab('ft3',bb.filter(r=>r[5]==1));ftab('ft4',bb.filter(r=>r[6]==1));lgtab('ft7',bb.filter(r=>r[11]>0));
  const mk=(rs,tot)=>[...group(rs,r=>F.l3[r[7]])].map(([k,x])=>({name:k,n:x.length,sh:tot?x.length/tot*100:0})).sort((x,y)=>y.n-x.n).slice(0,10);
- tbars('ft5',mk(cur,cur.length),'Tiket',0);
- const os=cur.filter(r=>r[4]==1);tbars('ft6',mk(os,os.length),'Tiket OSL',1)}
+ fRank(cur)}
 $('ff').innerHTML=F.m.map((m,i)=>`<option value="${i}">${['Agustus','September','Oktober','November (1–'+FCUT[3]+' Nov, parsial)'][i]||m}</option>`).join('')+'<option value="all">All Month</option>';$('ff').value='2';
 $('ff').onchange=e=>{st.ff=e.target.value=='all'?'all':+e.target.value;renderF()};
 async function exportFixed(){
@@ -367,7 +381,7 @@ async function exportFixed(){
  const wb=XLSX.utils.book_new(),add=(n,aoa)=>XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(aoa),n);
  const fb=F.rows.filter(r=>(st.b=='ALL'||F.br[r[0]]==st.b)&&(st.u=='ALL'||F.un[r[1]]==st.u)),cur=fb.filter(FC),per=st.ff=='all'?F.m[0]+'–'+F.m[F.m.length-1]:F.m[st.ff],a=fg(cur);
  add('Ringkasan',[['Laporan Tiket Fixed Jabar'],['Periode',per],...finfo().slice(1),['Definisi','Closing = status CLOSE; % in SLA = tiket In SLA / total tiket; OSL = Out SLA'],[],['Metrik','Tiket','Closing','% Closing','OSL','% in SLA'],['Tiket Fixed Jabar - '+per,a.n,a.cl,rd(a.pc),a.osl,rd(a.sla)]]);
- [['ftb','Tiket by Branch'],['ft2','Tiket by GraPARI'],['ft3','GraPARI Tiket Insera'],['ft4','GraPARI Tiket GAMAS'],['ft7','GraPARI LAPUL GAUL'],['ft5','Top 10 Tiket'],['ft6','Top 10 OSL']].forEach(([id,n])=>{const e=EX[id];if(e)add(n,[e.cols.map(c=>c[0]),...e.rows.map(r=>e.cols.map(c=>rd(r[c[1]])))])});
+ [['ftb','Tiket by Branch'],['ft2','Tiket by GraPARI'],['ft3','GraPARI Tiket Insera'],['ft4','GraPARI Tiket GAMAS'],['ft7','GraPARI LAPUL GAUL'],['ft8','Top 10 GraPARI Open OSL'],['ft5','Top 10 Tiket'],['ft6','Top 10 OSL']].forEach(([id,n])=>{const e=EX[id];if(e)add(n,[e.cols.map(c=>c[0]),...e.rows.map(r=>e.cols.map(c=>rd(r[c[1]])))])});
  add('Data tiket',[['Bulan','Branch','GraPARI','case_type_3','Closing','SLA','Insera','GAMAS'],...cur.map(r=>[F.m[r[2]],F.br[r[0]],F.un[r[1]],F.l3[r[7]],r[3]?'Closed':'Open',r[4]?'OSL':'ISL',r[5]?'Ya':'',r[6]?'Ya':''])]);
  await saveFile('Tiket_Fixed_Jabar_'+per+'.xlsx',new Blob([XLSX.write(wb,{bookType:'xlsx',type:'array'})],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
 }
@@ -977,7 +991,7 @@ document.querySelectorAll('#fb .chip').forEach(c=>c.onclick=()=>{st.b=c.dataset.
 F.rows.forEach(r=>{if(!UBR.has(F.un[r[1]]))UBR.set(F.un[r[1]],F.br[r[0]])});
 $('fu').innerHTML='<option value="ALL">Semua unit</option>'+[...UBR.keys()].sort().map(u=>`<option>${u}</option>`).join('');
 $('fu').onchange=e=>{st.u=e.target.value;render()};$('fs').onchange=e=>{st.s=e.target.value;$('fs').dataset.v=st.s;render()};$('fs').dataset.v=st.s;
-$('rs').onclick=()=>{st.vm=3;st.vs='all';st.vk='aktif';st.vd='br';st.vsel.clear();$('vq').value='';$('vmin').value=1;$('vcf').value='ALL';st.m=2;st.wm=3;st.hm=3;st.im=3;st.om=3;st.cm=4;st.ff=1;st.km=1;st.b='ALL';st.u='ALL';st.s='cs';$('fs').value='cs';$('fs').dataset.v='cs';sync();render();mqLatest()};
+$('rs').onclick=()=>{st.vs='all';st.vk='aktif';st.vd='br';st.vsel.clear();$('vq').value='';$('vmin').value=1;$('vcf').value='ALL';st.b='ALL';st.u='ALL';st.s='cs';$('fs').value='cs';$('fs').dataset.v='cs';sync();render();mqLatest()};
 $('fm').innerHTML=[['0','Agustus'],['1','September'],['2','Oktober'],['3','November (1–'+(D.mn[3].match(/–(\d+)/)||[,'?'])[1]+' Nov, parsial)'],['all','All Month']].map(x=>`<option value="${x[0]}">${x[1]}</option>`).join('');
 $('fm').onchange=e=>{const v=e.target.value;st.m=v=='all'?v:+v;render()};
 $('wm').innerHTML=['Juli','Agustus','September','Oktober','November'+(VPART?` (1–${vlast()} Nov, parsial)`:'')].map((m,i)=>`<option value="${i}">${m}</option>`).join('')+'<option value="all">All Month</option>';$('cm').innerHTML=[['0','Juli'],['1','Agustus'],['2','September'],['3','Oktober'],['4','November (1–'+CP.ms[4].match(/–(\d+)/)[1]+' Nov, parsial)'],['all','All Month']].map(x=>`<option value="${x[0]}">${x[1]}</option>`).join('');$('cm').onchange=e=>{const v=e.target.value;st.cm=v=='all'?v:+v;renderCP()};['cq','cmin'].forEach(i=>$(i).oninput=renderCP);
